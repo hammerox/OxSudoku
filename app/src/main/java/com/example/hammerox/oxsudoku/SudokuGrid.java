@@ -20,7 +20,7 @@ public class SudokuGrid {
     public SudokuGrid() {
     }
 
-    public static void createGrid(Activity activity, View rootView, int squareSize) {
+    public static void createGrid(Activity activity, View rootView, int squareDim) {
 
         Context context = activity.getApplicationContext();
 
@@ -98,7 +98,7 @@ public class SudokuGrid {
                 int id = activity.getResources()
                         .getIdentifier(idString, "id", activity.getPackageName());
                 textView.setId(id);
-                textView.setLayoutParams(new ViewGroup.LayoutParams(squareSize, squareSize));
+                textView.setLayoutParams(new ViewGroup.LayoutParams(squareDim, squareDim));
                 textView.setBackground(mDrawable);
                 textView.setText(col + "");
                 textView.setGravity(Gravity.CENTER);

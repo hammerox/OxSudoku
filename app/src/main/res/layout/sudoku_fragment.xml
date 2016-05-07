@@ -15,7 +15,16 @@
         android:columnCount="9"
         android:rowCount="9"
         android:background="@color/colorPrimary">
-
     </GridLayout>
+
+    <GridLayout
+        android:id="@+id/sudoku_keyboard"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/sudoku_gridlayout"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:background="@color/colorAccent"></GridLayout>
+
 
 </RelativeLayout>

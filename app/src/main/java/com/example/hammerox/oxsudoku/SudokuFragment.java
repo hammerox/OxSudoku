@@ -2,6 +2,7 @@ package com.example.hammerox.oxsudoku;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.Typeface;
@@ -11,12 +12,16 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.example.hammerox.oxsudoku.Tools.MetricConverter;
 
 
 public class SudokuFragment extends Fragment {
@@ -63,12 +68,22 @@ public class SudokuFragment extends Fragment {
         int screenHeight = displaymetrics.heightPixels;
         int screenWidth = displaymetrics.widthPixels;
 
-        int gridSize;
-        if (screenWidth < screenHeight) gridSize = screenWidth; else gridSize = screenHeight;
-        int squareSize = gridSize / 9;
+        int squareDim = screenWidth / 9;
 
-        SudokuGrid.createGrid(getActivity(), rootView, squareSize);
+        SudokuGrid.createGrid(getActivity(), rootView, squareDim);
 
+        final TypedArray ta = getActivity().getTheme().obtainStyledAttributes(
+                new int[] {android.R.attr.actionBarSize});
+        int actionBarHeight = (int) ta.getDimension(0, 0);
+        actionBarHeight = Math.round(MetricConverter.convertDpToPixel(actionBarHeight, getActivity()));
+
+        int keyboardDim = screenHeight - actionBarHeight - 9 * squareDim
+                - Math.round(MetricConverter.convertDpToPixel(10, getActivity()));
+
+        GridLayout keyboardLayout = (GridLayout) rootView.findViewById(R.id.sudoku_keyboard);
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(keyboardDim, keyboardDim);
+        params.addRule(RelativeLayout.BELOW, R.id.sudoku_gridlayout);
+        keyboardLayout.setLayoutParams(params);
 
         return rootView;
     }
