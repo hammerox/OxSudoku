@@ -2,6 +2,9 @@ package com.example.hammerox.oxsudoku;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -66,15 +69,16 @@ public class SudokuFragment extends Fragment {
             for (int col = 1; col <= 9; col++) {
                 TextView textView = new TextView(getActivity());
                 textView.setLayoutParams(new ViewGroup.LayoutParams(squareSize, squareSize));
+                Drawable mDrawable;
                 if (col == 1) {
                     switch (row) {
                         case 3:
                         case 6:
                         case 9:
-                            textView.setBackgroundResource(R.drawable.grid_border_d);
+                            mDrawable = getActivity().getResources().getDrawable(R.drawable.grid_border_d);
                             break;
                         default:
-                            textView.setBackgroundResource(R.drawable.grid_border_a);
+                            mDrawable = getActivity().getResources().getDrawable(R.drawable.grid_border_a);
                             break;
                     }
                 } else if (col == 3 || col == 6) {
@@ -82,10 +86,10 @@ public class SudokuFragment extends Fragment {
                         case 3:
                         case 6:
                         case 9:
-                            textView.setBackgroundResource(R.drawable.grid_border_f);
+                            mDrawable = getActivity().getResources().getDrawable(R.drawable.grid_border_f);
                             break;
                         default:
-                            textView.setBackgroundResource(R.drawable.grid_border_c);
+                            mDrawable = getActivity().getResources().getDrawable(R.drawable.grid_border_c);
                             break;
                     }
                 } else {
@@ -93,13 +97,40 @@ public class SudokuFragment extends Fragment {
                         case 3:
                         case 6:
                         case 9:
-                            textView.setBackgroundResource(R.drawable.grid_border_e);
+                            mDrawable = getActivity().getResources().getDrawable(R.drawable.grid_border_e);
                             break;
                         default:
-                            textView.setBackgroundResource(R.drawable.grid_border_b);
+                            mDrawable = getActivity().getResources().getDrawable(R.drawable.grid_border_b);
                             break;
                     }
                 }
+
+                if (col == 4 || col == 5 || col == 6) {
+                    switch (row) {
+                        case 4:
+                        case 5:
+                        case 6:
+                            int mColor = getResources().getColor(R.color.colorLightGray);
+                            mDrawable.setColorFilter(
+                                    new PorterDuffColorFilter(mColor, PorterDuff.Mode.MULTIPLY));
+                            break;
+                    }
+                } else {
+                    switch (row) {
+                        case 1:
+                        case 2:
+                        case 3:
+                        case 7:
+                        case 8:
+                        case 9:
+                            int mColor = getResources().getColor(R.color.colorLightGray);
+                            mDrawable.setColorFilter(
+                                    new PorterDuffColorFilter(mColor, PorterDuff.Mode.MULTIPLY));
+                            break;
+                    }
+                }
+
+                textView.setBackgroundDrawable(mDrawable);
                 gridLayout.addView(textView);
             }
         }
