@@ -9,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -75,10 +76,12 @@ public class SudokuFragment extends Fragment {
                         case 3:
                         case 6:
                         case 9:
-                            mDrawable = getActivity().getResources().getDrawable(R.drawable.grid_border_d);
+                            mDrawable = ResourcesCompat
+                                    .getDrawable(getResources(), R.drawable.grid_border_d, null);
                             break;
                         default:
-                            mDrawable = getActivity().getResources().getDrawable(R.drawable.grid_border_a);
+                            mDrawable = ResourcesCompat
+                                    .getDrawable(getResources(), R.drawable.grid_border_a, null);
                             break;
                     }
                 } else if (col == 3 || col == 6) {
@@ -86,10 +89,12 @@ public class SudokuFragment extends Fragment {
                         case 3:
                         case 6:
                         case 9:
-                            mDrawable = getActivity().getResources().getDrawable(R.drawable.grid_border_f);
+                            mDrawable = ResourcesCompat
+                                    .getDrawable(getResources(), R.drawable.grid_border_f, null);
                             break;
                         default:
-                            mDrawable = getActivity().getResources().getDrawable(R.drawable.grid_border_c);
+                            mDrawable = ResourcesCompat
+                                    .getDrawable(getResources(), R.drawable.grid_border_c, null);
                             break;
                     }
                 } else {
@@ -97,10 +102,12 @@ public class SudokuFragment extends Fragment {
                         case 3:
                         case 6:
                         case 9:
-                            mDrawable = getActivity().getResources().getDrawable(R.drawable.grid_border_e);
+                            mDrawable = ResourcesCompat
+                                    .getDrawable(getResources(), R.drawable.grid_border_e, null);
                             break;
                         default:
-                            mDrawable = getActivity().getResources().getDrawable(R.drawable.grid_border_b);
+                            mDrawable = ResourcesCompat
+                                    .getDrawable(getResources(), R.drawable.grid_border_b, null);
                             break;
                     }
                 }
