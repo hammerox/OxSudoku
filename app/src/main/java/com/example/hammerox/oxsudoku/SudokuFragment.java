@@ -4,11 +4,13 @@ import android.app.Fragment;
 import android.content.Context;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -131,6 +133,10 @@ public class SudokuFragment extends Fragment {
                 }
 
                 textView.setBackground(mDrawable);
+                textView.setText(col + "");
+                textView.setGravity(Gravity.CENTER);
+                textView.setTypeface(Typeface.DEFAULT_BOLD);
+                textView.setTextSize(30);
                 gridLayout.addView(textView);
             }
         }
