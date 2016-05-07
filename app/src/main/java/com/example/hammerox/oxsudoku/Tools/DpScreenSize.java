@@ -10,24 +10,24 @@ public class DpScreenSize {
     public DpScreenSize() {
     }
 
-    public float getScreenHeight(Activity activity) {
+    public static int getScreenHeight(Activity activity) {
         Context context = activity.getApplicationContext();
         DisplayMetrics displaymetrics = new DisplayMetrics();
         activity.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         int heightPx = displaymetrics.heightPixels;
         float heightDp = MetricConverter.convertPixelsToDp(heightPx, context);
 
-        return heightDp;
+        return Math.round(heightDp);
     }
 
-    public float getScreenWeight(Activity activity) {
+    public static int getScreenWeight(Activity activity) {
         Context context = activity.getApplicationContext();
         DisplayMetrics displaymetrics = new DisplayMetrics();
         activity.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         int widthPx = displaymetrics.widthPixels;
         float widthDp = MetricConverter.convertPixelsToDp(widthPx, context);
 
-        return widthDp;
+        return Math.round(widthDp);
     }
 
 }
