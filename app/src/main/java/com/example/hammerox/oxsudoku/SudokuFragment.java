@@ -7,6 +7,7 @@ import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -109,7 +110,7 @@ public class SudokuFragment extends Fragment {
                         case 4:
                         case 5:
                         case 6:
-                            int mColor = getResources().getColor(R.color.colorLightGray);
+                            int mColor = ContextCompat.getColor(getActivity(), R.color.colorLightGray);
                             mDrawable.setColorFilter(
                                     new PorterDuffColorFilter(mColor, PorterDuff.Mode.MULTIPLY));
                             break;
@@ -122,14 +123,14 @@ public class SudokuFragment extends Fragment {
                         case 7:
                         case 8:
                         case 9:
-                            int mColor = getResources().getColor(R.color.colorLightGray);
+                            int mColor = ContextCompat.getColor(getActivity(), R.color.colorLightGray);
                             mDrawable.setColorFilter(
                                     new PorterDuffColorFilter(mColor, PorterDuff.Mode.MULTIPLY));
                             break;
                     }
                 }
 
-                textView.setBackgroundDrawable(mDrawable);
+                textView.setBackground(mDrawable);
                 gridLayout.addView(textView);
             }
         }
