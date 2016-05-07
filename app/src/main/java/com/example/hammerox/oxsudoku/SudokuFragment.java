@@ -17,6 +17,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -84,6 +85,22 @@ public class SudokuFragment extends Fragment {
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(keyboardDim, keyboardDim);
         params.addRule(RelativeLayout.BELOW, R.id.sudoku_gridlayout);
         keyboardLayout.setLayoutParams(params);
+
+        /*Todo - Fix keyDim to fit automatically (the button's padding are messing the size)*/
+        int keyDim = (int)Math.floor((keyboardDim - 15)/ 3);
+        for (int key = 1; key <= 9; key++) {
+            Button button = new Button(getActivity());
+            button.setLayoutParams(new ViewGroup.LayoutParams(keyDim, keyDim));
+            String idString = "key_" + key;
+            int id = getActivity().getResources()
+                    .getIdentifier(idString, "id", getActivity().getPackageName());
+            button.setId(id);
+            button.setText("" + key);
+            button.setGravity(Gravity.CENTER);
+            button.setTypeface(Typeface.DEFAULT_BOLD);
+            button.setTextSize(30);
+            keyboardLayout.addView(button);
+        }
 
         return rootView;
     }

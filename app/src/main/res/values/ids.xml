@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!--IDs reserved for keyboard buttons (Buttons)-->
+    <item name="key_1" type="id"/>
+    <item name="key_2" type="id"/>
+    <item name="key_3" type="id"/>
+    <item name="key_4" type="id"/>
+    <item name="key_5" type="id"/>
+    <item name="key_6" type="id"/>
+    <item name="key_7" type="id"/>
+    <item name="key_8" type="id"/>
+    <item name="key_9" type="id"/>
+
     <!--IDs reserved for major number containers (Textviews)-->
     <!--Where 'major_(row)(col)'-->
     <item name="major_11" type="id"/>

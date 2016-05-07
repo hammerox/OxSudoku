@@ -24,7 +24,8 @@
         android:layout_below="@+id/sudoku_gridlayout"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:background="@color/colorAccent"></GridLayout>
+        android:columnCount="3"
+        android:rowCount="3"></GridLayout>
 
 
 </RelativeLayout>
