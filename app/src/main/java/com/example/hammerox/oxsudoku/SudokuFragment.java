@@ -7,13 +7,12 @@ import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridLayout;
 import android.widget.TextView;
-
-import com.example.hammerox.oxsudoku.Tools.DpScreenSize;
 
 
 public class SudokuFragment extends Fragment {
@@ -55,14 +54,14 @@ public class SudokuFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.sudoku_fragment, container, false);
 
-        int screenWidth = DpScreenSize.getScreenWeight(getActivity());
-        int screenHeight = DpScreenSize.getScreenHeight(getActivity());
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        int screenHeight = displaymetrics.heightPixels;
+        int screenWidth = displaymetrics.widthPixels;
+
         int gridSize;
         if (screenWidth < screenHeight) gridSize = screenWidth; else gridSize = screenHeight;
-        /*Todo - Fix squareSize*/
-        /* squareSize = Math.round(gridSize / 9)
-         * squareSize está dando 40, era pra dar 60 */
-        int squareSize = 60;
+        int squareSize = gridSize / 9;
 
         GridLayout gridLayout = (GridLayout)rootView.findViewById(R.id.sudoku_gridlayout);
         for(int row = 1; row <= 9; row++) {
