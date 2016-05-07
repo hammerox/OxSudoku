@@ -69,8 +69,6 @@ public class SudokuFragment extends Fragment {
         GridLayout gridLayout = (GridLayout)rootView.findViewById(R.id.sudoku_gridlayout);
         for(int row = 1; row <= 9; row++) {
             for (int col = 1; col <= 9; col++) {
-                TextView textView = new TextView(getActivity());
-                textView.setLayoutParams(new ViewGroup.LayoutParams(squareSize, squareSize));
                 Drawable mDrawable;
                 if (col == 1) {
                     switch (row) {
@@ -131,7 +129,12 @@ public class SudokuFragment extends Fragment {
                             break;
                     }
                 }
-
+                TextView textView = new TextView(getActivity());
+                String idString = "major_" + row + col;
+                int id = getActivity().getResources()
+                        .getIdentifier(idString, "id", getActivity().getPackageName());
+                textView.setId(id);
+                textView.setLayoutParams(new ViewGroup.LayoutParams(squareSize, squareSize));
                 textView.setBackground(mDrawable);
                 textView.setText(col + "");
                 textView.setGravity(Gravity.CENTER);
