@@ -81,26 +81,10 @@ public class SudokuFragment extends Fragment {
         int keyboardDim = screenHeight - actionBarHeight - 9 * squareDim
                 - Math.round(MetricConverter.convertDpToPixel(10, getActivity()));
 
-        GridLayout keyboardLayout = (GridLayout) rootView.findViewById(R.id.sudoku_keyboard);
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(keyboardDim, keyboardDim);
-        params.addRule(RelativeLayout.BELOW, R.id.sudoku_gridlayout);
-        keyboardLayout.setLayoutParams(params);
-
         /*Todo - Fix keyDim to fit automatically (the button's padding are messing the size)*/
         int keyDim = (int)Math.floor((keyboardDim - 15)/ 3);
-        for (int key = 1; key <= 9; key++) {
-            Button button = new Button(getActivity());
-            button.setLayoutParams(new ViewGroup.LayoutParams(keyDim, keyDim));
-            String idString = "key_" + key;
-            int id = getActivity().getResources()
-                    .getIdentifier(idString, "id", getActivity().getPackageName());
-            button.setId(id);
-            button.setText("" + key);
-            button.setGravity(Gravity.CENTER);
-            button.setTypeface(Typeface.DEFAULT_BOLD);
-            button.setTextSize(30);
-            keyboardLayout.addView(button);
-        }
+
+        SudokuKeyboard.createKeyboard(getActivity(), rootView, keyDim);
 
         return rootView;
     }
