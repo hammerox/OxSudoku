@@ -3,24 +3,12 @@ package com.example.hammerox.oxsudoku;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
-import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.res.ResourcesCompat;
 import android.util.DisplayMetrics;
-import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.GridLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.example.hammerox.oxsudoku.Tools.MetricConverter;
 
@@ -84,7 +72,8 @@ public class SudokuFragment extends Fragment {
         /*Todo - Fix keyDim to fit automatically (the button's padding are messing the size)*/
         int keyDim = (int)Math.floor((keyboardDim - 15)/ 3);
 
-        SudokuKeyboard.createKeyboard(getActivity(), rootView, keyDim);
+        SudokuKeyboard keyboard = new SudokuKeyboard();
+        keyboard.createKeyboard(getActivity(), rootView, keyDim);
 
         new SudokuGrid();
 
