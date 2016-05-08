@@ -110,9 +110,11 @@ public class SudokuGrid {
                 textView.setTypeface(Typeface.DEFAULT_BOLD);
                 textView.setTextSize(30);
 
+                List<Boolean> puzzleMask = createPuzzleMask();
                 int index = 9 * (row - 1) + col - 1;
-                textView.setText(solution.get(index).toString());
-
+                if (puzzleMask.get(index) == true) {
+                    textView.setText(solution.get(index).toString());
+                }
                 gridLayout.addView(textView);
             }
         }
@@ -135,7 +137,24 @@ public class SudokuGrid {
         {
             solution.add(ints[index]);
         }
-
         return solution;
+    }
+
+    public List<Boolean> createPuzzleMask() {
+        boolean[] bols =   {false,false,true,   true,false,true,    true,false,false,
+                            true,false,false,   true,false,true,    false,false,true,
+                            false,false,false,  false,true,false,   false,false,false,
+                            false,true,false,   false,true,false,   false,true,false,
+                            true,false,true,    true,false,true,    true,false,true,
+                            false,true,false,   false,true,false,   false,true,false,
+                            false,false,false,  false,true,false,   false,false,false,
+                            true,false,false,   true,false,true,    false,false,true,
+                            false,false,true,   true,false,true,    true,false,false};
+        List<Boolean> puzzleMask = new ArrayList<>();
+        for (int index = 0; index < bols.length; index++)
+        {
+            puzzleMask.add(bols[index]);
+        }
+        return puzzleMask;
     }
 }
