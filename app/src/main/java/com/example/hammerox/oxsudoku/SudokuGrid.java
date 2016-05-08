@@ -14,13 +14,19 @@ import android.view.ViewGroup;
 import android.widget.GridLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class SudokuGrid {
 
+    private List<Integer> solution;
+
     public SudokuGrid() {
+        solution = createSolution();
     }
 
-    public static void createGrid(Activity activity, View rootView, int squareDim) {
+    public void createGrid(Activity activity, View rootView, int squareDim) {
 
         Context context = activity.getApplicationContext();
 
@@ -100,13 +106,36 @@ public class SudokuGrid {
                 textView.setId(id);
                 textView.setLayoutParams(new ViewGroup.LayoutParams(squareDim, squareDim));
                 textView.setBackground(mDrawable);
-                textView.setText(col + "");
                 textView.setGravity(Gravity.CENTER);
                 textView.setTypeface(Typeface.DEFAULT_BOLD);
                 textView.setTextSize(30);
+
+                int index = 9 * (row - 1) + col - 1;
+                textView.setText(solution.get(index).toString());
+
                 gridLayout.addView(textView);
             }
         }
 
+    }
+
+    public List<Integer> createSolution() {
+        /*Todo - Create a sudoku puzzle generator*/
+        int[] ints =   {6,2,7,3,8,9,4,1,5,
+                        8,9,4,1,7,5,3,6,2,
+                        1,3,5,6,4,2,7,8,9,
+                        9,8,2,7,6,3,1,5,4,
+                        4,5,3,2,9,1,8,7,6,
+                        7,1,6,4,5,8,2,9,3,
+                        3,7,1,9,2,6,5,4,8,
+                        2,6,8,5,1,4,9,3,7,
+                        5,4,9,8,3,7,6,2,1};
+        List<Integer> solution = new ArrayList<Integer>();
+        for (int index = 0; index < ints.length; index++)
+        {
+            solution.add(ints[index]);
+        }
+
+        return solution;
     }
 }

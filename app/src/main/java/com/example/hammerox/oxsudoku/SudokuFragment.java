@@ -71,7 +71,7 @@ public class SudokuFragment extends Fragment {
 
         int squareDim = screenWidth / 9;
 
-        SudokuGrid.createGrid(getActivity(), rootView, squareDim);
+        new SudokuGrid().createGrid(getActivity(), rootView, squareDim);
 
         final TypedArray ta = getActivity().getTheme().obtainStyledAttributes(
                 new int[] {android.R.attr.actionBarSize});
@@ -85,6 +85,8 @@ public class SudokuFragment extends Fragment {
         int keyDim = (int)Math.floor((keyboardDim - 15)/ 3);
 
         SudokuKeyboard.createKeyboard(getActivity(), rootView, keyDim);
+
+        new SudokuGrid();
 
         return rootView;
     }
