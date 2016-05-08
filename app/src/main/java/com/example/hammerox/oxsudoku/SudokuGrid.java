@@ -26,7 +26,7 @@ public class SudokuGrid {
         solution = createSolution();
     }
 
-    public void createGrid(Activity activity, View rootView, int squareDim) {
+    public void createGrid(Activity activity, final View rootView, int squareDim) {
 
         Context context = activity.getApplicationContext();
 
@@ -99,7 +99,7 @@ public class SudokuGrid {
                             break;
                     }
                 }
-                TextView textView = new TextView(activity);
+                final TextView textView = new TextView(activity);
                 String idString = "major_" + row + col;
                 int id = activity.getResources()
                         .getIdentifier(idString, "id", activity.getPackageName());
@@ -114,6 +114,19 @@ public class SudokuGrid {
                 int index = 9 * (row - 1) + col - 1;
                 if (puzzleMask.get(index) == true) {
                     textView.setText(solution.get(index).toString());
+                } else {
+                    int mColor = ContextCompat.getColor(activity, R.color.colorAccent);
+                    textView.setTextColor(mColor);
+                    textView.isClickable();
+                    textView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            int activeKey = SudokuKeyboard.getActiveKey();
+                            if (activeKey != 0) {
+                                textView.setText(activeKey + "");
+                            }
+                        }
+                    });
                 }
                 gridLayout.addView(textView);
             }

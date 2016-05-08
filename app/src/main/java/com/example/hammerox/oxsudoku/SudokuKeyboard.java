@@ -59,4 +59,11 @@ public class SudokuKeyboard {
         }
     }
 
+    public static int getActiveKey() {
+        return activeKey;
+    }
+
+    public static void setActiveKey(int activeKey) {
+        SudokuKeyboard.activeKey = activeKey;
+    }
 }
