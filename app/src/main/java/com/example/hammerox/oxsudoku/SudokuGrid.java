@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,86 +21,23 @@ import java.util.List;
 
 public class SudokuGrid {
 
-    private List<Integer> solution;
+    private List<Integer> puzzleSolution;
+    private List<Boolean> puzzleMask;
+    private List<Boolean> puzzleCorrectAnswers;
+
 
     public SudokuGrid() {
-        solution = createSolution();
+        puzzleSolution = createSolution();
     }
 
-    public void createGrid(Activity activity, final View rootView, int squareDim) {
-
-        Context context = activity.getApplicationContext();
+    public void createGrid(final Activity activity, final View rootView, int squareDim) {
 
         GridLayout gridLayout = (GridLayout) rootView.findViewById(R.id.sudoku_gridlayout);
         for (int row = 1; row <= 9; row++) {
             for (int col = 1; col <= 9; col++) {
-                Drawable mDrawable;
-                if (col == 1) {
-                    switch (row) {
-                        case 3:
-                        case 6:
-                        case 9:
-                            mDrawable = ResourcesCompat
-                                    .getDrawable(context.getResources(), R.drawable.grid_border_d, null);
-                            break;
-                        default:
-                            mDrawable = ResourcesCompat
-                                    .getDrawable(context.getResources(), R.drawable.grid_border_a, null);
-                            break;
-                    }
-                } else if (col == 3 || col == 6) {
-                    switch (row) {
-                        case 3:
-                        case 6:
-                        case 9:
-                            mDrawable = ResourcesCompat
-                                    .getDrawable(context.getResources(), R.drawable.grid_border_f, null);
-                            break;
-                        default:
-                            mDrawable = ResourcesCompat
-                                    .getDrawable(context.getResources(), R.drawable.grid_border_c, null);
-                            break;
-                    }
-                } else {
-                    switch (row) {
-                        case 3:
-                        case 6:
-                        case 9:
-                            mDrawable = ResourcesCompat
-                                    .getDrawable(context.getResources(), R.drawable.grid_border_e, null);
-                            break;
-                        default:
-                            mDrawable = ResourcesCompat
-                                    .getDrawable(context.getResources(), R.drawable.grid_border_b, null);
-                            break;
-                    }
-                }
+                Drawable mDrawable = drawGrid(activity, row, col);
 
-                if (col == 4 || col == 5 || col == 6) {
-                    switch (row) {
-                        case 4:
-                        case 5:
-                        case 6:
-                            int mColor = ContextCompat.getColor(activity, R.color.colorLightGray);
-                            mDrawable.setColorFilter(
-                                    new PorterDuffColorFilter(mColor, PorterDuff.Mode.MULTIPLY));
-                            break;
-                    }
-                } else {
-                    switch (row) {
-                        case 1:
-                        case 2:
-                        case 3:
-                        case 7:
-                        case 8:
-                        case 9:
-                            int mColor = ContextCompat.getColor(activity, R.color.colorLightGray);
-                            mDrawable.setColorFilter(
-                                    new PorterDuffColorFilter(mColor, PorterDuff.Mode.MULTIPLY));
-                            break;
-                    }
-                }
-                final TextView textView = new TextView(activity);
+                TextView textView = new TextView(activity);
                 String idString = "major_" + row + col;
                 int id = activity.getResources()
                         .getIdentifier(idString, "id", activity.getPackageName());
@@ -110,10 +48,12 @@ public class SudokuGrid {
                 textView.setTypeface(Typeface.DEFAULT_BOLD);
                 textView.setTextSize(30);
 
-                List<Boolean> puzzleMask = createPuzzleMask();
+                puzzleMask = createPuzzleMask();
+                puzzleCorrectAnswers = createPuzzleCorrectAnswers(puzzleMask);
+
                 int index = 9 * (row - 1) + col - 1;
-                if (puzzleMask.get(index) == true) {
-                    textView.setText(solution.get(index).toString());
+                if (puzzleMask.get(index)) {
+                    textView.setText(String.valueOf(puzzleSolution.get(index)));
                 } else {
                     int mColor = ContextCompat.getColor(activity, R.color.colorAccent);
                     textView.setTextColor(mColor);
@@ -123,7 +63,25 @@ public class SudokuGrid {
                         public void onClick(View v) {
                             int activeKey = SudokuKeyboard.getActiveKey();
                             if (activeKey != 0) {
-                                textView.setText(activeKey + "");
+                                TextView clickedText = (TextView) v;
+                                clickedText.setText(String.valueOf(activeKey));
+
+                                GridLayout parent = (GridLayout) clickedText.getParent();
+                                int indexOfClick = parent.indexOfChild(clickedText);
+                                int solution = puzzleSolution.get(indexOfClick);
+                                if (solution == activeKey) {
+                                    puzzleCorrectAnswers.set(indexOfClick, true);
+                                } else {
+                                    puzzleCorrectAnswers.set(indexOfClick, false);
+                                }
+                                int count = 0;
+                                for (Boolean answer : puzzleCorrectAnswers) {
+                                    if (answer) {count = count + 1;}
+                                }
+                                float correctAnswersRatio = (float)count / (float)puzzleCorrectAnswers.size();
+                                if (correctAnswersRatio == 1) {
+                                    Toast.makeText(activity, "CONGRATS!", Toast.LENGTH_LONG).show();
+                                }
                             }
                         }
                     });
@@ -146,9 +104,8 @@ public class SudokuGrid {
                         2,6,8,5,1,4,9,3,7,
                         5,4,9,8,3,7,6,2,1};
         List<Integer> solution = new ArrayList<Integer>();
-        for (int index = 0; index < ints.length; index++)
-        {
-            solution.add(ints[index]);
+        for (int anInt : ints) {
+            solution.add(anInt);
         }
         return solution;
     }
@@ -157,17 +114,94 @@ public class SudokuGrid {
         boolean[] bols =   {false,false,true,   true,false,true,    true,false,false,
                             true,false,false,   true,false,true,    false,false,true,
                             false,false,false,  false,true,false,   false,false,false,
+
                             false,true,false,   false,true,false,   false,true,false,
                             true,false,true,    true,false,true,    true,false,true,
                             false,true,false,   false,true,false,   false,true,false,
+
                             false,false,false,  false,true,false,   false,false,false,
                             true,false,false,   true,false,true,    false,false,true,
                             false,false,true,   true,false,true,    true,false,false};
-        List<Boolean> puzzleMask = new ArrayList<>();
-        for (int index = 0; index < bols.length; index++)
-        {
-            puzzleMask.add(bols[index]);
+        List<Boolean> mask = new ArrayList<>();
+        for (boolean bol : bols) {
+            mask.add(bol);
         }
-        return puzzleMask;
+        return mask;
+    }
+
+    public List<Boolean> createPuzzleCorrectAnswers(List<Boolean> mask) {
+        return mask;
+    }
+
+    public Drawable drawGrid(Activity activity, int row, int col) {
+        Context context = activity.getApplicationContext();
+        Drawable mDrawable;
+        if (col == 1) {
+            switch (row) {
+                case 3:
+                case 6:
+                case 9:
+                    mDrawable = ResourcesCompat
+                            .getDrawable(context.getResources(), R.drawable.grid_border_d, null);
+                    break;
+                default:
+                    mDrawable = ResourcesCompat
+                            .getDrawable(context.getResources(), R.drawable.grid_border_a, null);
+                    break;
+            }
+        } else if (col == 3 || col == 6) {
+            switch (row) {
+                case 3:
+                case 6:
+                case 9:
+                    mDrawable = ResourcesCompat
+                            .getDrawable(context.getResources(), R.drawable.grid_border_f, null);
+                    break;
+                default:
+                    mDrawable = ResourcesCompat
+                            .getDrawable(context.getResources(), R.drawable.grid_border_c, null);
+                    break;
+            }
+        } else {
+            switch (row) {
+                case 3:
+                case 6:
+                case 9:
+                    mDrawable = ResourcesCompat
+                            .getDrawable(context.getResources(), R.drawable.grid_border_e, null);
+                    break;
+                default:
+                    mDrawable = ResourcesCompat
+                            .getDrawable(context.getResources(), R.drawable.grid_border_b, null);
+                    break;
+            }
+        }
+
+        if (col == 4 || col == 5 || col == 6) {
+            switch (row) {
+                case 4:
+                case 5:
+                case 6:
+                    int mColor = ContextCompat.getColor(activity, R.color.colorLightGray);
+                    mDrawable.setColorFilter(
+                            new PorterDuffColorFilter(mColor, PorterDuff.Mode.MULTIPLY));
+                    break;
+            }
+        } else {
+            switch (row) {
+                case 1:
+                case 2:
+                case 3:
+                case 7:
+                case 8:
+                case 9:
+                    int mColor = ContextCompat.getColor(activity, R.color.colorLightGray);
+                    mDrawable.setColorFilter(
+                            new PorterDuffColorFilter(mColor, PorterDuff.Mode.MULTIPLY));
+                    break;
+            }
+        }
+
+        return mDrawable;
     }
 }
