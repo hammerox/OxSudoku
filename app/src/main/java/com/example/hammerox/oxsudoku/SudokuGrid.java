@@ -24,10 +24,14 @@ public class SudokuGrid {
     private List<Integer> puzzleSolution;
     private List<Boolean> puzzleMask;
     private List<Boolean> puzzleCorrectAnswers;
+    private List<Boolean> puzzleUserInput;
 
 
     public SudokuGrid() {
         puzzleSolution = createSolution();
+        puzzleMask = createPuzzleMask();
+        puzzleCorrectAnswers = createPuzzleCorrectAnswers(puzzleMask);
+        puzzleUserInput = createPuzzleUserInput();
     }
 
     public void createGrid(final Activity activity, final View rootView, int squareDim) {
@@ -48,9 +52,6 @@ public class SudokuGrid {
                 textView.setTypeface(Typeface.DEFAULT_BOLD);
                 textView.setTextSize(30);
 
-                puzzleMask = createPuzzleMask();
-                puzzleCorrectAnswers = createPuzzleCorrectAnswers(puzzleMask);
-
                 int index = 9 * (row - 1) + col - 1;
                 if (puzzleMask.get(index)) {
                     textView.setText(String.valueOf(puzzleSolution.get(index)));
@@ -68,6 +69,7 @@ public class SudokuGrid {
 
                                 GridLayout parent = (GridLayout) clickedText.getParent();
                                 int indexOfClick = parent.indexOfChild(clickedText);
+                                puzzleUserInput.set(indexOfClick, true);
                                 int solution = puzzleSolution.get(indexOfClick);
                                 if (solution == activeKey) {
                                     puzzleCorrectAnswers.set(indexOfClick, true);
@@ -131,6 +133,15 @@ public class SudokuGrid {
 
     public List<Boolean> createPuzzleCorrectAnswers(List<Boolean> mask) {
         return mask;
+    }
+
+    public List<Boolean> createPuzzleUserInput() {
+        List<Boolean> userInput = new ArrayList<>();
+        int size = 9*9;
+        for (int i = 0; i < size; i++) {
+            userInput.add(false);
+        }
+        return userInput;
     }
 
     public Drawable drawGrid(Activity activity, int row, int col) {
@@ -203,5 +214,39 @@ public class SudokuGrid {
         }
 
         return mDrawable;
+    }
+
+    // Getters and Setters
+
+    public List<Boolean> getPuzzleCorrectAnswers() {
+        return puzzleCorrectAnswers;
+    }
+
+    public void setPuzzleCorrectAnswers(List<Boolean> puzzleCorrectAnswers) {
+        this.puzzleCorrectAnswers = puzzleCorrectAnswers;
+    }
+
+    public List<Boolean> getPuzzleMask() {
+        return puzzleMask;
+    }
+
+    public void setPuzzleMask(List<Boolean> puzzleMask) {
+        this.puzzleMask = puzzleMask;
+    }
+
+    public List<Integer> getPuzzleSolution() {
+        return puzzleSolution;
+    }
+
+    public void setPuzzleSolution(List<Integer> puzzleSolution) {
+        this.puzzleSolution = puzzleSolution;
+    }
+
+    public List<Boolean> getPuzzleUserInput() {
+        return puzzleUserInput;
+    }
+
+    public void setPuzzleUserInput(List<Boolean> puzzleUserInput) {
+        this.puzzleUserInput = puzzleUserInput;
     }
 }

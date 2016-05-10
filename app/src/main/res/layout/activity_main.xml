@@ -5,9 +5,8 @@
     android:layout_height="match_parent"
     tools:context="com.example.hammerox.oxsudoku.MainActivity">
 
-    <fragment android:name="com.example.hammerox.oxsudoku.SudokuFragment"
+    <FrameLayout
         android:id="@+id/sudoku_container"
-        android:layout_weight="1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:layout="@layout/sudoku_fragment" />

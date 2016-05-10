@@ -7,19 +7,23 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.hammerox.oxsudoku.Tools.MetricConverter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class SudokuFragment extends Fragment {
 
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    private String mParam1;
-    private String mParam2;
+    private SudokuGrid sudokuGrid;
 
     private OnFragmentInteractionListener mListener;
 
@@ -27,23 +31,11 @@ public class SudokuFragment extends Fragment {
         // Required empty public constructor
     }
 
-    // TODO: Rename and change types and number of parameters
-    public static SudokuFragment newInstance(String param1, String param2) {
-        SudokuFragment fragment = new SudokuFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+        sudokuGrid = new SudokuGrid();
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -59,7 +51,7 @@ public class SudokuFragment extends Fragment {
 
         int squareDim = screenWidth / 9;
 
-        new SudokuGrid().createGrid(getActivity(), rootView, squareDim);
+        sudokuGrid.createGrid(getActivity(), rootView, squareDim);
 
         final TypedArray ta = getActivity().getTheme().obtainStyledAttributes(
                 new int[] {android.R.attr.actionBarSize});
@@ -75,9 +67,60 @@ public class SudokuFragment extends Fragment {
         SudokuKeyboard keyboard = new SudokuKeyboard();
         keyboard.createKeyboard(getActivity(), rootView, keyDim);
 
-        new SudokuGrid();
-
         return rootView;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_sudoku, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.action_check:
+                List<Boolean> puzzleMask = sudokuGrid.getPuzzleMask();
+                List<Boolean> puzzleCorrectAnswers = sudokuGrid.getPuzzleCorrectAnswers();
+                List<Boolean> puzzleUserInput = sudokuGrid.getPuzzleUserInput();
+
+                int total = 0;
+                int correctCount = 0;
+                int wrongCount = 0;
+                List<List> wrongArray = new ArrayList<>();
+                for (int row = 1; row <= 9; row++) {
+                    for (int col = 1; col <= 9; col++) {
+                        int index = 9 * (row - 1) + col - 1;
+                        if (!puzzleCorrectAnswers.get(index) && puzzleUserInput.get(index)) {
+                            List<Integer> toAdd = new ArrayList<>();
+                            toAdd.add(row);
+                            toAdd.add(col);
+                            wrongArray.add(toAdd);
+                            wrongCount++;
+                        } else if (puzzleCorrectAnswers.get(index) && puzzleUserInput.get(index)) {
+                            correctCount++;
+                        }
+                        if (!puzzleMask.get(index)) total++;
+                    }
+                }
+
+                if (wrongCount != 0) {
+                    if (wrongCount == 1) {
+                        Toast.makeText(getActivity(), "There is 1 mistake",
+                                Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(getActivity(), "There are " + wrongCount + " mistakes",
+                                Toast.LENGTH_LONG).show();
+                    }
+                } else {
+                    Toast.makeText(getActivity(), "Everything is alright! \n Progress: "
+                            + correctCount + "/" + total, Toast.LENGTH_LONG).show();
+                }
+
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     public void onButtonPressed(Uri uri) {
