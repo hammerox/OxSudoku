@@ -5,6 +5,7 @@
     tools:context="com.example.hammerox.oxsudoku.SudokuFragment">
 
     <com.example.hammerox.oxsudoku.Tools.SquareLayout
+        android:orientation="vertical"
         android:id="@+id/sudoku_gridlayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -12,6 +12,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,6 +41,13 @@ public class SudokuGrid {
 
         SquareLayout gridLayout = (SquareLayout) rootView.findViewById(R.id.sudoku_gridlayout);
         for (int row = 1; row <= 9; row++) {
+            LinearLayout linearLayout = new LinearLayout(activity);
+            linearLayout.setOrientation(LinearLayout.HORIZONTAL);
+            linearLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    1.0f));
+
             for (int col = 1; col <= 9; col++) {
                 Drawable mDrawable = drawGrid(activity, row, col);
 
@@ -69,8 +77,8 @@ public class SudokuGrid {
                                 TextView clickedText = (TextView) v;
                                 clickedText.setText(String.valueOf(activeKey));
 
-                                GridLayout parent = (GridLayout) clickedText.getParent();
-                                int indexOfClick = parent.indexOfChild(clickedText);
+                                int indexOfClick = getIndexFromView(activity, clickedText);
+
                                 puzzleUserInput.set(indexOfClick, true);
                                 int solution = puzzleSolution.get(indexOfClick);
                                 if (solution == activeKey) {
@@ -90,8 +98,9 @@ public class SudokuGrid {
                         }
                     });
                 }
-                gridLayout.addView(textView);
+                linearLayout.addView(textView);
             }
+            gridLayout.addView(linearLayout);
         }
 
     }
@@ -216,6 +225,16 @@ public class SudokuGrid {
         }
 
         return mDrawable;
+    }
+
+    public int getIndexFromView(Activity activity, TextView view) {
+        int viewId = view.getId();
+        String viewIdName = activity.getResources()
+                .getResourceEntryName(viewId);
+        String viewRowCol = viewIdName.split("_")[1];
+        int rowIndex = Integer.valueOf(viewRowCol.substring(0,1));
+        int colIndex = Integer.valueOf(viewRowCol.substring(1,2));
+        return 9 * (rowIndex - 1) + colIndex - 1;
     }
 
     // Getters and Setters

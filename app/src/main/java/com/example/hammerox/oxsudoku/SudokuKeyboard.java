@@ -26,9 +26,6 @@ public class SudokuKeyboard {
 
     public void createKeyboard(final Activity activity, final View rootView, int keyDim) {
 
-        int keyboardDim = keyDim * 3;
-
-        SquareLayout keyboardLayout = (SquareLayout) rootView.findViewById(R.id.sudoku_keyboard);
         for (int key = 1; key <= 9; key++) {
             String idString = "key_" + key;
             int id = activity.getResources()
