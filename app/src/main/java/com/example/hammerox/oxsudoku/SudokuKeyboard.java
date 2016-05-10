@@ -12,6 +12,8 @@ import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.RelativeLayout;
 
+import com.example.hammerox.oxsudoku.Tools.SquareLayout;
+
 
 public class SudokuKeyboard {
 
@@ -24,17 +26,12 @@ public class SudokuKeyboard {
 
         int keyboardDim = keyDim * 3;
 
-        GridLayout keyboardLayout = (GridLayout) rootView.findViewById(R.id.sudoku_keyboard);
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(keyboardDim, keyboardDim);
-        params.addRule(RelativeLayout.BELOW, R.id.sudoku_gridlayout);
-        keyboardLayout.setLayoutParams(params);
+        SquareLayout keyboardLayout = (SquareLayout) rootView.findViewById(R.id.sudoku_keyboard);
         for (int key = 1; key <= 9; key++) {
-            Button keyButton = new Button(activity);
-            keyButton.setLayoutParams(new ViewGroup.LayoutParams(keyDim, keyDim));
             String idString = "key_" + key;
             int id = activity.getResources()
                     .getIdentifier(idString, "id", activity.getPackageName());
-            keyButton.setId(id);
+            Button keyButton = (Button) rootView.findViewById(id);
             keyButton.setText("" + key);
             keyButton.setGravity(Gravity.CENTER);
             keyButton.setTypeface(Typeface.DEFAULT_BOLD);
@@ -55,7 +52,6 @@ public class SudokuKeyboard {
                     activeKey = Integer.valueOf(pressedKey.getText().toString());
                 }
             });
-            keyboardLayout.addView(keyButton);
         }
     }
 

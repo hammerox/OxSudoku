@@ -15,6 +15,8 @@ import android.widget.GridLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.hammerox.oxsudoku.Tools.SquareLayout;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +38,7 @@ public class SudokuGrid {
 
     public void createGrid(final Activity activity, final View rootView, int squareDim) {
 
-        GridLayout gridLayout = (GridLayout) rootView.findViewById(R.id.sudoku_gridlayout);
+        SquareLayout gridLayout = (SquareLayout) rootView.findViewById(R.id.sudoku_gridlayout);
         for (int row = 1; row <= 9; row++) {
             for (int col = 1; col <= 9; col++) {
                 Drawable mDrawable = drawGrid(activity, row, col);
