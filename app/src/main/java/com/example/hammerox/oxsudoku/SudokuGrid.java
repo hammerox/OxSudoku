@@ -37,7 +37,7 @@ public class SudokuGrid {
         puzzleUserInput = createPuzzleUserInput();
     }
 
-    public void createGrid(final Activity activity, final View rootView, int squareDim) {
+    public void createGrid(final Activity activity, final View rootView) {
 
         SquareLayout gridLayout = (SquareLayout) rootView.findViewById(R.id.sudoku_gridlayout);
         for (int row = 1; row <= 9; row++) {
@@ -56,7 +56,10 @@ public class SudokuGrid {
                 int id = activity.getResources()
                         .getIdentifier(idString, "id", activity.getPackageName());
                 textView.setId(id);
-                textView.setLayoutParams(new ViewGroup.LayoutParams(squareDim, squareDim));
+                textView.setLayoutParams(new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        1.0f));
                 textView.setBackground(mDrawable);
                 textView.setGravity(Gravity.CENTER);
                 textView.setTypeface(Typeface.DEFAULT_BOLD);

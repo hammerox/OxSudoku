@@ -24,7 +24,7 @@ public class SudokuKeyboard {
     public SudokuKeyboard() {
     }
 
-    public void createKeyboard(final Activity activity, final View rootView, int keyDim) {
+    public void createKeyboard(final Activity activity, final View rootView) {
 
         for (int key = 1; key <= 9; key++) {
             String idString = "key_" + key;

@@ -43,29 +43,9 @@ public class SudokuFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.sudoku_fragment, container, false);
-
-        DisplayMetrics displaymetrics = new DisplayMetrics();
-        getActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-        int screenHeight = displaymetrics.heightPixels;
-        int screenWidth = displaymetrics.widthPixels;
-
-        int squareDim = screenWidth / 9;
-
-        sudokuGrid.createGrid(getActivity(), rootView, squareDim);
-
-        final TypedArray ta = getActivity().getTheme().obtainStyledAttributes(
-                new int[] {android.R.attr.actionBarSize});
-        int actionBarHeight = (int) ta.getDimension(0, 0);
-        actionBarHeight = Math.round(MetricConverter.convertDpToPixel(actionBarHeight, getActivity()));
-
-        int keyboardDim = screenHeight - actionBarHeight - 9 * squareDim
-                - Math.round(MetricConverter.convertDpToPixel(10, getActivity()));
-
-        /*Todo - Fix keyDim to fit automatically (the button's padding are messing the size)*/
-        int keyDim = (int)Math.floor((keyboardDim - 15)/ 3);
-
+        sudokuGrid.createGrid(getActivity(), rootView);
         SudokuKeyboard keyboard = new SudokuKeyboard();
-        keyboard.createKeyboard(getActivity(), rootView, keyDim);
+        keyboard.createKeyboard(getActivity(), rootView);
 
         return rootView;
     }
