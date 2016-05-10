@@ -1,10 +1,12 @@
 package com.example.hammerox.oxsudoku;
 
 import android.app.Activity;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewCompat;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +34,9 @@ public class SudokuKeyboard {
             int id = activity.getResources()
                     .getIdentifier(idString, "id", activity.getPackageName());
             Button keyButton = (Button) rootView.findViewById(id);
+
+            ColorStateList mColor = ContextCompat.getColorStateList(activity, R.color.colorMediumGray);
+            ViewCompat.setBackgroundTintList(keyButton, mColor);
             keyButton.setText("" + key);
             keyButton.setGravity(Gravity.CENTER);
             keyButton.setTypeface(Typeface.DEFAULT_BOLD);
@@ -44,11 +49,15 @@ public class SudokuKeyboard {
                         int id = activity.getResources()
                                 .getIdentifier(idString, "id", activity.getPackageName());
                         Button lastKey = (Button) rootView.findViewById(id);
-                        lastKey.getBackground().setColorFilter(Color.TRANSPARENT, PorterDuff.Mode.SRC_ATOP);
+                        ColorStateList mReleaseColor = ContextCompat
+                                .getColorStateList(activity, R.color.colorMediumGray);
+                        ViewCompat.setBackgroundTintList(lastKey, mReleaseColor);
+
                     }
                     Button pressedKey = (Button)v;
-                    int mColor = ContextCompat.getColor(activity, R.color.colorAccent);
-                    pressedKey.getBackground().setColorFilter(mColor, PorterDuff.Mode.SRC_ATOP);
+                    ColorStateList mPressedColor = ContextCompat
+                            .getColorStateList(activity, R.color.colorAccent);
+                    ViewCompat.setBackgroundTintList(pressedKey, mPressedColor);
                     activeKey = Integer.valueOf(pressedKey.getText().toString());
                 }
             });

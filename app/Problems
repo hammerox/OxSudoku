@@ -1,0 +1,18 @@
+1.  Como criar view quadradas, automaticamente.
+            Extender um LinearLayout com algumas propriedades, mostradas no post:
+                http://stackoverflow.com/questions/2948212/android-layout-with-sqare-buttons
+                Jan Němec
+
+2.  Não era possível mudar as cores de botões programáticamente, especialmente dentro do onClick.
+            Achei vários posts na internet falando sobre como mudar a cor do botão programaticamente,
+        mas nenhum deles me ajudavam. Usar setBackground e indicar o drawable padrão dos botões
+        funcionava, mas mudava completamente a aparência do botão. O post abaixo me fez entender
+        melhor como os botões funcionam:
+                http://stackoverflow.com/questions/13222858/android-default-button-style
+                forgemo
+        Um comentário no fim do tópico me fez entender que a biblioteca AppCompat muda as referências
+        do botão, o que fazia sentido quando eu tentava formatá-lo para o drawable padrão. Os posts
+        do tópico abaixo me ajudaram a entender o problema, mas foi apenas o último post (e o mais
+        simples) que funcionou para o meu caso:
+                http://stackoverflow.com/questions/26519979/coloring-buttons-in-android-with-material-design-and-appcompat
+                Jaydeep
