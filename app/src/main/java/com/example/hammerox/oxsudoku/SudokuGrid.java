@@ -37,7 +37,7 @@ public class SudokuGrid {
         * */
         puzzleSolution = createSolution();
         puzzleMask = createPuzzleMask();
-        puzzleCorrectAnswers = createPuzzleCorrectAnswers(puzzleMask);
+        puzzleCorrectAnswers = createPuzzleCorrectAnswers();
         puzzleUserInput = createPuzzleUserInput();
     }
 
@@ -74,7 +74,7 @@ public class SudokuGrid {
                 textView.setTextSize(30);
 
                 int index = 9 * (row - 1) + col - 1;
-                // If puzzleMask = true, show number. Otherwise, demand user input;
+                // If puzzleMask is true, show number. Otherwise, demand user input;
                 if (puzzleMask.get(index)) {
                     textView.setText(String.valueOf(puzzleSolution.get(index)));
                 } else {
@@ -96,7 +96,7 @@ public class SudokuGrid {
                                 int indexOfClick = getIndexFromView(activity, clickedText);
                                 puzzleUserInput.set(indexOfClick, true);
 
-                                // Updating puzzleCorrectAnswers
+                                // Updating puzzleCorrectAnswers.
                                 int solution = puzzleSolution.get(indexOfClick);
                                 if (solution == activeKey) {
                                     puzzleCorrectAnswers.set(indexOfClick, true);
@@ -107,9 +107,10 @@ public class SudokuGrid {
                                 // Checking if puzzle is complete.
                                 int count = 0;
                                 for (Boolean answer : puzzleCorrectAnswers) {
-                                    if (answer) {count = count + 1;}
+                                    if (answer) count++;
                                 }
-                                float correctAnswersRatio = (float)count / (float)puzzleCorrectAnswers.size();
+                                float correctAnswersRatio
+                                        = (float) count / (float) puzzleCorrectAnswers.size();
                                 if (correctAnswersRatio == 1) {
                                     Toast.makeText(activity, "CONGRATS!", Toast.LENGTH_LONG).show();
                                 }
@@ -161,8 +162,12 @@ public class SudokuGrid {
         return mask;
     }
 
-    public List<Boolean> createPuzzleCorrectAnswers(List<Boolean> booleanList) {
-        return booleanList;
+    public List<Boolean> createPuzzleCorrectAnswers() {
+        List<Boolean> list = new ArrayList<>();
+        for (Boolean bol : puzzleMask) {
+            list.add(bol);
+        }
+        return list;
     }
 
     public List<Boolean> createPuzzleUserInput() {

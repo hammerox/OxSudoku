@@ -76,7 +76,6 @@ public class SudokuFragment extends Fragment {
                         } else if (puzzleCorrectAnswers.get(index) && puzzleUserInput.get(index)) {
                             correctCount++;
                         }
-                        /*Todo BUG - puzzleMask is changing while playing the game*/
                         if (!puzzleMask.get(index)) totalCount++;
                     }
                 }
