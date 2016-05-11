@@ -2,20 +2,15 @@ package com.example.hammerox.oxsudoku;
 
 import android.app.Fragment;
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import com.example.hammerox.oxsudoku.Tools.MetricConverter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +29,7 @@ public class SudokuFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        sudokuGrid = new SudokuGrid();
+        sudokuGrid = new SudokuGrid();      // Generates new puzzle
         setHasOptionsMenu(true);
     }
 
@@ -43,9 +38,9 @@ public class SudokuFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.sudoku_fragment, container, false);
-        sudokuGrid.createGrid(getActivity(), rootView);
+        sudokuGrid.drawPuzzle(getActivity(), rootView);
         SudokuKeyboard keyboard = new SudokuKeyboard();
-        keyboard.createKeyboard(getActivity(), rootView);
+        keyboard.drawKeyboard(getActivity(), rootView);
 
         return rootView;
     }
@@ -60,15 +55,15 @@ public class SudokuFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch (id) {
-            case R.id.action_check:
+            case R.id.action_check:     // 'Check progress' option
+                int wrongCount = 0; int correctCount = 0; int totalCount = 0;
+                List<List> wrongArray = new ArrayList<>();
                 List<Boolean> puzzleMask = sudokuGrid.getPuzzleMask();
                 List<Boolean> puzzleCorrectAnswers = sudokuGrid.getPuzzleCorrectAnswers();
                 List<Boolean> puzzleUserInput = sudokuGrid.getPuzzleUserInput();
-
-                int total = 0;
-                int correctCount = 0;
-                int wrongCount = 0;
-                List<List> wrongArray = new ArrayList<>();
+                // Compares all user inputs with correct answers. If wrong, it stores the position
+                // of the wrong answer into wrongArray. Counters are used to calculate puzzle's
+                // progression.
                 for (int row = 1; row <= 9; row++) {
                     for (int col = 1; col <= 9; col++) {
                         int index = 9 * (row - 1) + col - 1;
@@ -82,23 +77,11 @@ public class SudokuFragment extends Fragment {
                             correctCount++;
                         }
                         /*Todo BUG - puzzleMask is changing while playing the game*/
-                        if (!puzzleMask.get(index)) total++;
+                        if (!puzzleMask.get(index)) totalCount++;
                     }
                 }
-
-                if (wrongCount != 0) {
-                    if (wrongCount == 1) {
-                        Toast.makeText(getActivity(), "There is 1 mistake",
-                                Toast.LENGTH_LONG).show();
-                    } else {
-                        Toast.makeText(getActivity(), "There are " + wrongCount + " mistakes",
-                                Toast.LENGTH_LONG).show();
-                    }
-                } else {
-                    Toast.makeText(getActivity(), "Everything is alright! \n Progress: "
-                            + correctCount + "/" + total, Toast.LENGTH_LONG).show();
-                }
-
+                // Printing on screen if there are mistakes or not.
+                getProgress(wrongCount, correctCount, totalCount);
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -129,5 +112,20 @@ public class SudokuFragment extends Fragment {
 
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
+    }
+
+    public void getProgress(int wrongCount, int correctCount, int totalCount){
+        if (wrongCount != 0) {
+            if (wrongCount == 1) {
+                Toast.makeText(getActivity(), "There is 1 mistake",
+                        Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(getActivity(), "There are " + wrongCount + " mistakes",
+                        Toast.LENGTH_LONG).show();
+            }
+        } else {
+            Toast.makeText(getActivity(), "Everything is alright! \n Progress: "
+                    + correctCount + "/" + totalCount, Toast.LENGTH_LONG).show();
+        }
     }
 }

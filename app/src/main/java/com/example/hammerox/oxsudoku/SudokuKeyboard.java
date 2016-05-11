@@ -2,19 +2,12 @@ package com.example.hammerox.oxsudoku;
 
 import android.app.Activity;
 import android.content.res.ColorStateList;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.GridLayout;
-import android.widget.RelativeLayout;
-
-import com.example.hammerox.oxsudoku.Tools.SquareLayout;
 
 
 public class SudokuKeyboard {
@@ -24,24 +17,27 @@ public class SudokuKeyboard {
     public SudokuKeyboard() {
     }
 
-    public void createKeyboard(final Activity activity, final View rootView) {
+    public void drawKeyboard(final Activity activity, final View rootView) {
 
         for (int key = 1; key <= 9; key++) {
+            // Getting each button from keyboard's view.
             String idString = "key_" + key;
             int id = activity.getResources()
                     .getIdentifier(idString, "id", activity.getPackageName());
             Button keyButton = (Button) rootView.findViewById(id);
-
+                // Appearance
             ColorStateList mColor = ContextCompat.getColorStateList(activity, R.color.colorMediumGray);
             ViewCompat.setBackgroundTintList(keyButton, mColor);
             keyButton.setText("" + key);
             keyButton.setGravity(Gravity.CENTER);
             keyButton.setTypeface(Typeface.DEFAULT_BOLD);
             keyButton.setTextSize(30);
+                // Interaction
             keyButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (activeKey != 0) {
+                    // On click, make last active key back to default's appearance.
+                    if (activeKey != 0) {       // activeKey = 0 means no key was clicked previously.
                         String idString = "key_" + activeKey;
                         int id = activity.getResources()
                                 .getIdentifier(idString, "id", activity.getPackageName());
@@ -49,8 +45,8 @@ public class SudokuKeyboard {
                         ColorStateList mReleaseColor = ContextCompat
                                 .getColorStateList(activity, R.color.colorMediumGray);
                         ViewCompat.setBackgroundTintList(lastKey, mReleaseColor);
-
                     }
+                    // Changes active key's color.
                     Button pressedKey = (Button)v;
                     ColorStateList mPressedColor = ContextCompat
                             .getColorStateList(activity, R.color.colorAccent);

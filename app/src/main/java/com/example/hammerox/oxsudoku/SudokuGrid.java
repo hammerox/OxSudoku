@@ -10,8 +10,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,16 +29,23 @@ public class SudokuGrid {
 
 
     public SudokuGrid() {
+        /* The puzzle is generated on class creation.
+        * puzzleSolution = Integer. Contains all correct answers.
+        * puzzleMask = Boolean. Show respective solution if true. False will demand user input.
+        * puzzleCorrectAnswers = Boolean. Is true if respective user's input matches solution.
+        * puzzleUserInput = Boolean. Is true if contains user value.
+        * */
         puzzleSolution = createSolution();
         puzzleMask = createPuzzleMask();
         puzzleCorrectAnswers = createPuzzleCorrectAnswers(puzzleMask);
         puzzleUserInput = createPuzzleUserInput();
     }
 
-    public void createGrid(final Activity activity, final View rootView) {
+    public void drawPuzzle(final Activity activity, final View rootView) {
 
         SquareLayout gridLayout = (SquareLayout) rootView.findViewById(R.id.sudoku_gridlayout);
         for (int row = 1; row <= 9; row++) {
+            // Creating a LinearLayout for each row
             LinearLayout linearLayout = new LinearLayout(activity);
             linearLayout.setOrientation(LinearLayout.HORIZONTAL);
             linearLayout.setLayoutParams(new LinearLayout.LayoutParams(
@@ -49,46 +54,57 @@ public class SudokuGrid {
                     1.0f));
 
             for (int col = 1; col <= 9; col++) {
-                Drawable mDrawable = drawGrid(activity, row, col);
-
+                // Creating a TextView for each square on the grid.
                 TextView textView = new TextView(activity);
+                    // ID
                 String idString = "major_" + row + col;
                 int id = activity.getResources()
                         .getIdentifier(idString, "id", activity.getPackageName());
                 textView.setId(id);
+                    // LayoutParams
                 textView.setLayoutParams(new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT,
                         LinearLayout.LayoutParams.MATCH_PARENT,
                         1.0f));
+                    // Appearance
+                Drawable mDrawable = getGridDrawable(activity, row, col);
                 textView.setBackground(mDrawable);
                 textView.setGravity(Gravity.CENTER);
                 textView.setTypeface(Typeface.DEFAULT_BOLD);
                 textView.setTextSize(30);
 
                 int index = 9 * (row - 1) + col - 1;
+                // If puzzleMask = true, show number. Otherwise, demand user input;
                 if (puzzleMask.get(index)) {
                     textView.setText(String.valueOf(puzzleSolution.get(index)));
                 } else {
+                    // User's TextView should be clickable and have a different color.
                     int mColor = ContextCompat.getColor(activity, R.color.colorAccent);
                     textView.setTextColor(mColor);
                     textView.isClickable();
+                        // Interaction
                     textView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             int activeKey = SudokuKeyboard.getActiveKey();
-                            if (activeKey != 0) {
+                            if (activeKey != 0) {       // A key from keyboard must be selected.
+                                // Setting new value.
                                 TextView clickedText = (TextView) v;
                                 clickedText.setText(String.valueOf(activeKey));
 
+                                // Updating puzzleUserInput.
                                 int indexOfClick = getIndexFromView(activity, clickedText);
-
                                 puzzleUserInput.set(indexOfClick, true);
+
+                                // Updating puzzleCorrectAnswers
                                 int solution = puzzleSolution.get(indexOfClick);
                                 if (solution == activeKey) {
                                     puzzleCorrectAnswers.set(indexOfClick, true);
                                 } else {
                                     puzzleCorrectAnswers.set(indexOfClick, false);
                                 }
+
+                                // Checking if puzzle is complete.
                                 int count = 0;
                                 for (Boolean answer : puzzleCorrectAnswers) {
                                     if (answer) {count = count + 1;}
@@ -145,8 +161,8 @@ public class SudokuGrid {
         return mask;
     }
 
-    public List<Boolean> createPuzzleCorrectAnswers(List<Boolean> mask) {
-        return mask;
+    public List<Boolean> createPuzzleCorrectAnswers(List<Boolean> booleanList) {
+        return booleanList;
     }
 
     public List<Boolean> createPuzzleUserInput() {
@@ -158,7 +174,19 @@ public class SudokuGrid {
         return userInput;
     }
 
-    public Drawable drawGrid(Activity activity, int row, int col) {
+    public Drawable getGridDrawable(Activity activity, int row, int col) {
+        /*  Different drawables are used according to its grid position, as shown on the diagram:
+        *       1 2 3 4 5 6 7 8 9
+        *       -----------------
+        *   1 | a b c b b c b b b
+        *   2 | a b c b b c b b b
+        *   3 | d e f e e f e e e
+        *   4 | a b c b b c b b b
+        *   5 | a b c b b c b b b
+        *   6 | d e f e e f e e e
+        *   7 | a b c b b c b b b
+        *   8 | a b c b b c b b b
+        *   9 | d e f e e f e e e  */
         Context context = activity.getApplicationContext();
         Drawable mDrawable;
         if (col == 1) {
@@ -201,7 +229,18 @@ public class SudokuGrid {
                     break;
             }
         }
-
+        /*  Grid uses different colors, with w = white and g = gray.
+        *       1 2 3 4 5 6 7 8 9
+        *       -----------------
+        *   1 | g g g w w w g g g
+        *   2 | g g g w w w g g g
+        *   3 | g g g w w w g g g
+        *   4 | w w w g g g w w w
+        *   5 | w w w g g g w w w
+        *   6 | w w w g g g w w w
+        *   7 | g g g w w w g g g
+        *   8 | g g g w w w g g g
+        *   9 | g g g w w w g g g  */
         if (col == 4 || col == 5 || col == 6) {
             switch (row) {
                 case 4:
@@ -231,6 +270,7 @@ public class SudokuGrid {
     }
 
     public int getIndexFromView(Activity activity, TextView view) {
+        // Gets a grid's TextView and returns its index.
         int viewId = view.getId();
         String viewIdName = activity.getResources()
                 .getResourceEntryName(viewId);
