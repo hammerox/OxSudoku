@@ -25,6 +25,7 @@ public class SudokuGrid {
 
     private List<Integer> puzzleSolution;
     private List<Boolean> puzzleMask;
+    private List<Integer> puzzleUserAnswers;
     private List<Boolean> puzzleCorrectAnswers;
     private List<Boolean> puzzleUserInput;
     private List<Integer> puzzleHighlight;
@@ -40,6 +41,7 @@ public class SudokuGrid {
         * */
         puzzleSolution = createSolution();
         puzzleMask = createPuzzleMask();
+        puzzleUserAnswers = createPuzzleUserAnswers();
         puzzleCorrectAnswers = createPuzzleCorrectAnswers();
         puzzleUserInput = createPuzzleUserInput();
         puzzleHighlight = createPuzzleHighlight();
@@ -98,8 +100,11 @@ public class SudokuGrid {
                                 TextView clickedText = (TextView) v;
                                 clickedText.setText(String.valueOf(activeKey));
 
-                                // Updating puzzleUserInput.
+                                // Updating puzzleUserAnswers.
                                 int indexOfClick = getIndexFromView(activity, clickedText);
+                                puzzleUserAnswers.set(indexOfClick, activeKey);
+
+                                // Updating puzzleUserInput.
                                 puzzleUserInput.set(indexOfClick, true);
 
                                 // Updating puzzleCorrectAnswers.
@@ -117,6 +122,7 @@ public class SudokuGrid {
                                 setColorFilter(activity, row, col,
                                         clickedText.getBackground(), 2);
                                 puzzleHighlight.set(indexOfClick, 2);
+
                                 // Updating puzzleHighlight Level 1
                                 List<Integer> rowColBox = getRowColBoxIndexes(row, col);
                                 for (Integer i : rowColBox) {
@@ -125,7 +131,6 @@ public class SudokuGrid {
                                         puzzleHighlight.set(i, 1);
                                     }
                                 }
-
 
                                 // Checking if puzzle is complete.
                                 int count = 0;
@@ -183,6 +188,19 @@ public class SudokuGrid {
             mask.add(bol);
         }
         return mask;
+    }
+
+    public List<Integer> createPuzzleUserAnswers() {
+        List<Integer> userAnswers = new ArrayList<>();
+        int size = 9 * 9;
+        for (int i = 0; i < size; i++) {
+            if (puzzleMask.get(i)) {
+                userAnswers.add(puzzleSolution.get(i));
+            } else {
+                userAnswers.add(0);
+            }
+        }
+        return userAnswers;
     }
 
     public List<Boolean> createPuzzleCorrectAnswers() {
