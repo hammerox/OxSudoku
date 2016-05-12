@@ -7,6 +7,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.IntegerRes;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.view.Gravity;
@@ -96,51 +97,32 @@ public class SudokuGrid {
                             /*Todo - Sudoku should not permit inputs that conflicts with rules.*/
                             int activeKey = SudokuKeyboard.getActiveKey();
                             if (activeKey != 0) {       // A key from keyboard must be selected.
-                                // Setting new value.
                                 TextView clickedText = (TextView) v;
-                                clickedText.setText(String.valueOf(activeKey));
-
-                                // Updating puzzleUserAnswers.
                                 int indexOfClick = getIndexFromView(activity, clickedText);
-                                puzzleUserAnswers.set(indexOfClick, activeKey);
-
-                                // Updating puzzleUserInput.
-                                puzzleUserInput.set(indexOfClick, true);
-
-                                // Updating puzzleCorrectAnswers.
-                                int solution = puzzleSolution.get(indexOfClick);
-                                if (solution == activeKey) {
-                                    puzzleCorrectAnswers.set(indexOfClick, true);
-                                } else {
-                                    puzzleCorrectAnswers.set(indexOfClick, false);
-                                }
-
-                                // Updating puzzleHighlight Level 2
                                 int[] position = getPositionFromIndex(indexOfClick);
-                                int row = position[0];
-                                int col = position[1];
-                                setColorFilter(activity, row, col,
-                                        clickedText.getBackground(), 2);
-                                puzzleHighlight.set(indexOfClick, 2);
+                                int clickedRow = position[0];
+                                int clickedCol = position[1];
+                                List<Integer> rowColBox = getRowColBoxIndexes(clickedRow, clickedCol);
 
-                                // Updating puzzleHighlight Level 1
-                                List<Integer> rowColBox = getRowColBoxIndexes(row, col);
+                                // Checking if user input is valid.
+                                Boolean isValid = true;
+                                List<Integer> invalidIndex = new ArrayList<Integer>();
                                 for (Integer i : rowColBox) {
-                                    if (puzzleHighlight.get(i) == 0) {
-                                        setIntensityColor(activity, i, 1);
-                                        puzzleHighlight.set(i, 1);
+                                    if (i != indexOfClick) {
+                                        int answer = puzzleUserAnswers.get(i);
+                                        if (answer == activeKey) {
+                                            isValid = false;
+                                            invalidIndex.add(i);
+                                        }
                                     }
                                 }
 
-                                // Checking if puzzle is complete.
-                                int count = 0;
-                                for (Boolean answer : puzzleCorrectAnswers) {
-                                    if (answer) count++;
-                                }
-                                float correctAnswersRatio
-                                        = (float) count / (float) puzzleCorrectAnswers.size();
-                                if (correctAnswersRatio == 1) {
-                                    Toast.makeText(activity, "CONGRATS!", Toast.LENGTH_LONG).show();
+                                // If user input is valid, commit changes.
+                                // If user input is not valid, warn and show conflicts.
+                                if (isValid) {
+                                    commitChanges(activity, clickedText);
+                                } else {
+                                    Toast.makeText(activity, "You can't break the rules", Toast.LENGTH_LONG).show();
                                 }
                             }
                         }
@@ -151,6 +133,56 @@ public class SudokuGrid {
             gridLayout.addView(linearLayout);
         }
 
+    }
+
+    public void commitChanges(Activity activity, TextView view) {
+        int activeKey = SudokuKeyboard.getActiveKey();
+        int indexOfClick = getIndexFromView(activity, view);
+        int[] position = getPositionFromIndex(indexOfClick);
+        int clickedRow = position[0];
+        int clickedCol = position[1];
+        List<Integer> rowColBox = getRowColBoxIndexes(clickedRow, clickedCol);
+
+        // Setting new value.
+        view.setText(String.valueOf(activeKey));
+
+        // Updating puzzleUserAnswers.
+        puzzleUserAnswers.set(indexOfClick, activeKey);
+
+        // Updating puzzleUserInput.
+        puzzleUserInput.set(indexOfClick, true);
+
+        // Updating puzzleCorrectAnswers.
+        int solution = puzzleSolution.get(indexOfClick);
+        if (solution == activeKey) {
+            puzzleCorrectAnswers.set(indexOfClick, true);
+        } else {
+            puzzleCorrectAnswers.set(indexOfClick, false);
+        }
+
+        // Updating puzzleHighlight Level 2
+        setColorFilter(activity, clickedRow, clickedCol,
+                view.getBackground(), 2);
+        puzzleHighlight.set(indexOfClick, 2);
+
+        // Updating puzzleHighlight Level 1
+        for (Integer i : rowColBox) {
+            if (puzzleHighlight.get(i) == 0) {
+                setIntensityColor(activity, i, 1);
+                puzzleHighlight.set(i, 1);
+            }
+        }
+
+        // Checking if puzzle is complete.
+        int count = 0;
+        for (Boolean answer : puzzleCorrectAnswers) {
+            if (answer) count++;
+        }
+        float correctAnswersRatio
+                = (float) count / (float) puzzleCorrectAnswers.size();
+        if (correctAnswersRatio == 1) {
+            Toast.makeText(activity, "CONGRATS!", Toast.LENGTH_LONG).show();
+        }
     }
 
     public List<Integer> createSolution() {
