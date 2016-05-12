@@ -16,6 +16,9 @@ public class SudokuKeyboard {
 
     public SudokuKeyboard() {
     }
+    
+/*Todo - Add Undo button*/
+/*Todo - Add Pencil button*/
 
     public void drawKeyboard(final Activity activity, final View rootView, final SudokuGrid sudokuGrid) {
 
