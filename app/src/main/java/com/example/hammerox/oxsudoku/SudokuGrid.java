@@ -91,6 +91,7 @@ public class SudokuGrid {
                     textView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+                            /*Todo - Sudoku should not permit inputs that conflicts with rules.*/
                             int activeKey = SudokuKeyboard.getActiveKey();
                             if (activeKey != 0) {       // A key from keyboard must be selected.
                                 // Setting new value.
@@ -110,6 +111,7 @@ public class SudokuGrid {
                                 }
 
                                 // Updating puzzleHighlight
+                                /*Todo - puzzleHighlight needs to update level 1*/
                                 int[] position = getPositionFromIndex(indexOfClick);
                                 setColorFilter(activity, position[0], position[1],
                                         clickedText.getBackground(), 2);
@@ -217,6 +219,7 @@ public class SudokuGrid {
         int size = 9*9;
         clearPuzzleHighlight(activity);
 
+        List<Integer> highlightList = new ArrayList<>();
         for (int i = 0; i < size; i++) {
             int highlightLevel = 2;
             int solution = puzzleSolution.get(i);
@@ -225,6 +228,27 @@ public class SudokuGrid {
                 if (needsHighlight) {
                     puzzleHighlight.set(i, highlightLevel);
                     setIntensityColor(activity, i, highlightLevel);
+                    highlightList.add(i);
+                }
+            }
+        }
+
+        for (Integer index : highlightList) {
+            int[] position = getPositionFromIndex(index);
+            int row = position[0];
+            int col = position[1];
+            for (int r = 1; r <= 9; r++) {
+                if (r != row) {
+                    int i = getIndexFromPosition(r, col);
+                    puzzleHighlight.set(i, 1);
+                    setIntensityColor(activity, i, 1);
+                }
+            }
+            for (int c = 1; c <= 9; c++) {
+                if (c != col) {
+                    int i = getIndexFromPosition(row, c);
+                    puzzleHighlight.set(i, 1);
+                    setIntensityColor(activity, i, 1);
                 }
             }
         }
@@ -317,8 +341,10 @@ public class SudokuGrid {
                 case 6:
                     if (highlightLevel == 0) {
                         mColor = ContextCompat.getColor(activity, R.color.colorLightGray);
+                    } else if (highlightLevel == 1) {
+                        mColor = ContextCompat.getColor(activity, R.color.colorHighlightGray);
                     } else {
-                        mColor = ContextCompat.getColor(activity, R.color.colorHighlight);
+                        mColor = ContextCompat.getColor(activity, R.color.colorHighlightStrong);
                     }
                     mDrawable.setColorFilter(
                             new PorterDuffColorFilter(mColor, PorterDuff.Mode.MULTIPLY));
@@ -326,8 +352,10 @@ public class SudokuGrid {
                 default:
                     if (highlightLevel == 0) {
                         mColor = Color.WHITE;
+                    } else if (highlightLevel == 1) {
+                        mColor = ContextCompat.getColor(activity, R.color.colorHighlightWhite);
                     } else {
-                        mColor = ContextCompat.getColor(activity, R.color.colorHighlight);
+                        mColor = ContextCompat.getColor(activity, R.color.colorHighlightStrong);
                     }
                     mDrawable.setColorFilter(
                             new PorterDuffColorFilter(mColor, PorterDuff.Mode.MULTIPLY));
@@ -343,8 +371,10 @@ public class SudokuGrid {
                 case 9:
                     if (highlightLevel == 0) {
                         mColor = ContextCompat.getColor(activity, R.color.colorLightGray);
+                    } else if (highlightLevel == 1) {
+                        mColor = ContextCompat.getColor(activity, R.color.colorHighlightGray);
                     } else {
-                        mColor = ContextCompat.getColor(activity, R.color.colorHighlight);
+                        mColor = ContextCompat.getColor(activity, R.color.colorHighlightStrong);
                     }
                     mDrawable.setColorFilter(
                             new PorterDuffColorFilter(mColor, PorterDuff.Mode.MULTIPLY));
@@ -352,8 +382,10 @@ public class SudokuGrid {
                 default:
                     if (highlightLevel == 0) {
                         mColor = Color.WHITE;
+                    } else if (highlightLevel == 1) {
+                        mColor = ContextCompat.getColor(activity, R.color.colorHighlightWhite);
                     } else {
-                        mColor = ContextCompat.getColor(activity, R.color.colorHighlight);
+                        mColor = ContextCompat.getColor(activity, R.color.colorHighlightStrong);
                     }
                     mDrawable.setColorFilter(
                             new PorterDuffColorFilter(mColor, PorterDuff.Mode.MULTIPLY));
@@ -377,6 +409,10 @@ public class SudokuGrid {
         int row = index / 9 + 1;
         int col = index % 9 + 1;
         return new int[] {row,col};
+    }
+
+    public int getIndexFromPosition(int row, int col) {
+        return 9 * (row - 1) + col - 1;
     }
 
     public int getIdFromIndex(Activity activity, int index) {
