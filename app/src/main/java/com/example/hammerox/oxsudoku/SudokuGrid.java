@@ -94,7 +94,6 @@ public class SudokuGrid {
                     textView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            /*Todo - Sudoku should not permit inputs that conflicts with rules.*/
                             int activeKey = SudokuKeyboard.getActiveKey();
                             if (activeKey != 0) {       // A key from keyboard must be selected.
                                 TextView clickedText = (TextView) v;
