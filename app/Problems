@@ -16,3 +16,12 @@
         simples) que funcionou para o meu caso:
                 http://stackoverflow.com/questions/26519979/coloring-buttons-in-android-with-material-design-and-appcompat
                 Jaydeep
+
+3.  Debug estava louco, não mostrava as variáveis de maneira correta.
+            Por algum motivo o debugger estava usando informações antigas do code. Variáveis que
+            foram deletadas continuavam aparecendo no debugger, enquanto variáveis novas não
+            apareciam. Até agora não entendi muito bem o que aconteceu, mas o post abaixo ajudou:
+                http://stackoverflow.com/questions/21805868/android-studio-debugger-highlights-the-wrong-lines?rq=1
+                Roger Alien
+
+
