@@ -2,6 +2,7 @@ package com.example.hammerox.oxsudoku;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.Typeface;
@@ -26,6 +27,7 @@ public class SudokuGrid {
     private List<Boolean> puzzleMask;
     private List<Boolean> puzzleCorrectAnswers;
     private List<Boolean> puzzleUserInput;
+    private List<Integer> puzzleHighlight;
 
 
     public SudokuGrid() {
@@ -34,11 +36,13 @@ public class SudokuGrid {
         * puzzleMask = Boolean. Show respective solution if true. False will demand user input.
         * puzzleCorrectAnswers = Boolean. Is true if respective user's input matches solution.
         * puzzleUserInput = Boolean. Is true if contains user value.
+        * puzzleHightlight = Integer. 0 shows no highlight, 1 shows partial and 2 shows full highlight.
         * */
         puzzleSolution = createSolution();
         puzzleMask = createPuzzleMask();
         puzzleCorrectAnswers = createPuzzleCorrectAnswers();
         puzzleUserInput = createPuzzleUserInput();
+        puzzleHighlight = createPuzzleHighlight();
     }
 
     public void drawPuzzle(final Activity activity, final View rootView) {
@@ -68,6 +72,7 @@ public class SudokuGrid {
                         1.0f));
                     // Appearance
                 Drawable mDrawable = getGridDrawable(activity, row, col);
+                setColorFilter(activity, row, col, mDrawable, 0);
                 textView.setBackground(mDrawable);
                 textView.setGravity(Gravity.CENTER);
                 textView.setTypeface(Typeface.DEFAULT_BOLD);
@@ -103,6 +108,12 @@ public class SudokuGrid {
                                 } else {
                                     puzzleCorrectAnswers.set(indexOfClick, false);
                                 }
+
+                                // Updating puzzleHighlight
+                                int[] position = getPositionFromIndex(indexOfClick);
+                                setColorFilter(activity, position[0], position[1],
+                                        clickedText.getBackground(), 2);
+                                puzzleHighlight.set(indexOfClick, 2);
 
                                 // Checking if puzzle is complete.
                                 int count = 0;
@@ -179,6 +190,60 @@ public class SudokuGrid {
         return userInput;
     }
 
+    public List<Integer> createPuzzleHighlight() {
+        List<Integer> list = new ArrayList<>();
+        int size = 9*9;
+        for (int i = 0; i < size; i++) {
+            list.add(0);
+        }
+        return list;
+    }
+
+    public void clearPuzzleHighlight() {
+        int size = 9*9;
+        for (int i = 0; i < size; i++) {
+            if (puzzleHighlight.get(i) != 0) puzzleHighlight.set(i, 0);
+        }
+    }
+
+    public void setPuzzleHighlight(Activity activity, int activeKey) {
+        int size = puzzleHighlight.size();
+        for (int i = 0; i < size; i++) {
+            int intensity = puzzleHighlight.get(i);
+            if (intensity != 0) {
+                int[] position = getPositionFromIndex(i);
+                int row = position[0];
+                int col = position[1];
+                String idString = "major_" + row + col;
+                int id = activity.getResources()
+                        .getIdentifier(idString, "id", activity.getPackageName());
+                Drawable mDrawable = activity.findViewById(id).getBackground();
+                setColorFilter(activity, row, col,mDrawable, 0);
+            }
+        }
+        clearPuzzleHighlight();
+
+
+        for (int i = 0; i < size; i++) {
+            int intensity = 2;
+            int solution = puzzleSolution.get(i);
+            if (solution == activeKey) {
+                Boolean needsHighlight = puzzleMask.get(i) || puzzleUserInput.get(i);
+                if (needsHighlight) {
+                    puzzleHighlight.set(i, intensity);
+                    int[] position = getPositionFromIndex(i);
+                    int row = position[0];
+                    int col = position[1];
+                    String idString = "major_" + row + col;
+                    int id = activity.getResources()
+                            .getIdentifier(idString, "id", activity.getPackageName());
+                    Drawable mDrawable = activity.findViewById(id).getBackground();
+                    setColorFilter(activity, row, col,mDrawable, intensity);
+                }
+            }
+        }
+    }
+
     public Drawable getGridDrawable(Activity activity, int row, int col) {
         /*  Different drawables are used according to its grid position, as shown on the diagram:
         *       1 2 3 4 5 6 7 8 9
@@ -234,6 +299,11 @@ public class SudokuGrid {
                     break;
             }
         }
+        return mDrawable;
+    }
+
+    public void setColorFilter(Activity activity, int row, int col,
+                               Drawable mDrawable, int intensity) {
         /*  Grid uses different colors, with w = white and g = gray.
         *       1 2 3 4 5 6 7 8 9
         *       -----------------
@@ -246,12 +316,26 @@ public class SudokuGrid {
         *   7 | g g g w w w g g g
         *   8 | g g g w w w g g g
         *   9 | g g g w w w g g g  */
+        int mColor;
         if (col == 4 || col == 5 || col == 6) {
             switch (row) {
                 case 4:
                 case 5:
                 case 6:
-                    int mColor = ContextCompat.getColor(activity, R.color.colorLightGray);
+                    if (intensity == 0) {
+                        mColor = ContextCompat.getColor(activity, R.color.colorLightGray);
+                    } else {
+                        mColor = ContextCompat.getColor(activity, R.color.colorHighlight);
+                    }
+                    mDrawable.setColorFilter(
+                            new PorterDuffColorFilter(mColor, PorterDuff.Mode.MULTIPLY));
+                    break;
+                default:
+                    if (intensity == 0) {
+                        mColor = Color.WHITE;
+                    } else {
+                        mColor = ContextCompat.getColor(activity, R.color.colorHighlight);
+                    }
                     mDrawable.setColorFilter(
                             new PorterDuffColorFilter(mColor, PorterDuff.Mode.MULTIPLY));
                     break;
@@ -264,14 +348,25 @@ public class SudokuGrid {
                 case 7:
                 case 8:
                 case 9:
-                    int mColor = ContextCompat.getColor(activity, R.color.colorLightGray);
+                    if (intensity == 0) {
+                        mColor = ContextCompat.getColor(activity, R.color.colorLightGray);
+                    } else {
+                        mColor = ContextCompat.getColor(activity, R.color.colorHighlight);
+                    }
+                    mDrawable.setColorFilter(
+                            new PorterDuffColorFilter(mColor, PorterDuff.Mode.MULTIPLY));
+                    break;
+                default:
+                    if (intensity == 0) {
+                        mColor = Color.WHITE;
+                    } else {
+                        mColor = ContextCompat.getColor(activity, R.color.colorHighlight);
+                    }
                     mDrawable.setColorFilter(
                             new PorterDuffColorFilter(mColor, PorterDuff.Mode.MULTIPLY));
                     break;
             }
         }
-
-        return mDrawable;
     }
 
     public int getIndexFromView(Activity activity, TextView view) {
@@ -283,6 +378,12 @@ public class SudokuGrid {
         int rowIndex = Integer.valueOf(viewRowCol.substring(0,1));
         int colIndex = Integer.valueOf(viewRowCol.substring(1,2));
         return 9 * (rowIndex - 1) + colIndex - 1;
+    }
+
+    public int[] getPositionFromIndex(int index) {
+        int row = index / 9 + 1;
+        int col = index % 9 + 1;
+        return new int[] {row,col};
     }
 
     // Getters and Setters

@@ -17,7 +17,7 @@ public class SudokuKeyboard {
     public SudokuKeyboard() {
     }
 
-    public void drawKeyboard(final Activity activity, final View rootView) {
+    public void drawKeyboard(final Activity activity, final View rootView, final SudokuGrid sudokuGrid) {
 
         for (int key = 1; key <= 9; key++) {
             // Getting each button from keyboard's view.
@@ -46,12 +46,16 @@ public class SudokuKeyboard {
                                 .getColorStateList(activity, R.color.colorMediumGray);
                         ViewCompat.setBackgroundTintList(lastKey, mReleaseColor);
                     }
+
                     // Changes active key's color.
                     Button pressedKey = (Button)v;
                     ColorStateList mPressedColor = ContextCompat
                             .getColorStateList(activity, R.color.colorAccent);
                     ViewCompat.setBackgroundTintList(pressedKey, mPressedColor);
                     activeKey = Integer.valueOf(pressedKey.getText().toString());
+
+                    // Highlight grid's keys
+                    sudokuGrid.setPuzzleHighlight(activity, activeKey);
                 }
             });
         }

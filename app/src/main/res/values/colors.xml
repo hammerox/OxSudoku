@@ -5,4 +5,5 @@
     <color name="colorAccent">#FF4081</color>
     <color name="colorLightGray">#E5E5E5</color>
     <color name="colorMediumGray">#D7D7D7</color>
+    <color name="colorHighlight">#FF7FAC</color> <!--Same color from colorAccent, with 50% saturation-->
 </resources>

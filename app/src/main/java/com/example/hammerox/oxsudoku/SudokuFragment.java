@@ -40,7 +40,7 @@ public class SudokuFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.sudoku_fragment, container, false);
         sudokuGrid.drawPuzzle(getActivity(), rootView);
         SudokuKeyboard keyboard = new SudokuKeyboard();
-        keyboard.drawKeyboard(getActivity(), rootView);
+        keyboard.drawKeyboard(getActivity(), rootView, sudokuGrid);
 
         return rootView;
     }
