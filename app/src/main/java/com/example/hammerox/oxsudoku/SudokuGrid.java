@@ -110,12 +110,22 @@ public class SudokuGrid {
                                     puzzleCorrectAnswers.set(indexOfClick, false);
                                 }
 
-                                // Updating puzzleHighlight
-                                /*Todo - puzzleHighlight needs to update level 1*/
+                                // Updating puzzleHighlight Level 2
                                 int[] position = getPositionFromIndex(indexOfClick);
-                                setColorFilter(activity, position[0], position[1],
+                                int row = position[0];
+                                int col = position[1];
+                                setColorFilter(activity, row, col,
                                         clickedText.getBackground(), 2);
                                 puzzleHighlight.set(indexOfClick, 2);
+                                // Updating puzzleHighlight Level 1
+                                List<Integer> rowColBox = getRowColBoxIndexes(row, col);
+                                for (Integer i : rowColBox) {
+                                    if (puzzleHighlight.get(i) == 0) {
+                                        setIntensityColor(activity, i, 1);
+                                        puzzleHighlight.set(i, 1);
+                                    }
+                                }
+
 
                                 // Checking if puzzle is complete.
                                 int count = 0;
@@ -219,6 +229,7 @@ public class SudokuGrid {
         int size = 9*9;
         clearPuzzleHighlight(activity);
 
+        // Setting highlight level 2 to activeKey's numbers .
         List<Integer> highlightList = new ArrayList<>();
         for (int i = 0; i < size; i++) {
             int highlightLevel = 2;
@@ -227,31 +238,75 @@ public class SudokuGrid {
                 Boolean needsHighlight = puzzleMask.get(i) || puzzleUserInput.get(i);
                 if (needsHighlight) {
                     puzzleHighlight.set(i, highlightLevel);
-                    setIntensityColor(activity, i, highlightLevel);
                     highlightList.add(i);
                 }
             }
         }
 
         for (Integer index : highlightList) {
+            // Setting highlight level 1 to all rows and columns containing level 2.
             int[] position = getPositionFromIndex(index);
             int row = position[0];
             int col = position[1];
-            for (int r = 1; r <= 9; r++) {
-                if (r != row) {
-                    int i = getIndexFromPosition(r, col);
-                    puzzleHighlight.set(i, 1);
-                    setIntensityColor(activity, i, 1);
-                }
-            }
-            for (int c = 1; c <= 9; c++) {
-                if (c != col) {
-                    int i = getIndexFromPosition(row, c);
-                    puzzleHighlight.set(i, 1);
-                    setIntensityColor(activity, i, 1);
-                }
+            setHighlightLevel1(row, col);
+        }
+
+        // Changing ColorFilter on highlights with level 1 or 2.
+        for (int i = 0; i < 81; i++) {
+            int intensity = puzzleHighlight.get(i);
+            if (intensity != 0) {
+                setIntensityColor(activity, i, intensity);
             }
         }
+    }
+
+    public void setHighlightLevel1(int row, int col) {
+        // Box
+        int[] boxIndexes = getBoxIndexes(row, col);
+        for (int i : boxIndexes) {
+            int intensity = puzzleHighlight.get(i);
+            if (intensity == 0) puzzleHighlight.set(i, 1);
+        }
+        // Row
+        for (int r = 1; r <= 9; r++) {
+            if (r != row) {
+                int i = getIndexFromPosition(r, col);
+                int intensity = puzzleHighlight.get(i);
+                if (intensity == 0) puzzleHighlight.set(i, 1);
+            }
+        }
+        // Column
+        for (int c = 1; c <= 9; c++) {
+            if (c != col) {
+                int i = getIndexFromPosition(row, c);
+                int intensity = puzzleHighlight.get(i);
+                if (intensity == 0) puzzleHighlight.set(i, 1);
+            }
+        }
+    }
+
+    public List<Integer> getRowColBoxIndexes(int row, int col) {
+        List<Integer> indexes = new ArrayList<>();
+        // Box
+        int[] boxIndexes = getBoxIndexes(row, col);
+        for (int i : boxIndexes) {
+            indexes.add(i);
+        }
+        // Row
+        for (int r = 1; r <= 9; r++) {
+            if (r != row) {
+                int i = getIndexFromPosition(r, col);
+                indexes.add(i);
+            }
+        }
+        // Column
+        for (int c = 1; c <= 9; c++) {
+            if (c != col) {
+                int i = getIndexFromPosition(row, c);
+                indexes.add(i);
+            }
+        }
+        return indexes;
     }
 
     public void setIntensityColor(Activity activity, int index, int highlightLevel) {
@@ -340,9 +395,9 @@ public class SudokuGrid {
                 case 5:
                 case 6:
                     if (highlightLevel == 0) {
-                        mColor = ContextCompat.getColor(activity, R.color.colorLightGray);
+                        mColor = Color.WHITE;
                     } else if (highlightLevel == 1) {
-                        mColor = ContextCompat.getColor(activity, R.color.colorHighlightGray);
+                        mColor = ContextCompat.getColor(activity, R.color.colorHighlightWhite);
                     } else {
                         mColor = ContextCompat.getColor(activity, R.color.colorHighlightStrong);
                     }
@@ -370,9 +425,9 @@ public class SudokuGrid {
                 case 8:
                 case 9:
                     if (highlightLevel == 0) {
-                        mColor = ContextCompat.getColor(activity, R.color.colorLightGray);
+                        mColor = Color.WHITE;
                     } else if (highlightLevel == 1) {
-                        mColor = ContextCompat.getColor(activity, R.color.colorHighlightGray);
+                        mColor = ContextCompat.getColor(activity, R.color.colorHighlightWhite);
                     } else {
                         mColor = ContextCompat.getColor(activity, R.color.colorHighlightStrong);
                     }
@@ -392,6 +447,55 @@ public class SudokuGrid {
                     break;
             }
         }
+    }
+
+    public int[] getBoxIndexes(int row, int col) {
+        int[] boxIndexes = new int[] {};
+        switch (row) {
+            case 1:
+            case 2:
+            case 3:
+                if (col == 1 || col == 2 || col == 3) {
+                    boxIndexes = new int[]{0, 1, 2, 9, 10, 11, 18, 19, 20};
+
+                } else if (col == 4 || col == 5 || col == 6) {
+                    boxIndexes = new int[]{3, 4, 5, 12, 13, 14, 21, 22, 23};
+
+                } else if (col == 7 || col == 8 || col == 9) {
+                    boxIndexes = new int[]{6, 7, 8, 15, 16, 17, 24, 25, 26};
+
+                }
+                break;
+            case 4:
+            case 5:
+            case 6:
+                if (col == 1 || col == 2 || col == 3) {
+                    boxIndexes = new int[]{27,28,29,36,37,38,45,46,47};
+
+                } else if (col == 4 || col == 5 || col == 6) {
+                    boxIndexes = new int[]{30,31,32,39,40,41,48,49,50};
+
+                } else if (col == 7 || col == 8 || col == 9) {
+                    boxIndexes = new int[]{33,34,35,42,43,44,51,52,53};
+
+                }
+                break;
+            case 7:
+            case 8:
+            case 9:
+                if (col == 1 || col == 2 || col == 3) {
+                    boxIndexes = new int[]{54,55,56,63,64,65,72,73,74};
+
+                } else if (col == 4 || col == 5 || col == 6) {
+                    boxIndexes = new int[]{57,58,59,66,67,68,75,76,77};
+
+                } else if (col == 7 || col == 8 || col == 9) {
+                    boxIndexes = new int[]{60,61,62,69,70,71,78,79,80};
+
+                }
+                break;
+        }
+        return boxIndexes;
     }
 
     public int getIndexFromView(Activity activity, TextView view) {
