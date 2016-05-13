@@ -3,6 +3,7 @@ package com.example.hammerox.oxsudoku;
 
 import android.support.annotation.IntegerRes;
 import android.util.Log;
+import android.util.Pair;
 import android.util.Range;
 
 import java.util.ArrayList;
@@ -55,8 +56,8 @@ public class SudokuGenerator {
 
     public List<Integer> fillBoard(List<Integer> board) {
         List<Boolean> toFill = getFillList(board);
-        doBacktrack(board, toFill);
-        return board;
+        Pair<List<Integer>, Integer> pair = doBacktrack(board, toFill, 1);
+        return pair.first;
     }
 
     public List<Boolean> setPuzzle(List<Integer> board) {
@@ -98,7 +99,9 @@ public class SudokuGenerator {
         return isValid;
     }
 
-    public List<Integer> doBacktrack(List<Integer> board, List<Boolean> toFill) {
+    public Pair<List<Integer>, Integer> doBacktrack(List<Integer> board,
+                                                    List<Boolean> toFill, int solutionsToBreak) {
+        int solutions = 0;
         Boolean isBacktracking = false;
         List<List> listOfLists = new ArrayList<>();
         int size = 9 * 9;
@@ -106,10 +109,7 @@ public class SudokuGenerator {
         for (int i = 0; i < size; i++) {
             Boolean isNewCell = listOfLists.isEmpty() || listOfLists.size() <= i;
             if (i == -1) {
-                board = startBoard(1);
-                toFill = getFillList(board);
-                listOfLists = new ArrayList<>();
-                isBacktracking = false;
+                break;
             } else {
                 if (toFill.get(i)) {
                     int row = getPositionFromIndex(i)[0];
@@ -140,6 +140,19 @@ public class SudokuGenerator {
                         board.set(i, newValue);
                         availableValues.remove(randomPosition);
                         isBacktracking = false;
+
+                        Boolean isComplete = true;
+                        for (int j = 0; j < size; j++) {
+                            if (board.get(j) == 0) {
+                                isComplete = false;
+                                break;
+                            }
+                        }
+                        if (isComplete) {
+                            solutions = solutions + 1;
+                            if (solutions == solutionsToBreak) break;
+                            i = i - 1;
+                        }
                     }
 
                 } else {
@@ -155,7 +168,7 @@ public class SudokuGenerator {
                 }
             }
         }
-        return board;
+        return new Pair(board, solutions);
     }
 
     public List<Boolean> getFillList(List<Integer> board) {

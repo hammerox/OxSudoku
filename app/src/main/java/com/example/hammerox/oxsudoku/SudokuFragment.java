@@ -29,6 +29,9 @@ public class SudokuFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        List<Integer> puzzle = new SudokuGenerator().board;
+
         sudokuGrid = new SudokuGrid();      // Generates new puzzle
         setHasOptionsMenu(true);
     }
