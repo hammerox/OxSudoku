@@ -1,6 +1,8 @@
 package com.example.hammerox.oxsudoku;
 
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -10,7 +12,8 @@ public class SudokuGenerator {
     List<Integer> board;
 
     public SudokuGenerator() {
-        this.board = startBoard(11);
+        this.board = startBoard(1);
+        this.board = fillBoard(board);
     }
 
     public List<Integer> startBoard(int iteration) {
@@ -25,12 +28,10 @@ public class SudokuGenerator {
                 int randCol = getPositionFromIndex(randIndex)[1];
                 List<Integer> checkList = getRowColBoxIndexes(randRow, randCol);
                 for (Integer index : checkList) {
-                    if (index != randIndex) {
-                        int checkValue = newBoard.get(index);
-                        if (checkValue == value) {
-                            isValid = false;
-                            break;
-                        }
+                    int checkValue = newBoard.get(index);
+                    if (checkValue == value) {
+                        isValid = false;
+                        break;
                     }
                 }
                 if (isValid) {
@@ -44,6 +45,157 @@ public class SudokuGenerator {
         }
 
         return newBoard;
+    }
+
+    public List<Integer> fillBoard(List<Integer> board) {
+        List<Boolean> toFill = getFillList(board);
+        List<List> listOfLists = new ArrayList<>();
+        Boolean isBacktracking = false;
+
+        int size = 9 * 9;
+        for (int i = 0; i < size; i++) {
+            Boolean isNewCell = listOfLists.isEmpty() || listOfLists.size() <= i;
+            if (i == -1) {
+                board = startBoard(1);
+                toFill = getFillList(board);
+                listOfLists = new ArrayList<>();
+                isBacktracking = false;
+                Log.d("Chrono", "Backtracked to -1");
+            } else {
+                if (toFill.get(i)) {
+                    int row = getPositionFromIndex(i)[0];
+                    int col = getPositionFromIndex(i)[1];
+                    List<Integer> checkList = getRowColBoxIndexes(row, col);
+                    List<Integer> availableValues;
+                    if (isBacktracking) {
+                        availableValues = listOfLists.get(i);
+                    } else {
+                        availableValues = getAvailableValues(board, checkList);
+                    }
+                    if (availableValues.isEmpty()) {
+                        isBacktracking = true;
+                        i = i - 2;
+
+                    } else {
+                        if (isNewCell) {
+                            listOfLists.add(availableValues);
+                        } else {
+                            listOfLists.set(i, availableValues);
+                        }
+                        int indexRange = availableValues.size() - 1;
+                        int randomPosition = 0;
+                        if (indexRange > 1) {
+                            randomPosition = new Random().nextInt(indexRange);
+                        }
+                        int newValue = availableValues.get(randomPosition);
+                        board.set(i, newValue);
+                        availableValues.remove(randomPosition);
+                        isBacktracking = false;
+                    }
+
+                } else {
+                    if (isBacktracking) {
+                        i = i - 2;
+                    } else {
+                        if (isNewCell) {
+                            listOfLists.add(new ArrayList());
+                        } else {
+                            listOfLists.set(i, new ArrayList());
+                        }
+                    }
+                }
+            }
+        }
+
+        return board;
+    }
+
+    public static Boolean isValidGame(List<Integer> board) {
+        Boolean isValid = true;
+        int size = 9 * 9;
+        for (int i = 0; i < size; i++) {
+            int row = getPositionFromIndex(i)[0];
+            int col = getPositionFromIndex(i)[1];
+            List<Integer> checkList = getRowColBoxIndexes(row, col);
+            List<Integer> availableValue = getAvailableValues(board, checkList);
+            Boolean firstCheck = availableValue.size() > 1;
+            Boolean secondCheck = availableValue.get(0) != board.get(i);
+            if (firstCheck || secondCheck) {
+                isValid = false;
+                break;
+            }
+        }
+        return isValid;
+    }
+
+    public List<Boolean> getFillList(List<Integer> board) {
+        List<Boolean> toFill = new ArrayList<>();
+        int size = 9 * 9;
+        for (int i = 0; i < size; i++) {
+            if (board.get(i) == 0) {
+                toFill.add(true);
+            } else {
+                toFill.add(false);
+            }
+        }
+        return toFill;
+    }
+
+    public static List<Integer> getAvailableValues(List<Integer> board, List<Integer> checkList) {
+        List<Integer> forbiddenValues = new ArrayList<>();
+        for (Integer index : checkList) {
+            int checkValue = board.get(index);
+            if (checkValue != 0) {
+                if (forbiddenValues.isEmpty()) {
+                    forbiddenValues.add(checkValue);
+                } else {
+                    Boolean isNewValue = true;
+                    for (Integer n : forbiddenValues) {
+                        if (n == checkValue) {
+                            isNewValue = false;
+                            break;
+                        }
+                    }
+                    if (isNewValue) {
+                        forbiddenValues.add(checkValue);
+                    }
+                }
+            }
+        }
+        Boolean contains1 = false;
+        Boolean contains2 = false;
+        Boolean contains3 = false;
+        Boolean contains4 = false;
+        Boolean contains5 = false;
+        Boolean contains6 = false;
+        Boolean contains7 = false;
+        Boolean contains8 = false;
+        Boolean contains9 = false;
+        List<Integer> availableList = new ArrayList<>();
+        for (Integer n : forbiddenValues) {
+            switch (n) {
+                case 1: contains1 = true; break;
+                case 2: contains2 = true; break;
+                case 3: contains3 = true; break;
+                case 4: contains4 = true; break;
+                case 5: contains5 = true; break;
+                case 6: contains6 = true; break;
+                case 7: contains7 = true; break;
+                case 8: contains8 = true; break;
+                case 9: contains9 = true; break;
+            }
+        }
+        if (!contains1) availableList.add(1);
+        if (!contains2) availableList.add(2);
+        if (!contains3) availableList.add(3);
+        if (!contains4) availableList.add(4);
+        if (!contains5) availableList.add(5);
+        if (!contains6) availableList.add(6);
+        if (!contains7) availableList.add(7);
+        if (!contains8) availableList.add(8);
+        if (!contains9) availableList.add(9);
+
+        return availableList;
     }
 
     public List<Integer> createBoard (Boolean createEmpty) {
@@ -137,12 +289,14 @@ public class SudokuGenerator {
         return inverse;
     }
 
-    public List<Integer> getRowColBoxIndexes(int row, int col) {
+    public static List<Integer> getRowColBoxIndexes(int row, int col) {
         List<Integer> indexes = new ArrayList<>();
         // Box
         int[] boxIndexes = getBoxIndexes(row, col);
         for (int i : boxIndexes) {
-            indexes.add(i);
+            if (i != getIndexFromPosition(row, col)) {
+                indexes.add(i);
+            }
         }
         // Row
         for (int r = 1; r <= 9; r++) {
@@ -161,7 +315,7 @@ public class SudokuGenerator {
         return indexes;
     }
 
-    public int[] getBoxIndexes(int row, int col) {
+    public static int[] getBoxIndexes(int row, int col) {
         int[] boxIndexes = new int[] {};
         switch (row) {
             case 1:
@@ -210,13 +364,13 @@ public class SudokuGenerator {
         return boxIndexes;
     }
 
-    public int[] getPositionFromIndex(int index) {
+    public static int[] getPositionFromIndex(int index) {
         int row = index / 9 + 1;
         int col = index % 9 + 1;
         return new int[] {row,col};
     }
 
-    public int getIndexFromPosition(int row, int col) {
+    public static int getIndexFromPosition(int row, int col) {
         return 9 * (row - 1) + col - 1;
     }
 
