@@ -1,10 +1,8 @@
 package com.example.hammerox.oxsudoku;
 
 
-import android.support.annotation.IntegerRes;
 import android.util.Log;
 import android.util.Pair;
-import android.util.Range;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -69,7 +67,7 @@ public class SudokuGenerator {
 
     public List<Boolean> setPuzzle(List<Integer> board) {
         Boolean[] array = new Boolean[81];
-        Arrays.fill(array, true);
+        Arrays.fill(array, false);
         List<Boolean> toFill = Arrays.asList(array);
         List<Integer> boardToEdit = new ArrayList<>(board);
         List<Integer> allIndexes = new ArrayList<>();
@@ -78,44 +76,41 @@ public class SudokuGenerator {
 
         int size = 9 * 9;
         for (int i = 0; i < size; i++) {
+            Log.d("onCreate", "iteration: " + i);
             int index = allIndexes.get(i);
-            toFill.set(index, false);
+            toFill.set(index, true);
             boardToEdit.set(index, 0);
+            Pair<List<Integer>, Integer> pair  = doBacktrack(boardToEdit, toFill, 2);
+            int solutionCount = pair.second;
+            if (solutionCount < 1) {
+                toFill.set(index, false);
+                boardToEdit.set(index, board.get(index));
+            }
 
-            /*Todo - Continue puzzle algorithm*/
+        }
+
+        List<Boolean> mask = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            Boolean toMask = !toFill.get(i);
+            mask.add(toMask);
         }
 
         return mask;
     }
 
-    public static Boolean isValidGame(List<Integer> board) {
-        Boolean isValid = true;
-        int size = 9 * 9;
-        for (int i = 0; i < size; i++) {
-            int row = getPositionFromIndex(i)[0];
-            int col = getPositionFromIndex(i)[1];
-            List<Integer> checkList = getRowColBoxIndexes(row, col);
-            List<Integer> availableValue = getAvailableValues(board, checkList);
-            Boolean firstCheck = availableValue.size() > 1;
-            Boolean secondCheck = availableValue.get(0) != board.get(i);
-            if (firstCheck || secondCheck) {
-                isValid = false;
-                break;
-            }
-        }
-        return isValid;
-    }
-
-    public Pair<List<Integer>, Integer> doBacktrack(List<Integer> board,
+    public Pair<List<Integer>, Integer> doBacktrack(List<Integer> boardCopy,
                                                     List<Boolean> toFill, int solutionsToBreak) {
+        List<Integer> board = new ArrayList<>(boardCopy);
         int solutions = 0;
         Boolean isBacktracking = false;
+        Boolean hasSolution = false;
         List<List> listOfLists = new ArrayList<>();
         int size = 9 * 9;
 
         for (int i = 0; i < size; i++) {
             Boolean isNewCell = listOfLists.isEmpty() || listOfLists.size() <= i;
             if (i == -1) {
+                Log.d("onCreate", "Break by index");
                 break;
             } else {
                 if (toFill.get(i)) {
@@ -133,7 +128,7 @@ public class SudokuGenerator {
                         i = i - 2;
 
                     } else {
-                        if (isNewCell) {
+                        if (isNewCell && !hasSolution) {
                             listOfLists.add(availableValues);
                         } else {
                             listOfLists.set(i, availableValues);
@@ -157,8 +152,14 @@ public class SudokuGenerator {
                         }
                         if (isComplete) {
                             solutions = solutions + 1;
-                            if (solutions == solutionsToBreak) break;
-                            i = i - 1;
+                            Log.d("onCreate", "solutions: " + solutions);
+                            if (solutions == solutionsToBreak) {
+                                Log.d("onCreate", "Break by solutions");
+                                break;
+                            }
+                            i = listOfLists.size() - 2;
+                            isBacktracking = true;
+                            hasSolution = true;
                         }
                     }
 
@@ -166,7 +167,7 @@ public class SudokuGenerator {
                     if (isBacktracking) {
                         i = i - 2;
                     } else {
-                        if (isNewCell) {
+                        if (isNewCell && !hasSolution) {
                             listOfLists.add(new ArrayList());
                         } else {
                             listOfLists.set(i, new ArrayList());
@@ -176,6 +177,24 @@ public class SudokuGenerator {
             }
         }
         return new Pair(board, solutions);
+    }
+
+    public static Boolean isValidGame(List<Integer> board) {
+        Boolean isValid = true;
+        int size = 9 * 9;
+        for (int i = 0; i < size; i++) {
+            int row = getPositionFromIndex(i)[0];
+            int col = getPositionFromIndex(i)[1];
+            List<Integer> checkList = getRowColBoxIndexes(row, col);
+            List<Integer> availableValue = getAvailableValues(board, checkList);
+            Boolean firstCheck = availableValue.size() > 1;
+            Boolean secondCheck = availableValue.get(0) != board.get(i);
+            if (firstCheck || secondCheck) {
+                isValid = false;
+                break;
+            }
+        }
+        return isValid;
     }
 
     public List<Boolean> getFillList(List<Integer> board) {
