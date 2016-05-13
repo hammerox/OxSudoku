@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 
 public class SudokuFragment extends Fragment {
@@ -30,7 +32,16 @@ public class SudokuFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        List<Integer> puzzle = new SudokuGenerator().board;
+        for (int i = 0; i < 100; i++) {
+            // This is only for debugging the puzzle generator
+            long start = System.nanoTime();
+            List<Integer> puzzle = new SudokuGenerator().board;
+            long end = System.nanoTime();
+            long elapsedInNanos = end - start;
+            long elapsedInMilliSeconds = TimeUnit.MILLISECONDS.convert(elapsedInNanos, TimeUnit.NANOSECONDS);
+            Log.d("onCreate", "elapsedInMilliSeconds: " + elapsedInMilliSeconds);
+
+        }
 
         sudokuGrid = new SudokuGrid();      // Generates new puzzle
         setHasOptionsMenu(true);

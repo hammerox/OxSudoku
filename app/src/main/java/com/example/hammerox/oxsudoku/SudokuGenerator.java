@@ -56,7 +56,14 @@ public class SudokuGenerator {
 
     public List<Integer> fillBoard(List<Integer> board) {
         List<Boolean> toFill = getFillList(board);
-        Pair<List<Integer>, Integer> pair = doBacktrack(board, toFill, 1);
+        Pair<List<Integer>, Integer> pair  = doBacktrack(board, toFill, 1);
+        int solution = pair.second;
+        if (solution < 0) {
+            while (solution < 1) {
+                pair = doBacktrack(board, toFill, 1);
+                solution = pair.second;
+            }
+        }
         return pair.first;
     }
 
