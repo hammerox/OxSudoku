@@ -18,7 +18,7 @@ public class SudokuGenerator {
     public SudokuGenerator() {
         this.board = startBoard(1);
         this.board = fillBoard(board);
-        this.mask = setPuzzle(board);
+        //this.mask = setPuzzle(board, 40);
     }
 
     public List<Integer> startBoard(int iteration) {
@@ -53,19 +53,21 @@ public class SudokuGenerator {
     }
 
     public List<Integer> fillBoard(List<Integer> board) {
-        List<Boolean> toFill = getFillList(board);
-        Pair<List<Integer>, Integer> pair  = doBacktrack(board, toFill, 1);
+        List<Boolean> toFill = createFillList(board);
+        List<Integer> boardCopy = new ArrayList<>(board);
+        Pair<List<Integer>, Integer> pair  = doBacktrack(boardCopy, toFill, 1);
         int solution = pair.second;
-        if (solution < 0) {
+        if (solution < 1) {
             while (solution < 1) {
-                pair = doBacktrack(board, toFill, 1);
+                boardCopy = new ArrayList<>(board);
+                pair = doBacktrack(boardCopy, toFill, 1);
                 solution = pair.second;
             }
         }
         return pair.first;
     }
 
-    public List<Boolean> setPuzzle(List<Integer> board) {
+    public List<Boolean> setPuzzle(List<Integer> board, int counterToRemove) {
         Boolean[] array = new Boolean[81];
         Arrays.fill(array, false);
         List<Boolean> toFill = Arrays.asList(array);
@@ -75,18 +77,22 @@ public class SudokuGenerator {
         Collections.shuffle(allIndexes);
 
         int size = 9 * 9;
+        int counter = 0;
         for (int i = 0; i < size; i++) {
-            Log.d("onCreate", "iteration: " + i);
+            //Log.d("onCreate", "iteration: " + i);
             int index = allIndexes.get(i);
             toFill.set(index, true);
             boardToEdit.set(index, 0);
-            Pair<List<Integer>, Integer> pair  = doBacktrack(boardToEdit, toFill, 2);
+            List<Integer> boardCopy = new ArrayList<>(boardToEdit);
+            Pair<List<Integer>, Integer> pair  = doBacktrack(boardCopy, toFill, 2);
             int solutionCount = pair.second;
             if (solutionCount < 1) {
                 toFill.set(index, false);
                 boardToEdit.set(index, board.get(index));
+            } else {
+                counter++;
             }
-
+            if (counter == counterToRemove) break;
         }
 
         List<Boolean> mask = new ArrayList<>();
@@ -98,9 +104,8 @@ public class SudokuGenerator {
         return mask;
     }
 
-    public Pair<List<Integer>, Integer> doBacktrack(List<Integer> boardCopy,
+    public Pair<List<Integer>, Integer> doBacktrack(List<Integer> board,
                                                     List<Boolean> toFill, int solutionsToBreak) {
-        List<Integer> board = new ArrayList<>(boardCopy);
         int solutions = 0;
         Boolean isBacktracking = false;
         Boolean hasSolution = false;
@@ -117,30 +122,30 @@ public class SudokuGenerator {
                     int row = getPositionFromIndex(i)[0];
                     int col = getPositionFromIndex(i)[1];
                     List<Integer> checkList = getRowColBoxIndexes(row, col);
-                    List<Integer> availableValues;
+                    List<Integer> availableNumbers;
                     if (isBacktracking) {
-                        availableValues = listOfLists.get(i);
+                        availableNumbers = listOfLists.get(i);
                     } else {
-                        availableValues = getAvailableValues(board, checkList);
+                        availableNumbers = getAvailableNumbers(board, checkList);
                     }
-                    if (availableValues.isEmpty()) {
+                    if (availableNumbers.isEmpty()) {
                         isBacktracking = true;
                         i = i - 2;
 
                     } else {
                         if (isNewCell && !hasSolution) {
-                            listOfLists.add(availableValues);
+                            listOfLists.add(availableNumbers);
                         } else {
-                            listOfLists.set(i, availableValues);
+                            listOfLists.set(i, availableNumbers);
                         }
-                        int indexRange = availableValues.size() - 1;
+                        int indexRange = availableNumbers.size() - 1;
                         int randomPosition = 0;
                         if (indexRange > 1) {
                             randomPosition = new Random().nextInt(indexRange);
                         }
-                        int newValue = availableValues.get(randomPosition);
+                        int newValue = availableNumbers.get(randomPosition);
                         board.set(i, newValue);
-                        availableValues.remove(randomPosition);
+                        availableNumbers.remove(randomPosition);
                         isBacktracking = false;
 
                         Boolean isComplete = true;
@@ -151,8 +156,9 @@ public class SudokuGenerator {
                             }
                         }
                         if (isComplete) {
+                            Log.d("onCreate", "Board is complete");
                             solutions = solutions + 1;
-                            Log.d("onCreate", "solutions: " + solutions);
+                            //Log.d("onCreate", "solutions: " + solutions);
                             if (solutions == solutionsToBreak) {
                                 Log.d("onCreate", "Break by solutions");
                                 break;
@@ -182,22 +188,24 @@ public class SudokuGenerator {
     public static Boolean isValidGame(List<Integer> board) {
         Boolean isValid = true;
         int size = 9 * 9;
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < size; i++) {                        // For every cell on the board,...
             int row = getPositionFromIndex(i)[0];
             int col = getPositionFromIndex(i)[1];
             List<Integer> checkList = getRowColBoxIndexes(row, col);
-            List<Integer> availableValue = getAvailableValues(board, checkList);
-            Boolean firstCheck = availableValue.size() > 1;
-            Boolean secondCheck = availableValue.get(0) != board.get(i);
+            List<Integer> availableValue                        // get all possible values to insert.
+                    = getAvailableNumbers(board, checkList);
+            Boolean firstCheck = availableValue.size() > 1;     // If there is more than one solution...
+            Boolean secondCheck                                 // or if possible value is different...
+                    = availableValue.get(0) != board.get(i);    // from the solution...
             if (firstCheck || secondCheck) {
-                isValid = false;
+                isValid = false;                                // the puzzle is not valid.
                 break;
             }
         }
         return isValid;
     }
 
-    public List<Boolean> getFillList(List<Integer> board) {
+    public List<Boolean> createFillList(List<Integer> board) {
         List<Boolean> toFill = new ArrayList<>();
         int size = 9 * 9;
         for (int i = 0; i < size; i++) {
@@ -210,59 +218,44 @@ public class SudokuGenerator {
         return toFill;
     }
 
-    public static List<Integer> getAvailableValues(List<Integer> board, List<Integer> checkList) {
+    public static List<Integer> getAvailableNumbers(List<Integer> board, List<Integer> checkList) {
+        // Getting an array with all forbidden values for the respective cell.
         List<Integer> forbiddenValues = new ArrayList<>();
-        for (Integer index : checkList) {
-            int checkValue = board.get(index);
-            if (checkValue != 0) {
-                if (forbiddenValues.isEmpty()) {
-                    forbiddenValues.add(checkValue);
-                } else {
+
+                                                    // For each cell on row, column and ...
+        for (Integer index : checkList) {           // box of the respective cell...
+            int checkValue = board.get(index);      // get its number...
+            if (checkValue != 0) {                  // and ignore if 0.
+                if (forbiddenValues.isEmpty()) {        // If list is new...
+                    forbiddenValues.add(checkValue);    // add number to list.
+                } else {                                // If list already contains numbers, ...
                     Boolean isNewValue = true;
-                    for (Integer n : forbiddenValues) {
-                        if (n == checkValue) {
-                            isNewValue = false;
-                            break;
+                    for (Integer n : forbiddenValues) { // check for each value inside it...
+                        if (n == checkValue) {          // if evaluating number is already on list.
+                            isNewValue = false;         // If so, number isn't new...
+                            break;                      // so ignore it.
                         }
                     }
-                    if (isNewValue) {
+                    if (isNewValue) {                   // If not, add it to the list.
                         forbiddenValues.add(checkValue);
                     }
                 }
             }
         }
-        Boolean contains1 = false;
-        Boolean contains2 = false;
-        Boolean contains3 = false;
-        Boolean contains4 = false;
-        Boolean contains5 = false;
-        Boolean contains6 = false;
-        Boolean contains7 = false;
-        Boolean contains8 = false;
-        Boolean contains9 = false;
-        List<Integer> availableList = new ArrayList<>();
-        for (Integer n : forbiddenValues) {
-            switch (n) {
-                case 1: contains1 = true; break;
-                case 2: contains2 = true; break;
-                case 3: contains3 = true; break;
-                case 4: contains4 = true; break;
-                case 5: contains5 = true; break;
-                case 6: contains6 = true; break;
-                case 7: contains7 = true; break;
-                case 8: contains8 = true; break;
-                case 9: contains9 = true; break;
-            }
+        Boolean[] array = new Boolean[9];               // Create a boolean value for each number...
+        Arrays.fill(array, true);                       // from 1 to 9. Set all values as true...
+        List<Boolean> isPossible = Arrays.asList(array);// and put them into an array.
+
+        for (Integer cannotExist : forbiddenValues) {   // For every number inside the forbidden list...
+            isPossible.set(cannotExist - 1, false);     // set it's respective boolean to false.
         }
-        if (!contains1) availableList.add(1);
-        if (!contains2) availableList.add(2);
-        if (!contains3) availableList.add(3);
-        if (!contains4) availableList.add(4);
-        if (!contains5) availableList.add(5);
-        if (!contains6) availableList.add(6);
-        if (!contains7) availableList.add(7);
-        if (!contains8) availableList.add(8);
-        if (!contains9) availableList.add(9);
+
+        List<Integer> availableList = new ArrayList<>();
+        for (int i = 1; i <= 9; i++) {
+            if (isPossible.get(i - 1)) {                    // Get all true values from our list...
+                availableList.add(i);               // and add its respective number to a new...
+            }                                           // list with all possible numbers.
+        }
 
         return availableList;
     }
