@@ -111,8 +111,10 @@ public class SudokuGenerator {
         Boolean hasSolution = false;
         List<List> listOfLists = new ArrayList<>();
         int size = 9 * 9;
+        int step = 0;
 
         for (int i = 0; i < size; i++) {
+            step++;
             Boolean isNewCell = listOfLists.isEmpty() || listOfLists.size() <= i;
             if (i == -1) {
                 Log.d("onCreate", "Break by index");
@@ -129,6 +131,7 @@ public class SudokuGenerator {
                         availableNumbers = getAvailableNumbers(board, checkList);
                     }
                     if (availableNumbers.isEmpty()) {
+                        board.set(i, 0);
                         isBacktracking = true;
                         i = i - 2;
 
