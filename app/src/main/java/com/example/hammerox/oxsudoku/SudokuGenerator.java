@@ -18,7 +18,7 @@ public class SudokuGenerator {
     public SudokuGenerator() {
         this.board = startBoard(1);
         this.board = fillBoard(board);
-        //this.mask = setPuzzle(board, 40);
+        this.mask = setPuzzle(board, 50);
     }
 
     public List<Integer> startBoard(int iteration) {
@@ -67,40 +67,52 @@ public class SudokuGenerator {
         return pair.first;
     }
 
-    public List<Boolean> setPuzzle(List<Integer> board, int counterToRemove) {
+    public List<Boolean> setPuzzle(List<Integer> board, int numberOfEmptyCells) {
+        // Creating a boolean list. If TRUE, cell is EMPTY. If false, cell contains solution.
+        // Setting all initial values to FALSE.
         Boolean[] array = new Boolean[81];
         Arrays.fill(array, false);
-        List<Boolean> toFill = Arrays.asList(array);
+        List<Boolean> emptyCells = Arrays.asList(array);
+
+        // Shuffling indexes.
         List<Integer> boardToEdit = new ArrayList<>(board);
         List<Integer> allIndexes = new ArrayList<>();
         for (int i = 0; i <= 80; ++i) allIndexes.add(i);
         Collections.shuffle(allIndexes);
 
         int size = 9 * 9;
-        int counter = 0;
-        for (int i = 0; i < size; i++) {
-            //Log.d("onCreate", "iteration: " + i);
-            int index = allIndexes.get(i);
-            toFill.set(index, true);
-            boardToEdit.set(index, 0);
-            List<Integer> boardCopy = new ArrayList<>(boardToEdit);
-            Pair<List<Integer>, Integer> pair  = doBacktrack(boardCopy, toFill, 2);
-            int solutionCount = pair.second;
-            if (solutionCount < 1) {
-                toFill.set(index, false);
-                boardToEdit.set(index, board.get(index));
-            } else {
-                counter++;
-            }
-            if (counter == counterToRemove) break;
-        }
+        int emptyCellsCounter = 0;
+        for (int i = 0; i < size; i++) {                // For every cell on the board...
+            int index = allIndexes.get(i);              // pick a random cell, ...
+            emptyCells.set(index, true);                // mark it...
+            boardToEdit.set(index, 0);                  // and make it empty.
 
+            List<Integer> boardCopy = new ArrayList<>(boardToEdit);
+            Pair<List<Integer>, Integer> pair           // Try to solve it...
+                    = doBacktrack(boardCopy, emptyCells, 2);
+            int solutions = pair.second;                // and count the number of possible solutions.
+            Log.d("onCreate", "i: " + i + ", emptyCells: " + emptyCellsCounter + " ,solutions: " + solutions );
+            if (solutions == 1) {                       // If there is a single solution...
+                emptyCellsCounter++;                    // keep changes and count.
+            } else {                                    // If there is more than one solution...
+                emptyCells.set(index, false);           // undo the changes.
+                boardToEdit.set(index, board.get(index));
+            }
+
+            if (emptyCellsCounter == numberOfEmptyCells) {
+                break;                                  // Stop if the number of empty cells is enough...
+            }
+        }
+        return fillToMask(emptyCells);                  // and convert it to a mask.
+    }
+
+    public static List<Boolean> fillToMask(List<Boolean> fillList) {
         List<Boolean> mask = new ArrayList<>();
+        int size = 9 * 9;
         for (int i = 0; i < size; i++) {
-            Boolean toMask = !toFill.get(i);
+            Boolean toMask = !fillList.get(i);
             mask.add(toMask);
         }
-
         return mask;
     }
 
@@ -117,7 +129,7 @@ public class SudokuGenerator {
             step++;
             Boolean isNewCell = listOfLists.isEmpty() || listOfLists.size() <= i;
             if (i == -1) {
-                Log.d("onCreate", "Break by index");
+                /*Log.d("onCreate", "Break by index");*/
                 break;
             } else {
                 if (toFill.get(i)) {
@@ -159,11 +171,11 @@ public class SudokuGenerator {
                             }
                         }
                         if (isComplete) {
-                            Log.d("onCreate", "Board is complete");
+                            /*Log.d("onCreate", "Board is complete");*/
                             solutions = solutions + 1;
                             //Log.d("onCreate", "solutions: " + solutions);
                             if (solutions == solutionsToBreak) {
-                                Log.d("onCreate", "Break by solutions");
+                                /*Log.d("onCreate", "Break by solutions");*/
                                 break;
                             }
                             i = listOfLists.size() - 2;

@@ -32,7 +32,7 @@ public class SudokuFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        for (int i = 0; i < 50; i++) {
+/*        for (int i = 0; i < 50; i++) {
             // This is only for debugging the puzzle generator
             long start = System.nanoTime();
             SudokuGenerator sdk = new SudokuGenerator();
@@ -43,7 +43,7 @@ public class SudokuFragment extends Fragment {
             long elapsedInNanos = end - start;
             long elapsedInMilliSeconds = TimeUnit.MILLISECONDS.convert(elapsedInNanos, TimeUnit.NANOSECONDS);
             Log.d("onCreate", "elapsedInMilliSeconds: " + elapsedInMilliSeconds + "ms, isValid: " + isValid.toString());
-        }
+        }*/
 
         sudokuGrid = new SudokuGrid();      // Generates new puzzle
         setHasOptionsMenu(true);
