@@ -165,6 +165,7 @@ public class SudokuGrid {
         }
 
         // Updating puzzleHighlight Level 2
+        /*Todo - Create highlight level for last added number*/
         setColorFilter(activity, clickedRow, clickedCol,
                 view.getBackground(), 2);
         puzzleHighlight.set(indexOfClick, 2);
@@ -195,7 +196,6 @@ public class SudokuGrid {
     }
 
     public List<Integer> createSolution() {
-        /*Todo - Create a sudoku puzzle generator*/
         int[] ints =   {6,2,7,3,8,9,4,1,5,
                         8,9,4,1,7,5,3,6,2,
                         1,3,5,6,4,2,7,8,9,
