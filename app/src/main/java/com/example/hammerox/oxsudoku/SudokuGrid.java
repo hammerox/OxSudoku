@@ -24,6 +24,8 @@ import java.util.List;
 
 public class SudokuGrid {
 
+    int lastInput = -1;
+
     private List<Integer> puzzleSolution;
     private List<Boolean> puzzleMask;
     private List<Integer> puzzleUserAnswers;
@@ -147,8 +149,19 @@ public class SudokuGrid {
         int clickedCol = position[1];
         List<Integer> rowColBox = getRowColBoxIndexes(clickedRow, clickedCol);
 
+        // Updating lastInput.
+        if (lastInput >= 0) {
+            int id = getIdFromIndex(activity, lastInput);
+            TextView lastInputCell = (TextView) activity.findViewById(id);
+            int mColorOld = ContextCompat.getColor(activity, R.color.colorAccent);
+            lastInputCell.setTextColor(mColorOld);
+        }
+        lastInput = indexOfClick;
+
         // Setting new value.
         view.setText(String.valueOf(activeKey));
+        int mColorNew = ContextCompat.getColor(activity, R.color.colorPrimary);
+        view.setTextColor(Color.BLUE);
 
         // Updating puzzleUserAnswers.
         puzzleUserAnswers.set(indexOfClick, activeKey);
