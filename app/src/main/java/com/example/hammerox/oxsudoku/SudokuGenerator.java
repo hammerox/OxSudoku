@@ -18,7 +18,7 @@ public class SudokuGenerator {
     public SudokuGenerator() {
         this.board = startBoard(1);
         this.board = fillBoard(board);
-        this.mask = setPuzzle(board, 50);
+        this.mask = setPuzzle(board, 4);
     }
 
     public List<Integer> startBoard(int iteration) {

@@ -124,7 +124,9 @@ public class SudokuGrid {
                                 if (isValid) {
                                     commitChanges(activity, clickedText);
                                 } else {
-                                    Toast.makeText(activity, "You can't break the rules", Toast.LENGTH_LONG).show();
+                                    Toast toast = Toast.makeText(activity, "You can't break the rules", Toast.LENGTH_LONG);
+                                    toast.setGravity(Gravity.CENTER, 0, 0);
+                                    toast.show();
                                 }
                             }
                         }
@@ -183,7 +185,12 @@ public class SudokuGrid {
         float correctAnswersRatio
                 = (float) count / (float) puzzleCorrectAnswers.size();
         if (correctAnswersRatio == 1) {
-            Toast.makeText(activity, "CONGRATS!", Toast.LENGTH_LONG).show();
+            Toast toast = Toast.makeText(activity, "CONGRATULATIONS!", Toast.LENGTH_LONG);
+            toast.setGravity(Gravity.CENTER, 0, 0);
+            toast.show();
+            Toast toast2 = Toast.makeText(activity, "You completed the puzzle!", Toast.LENGTH_LONG);
+            toast2.setGravity(Gravity.CENTER, 0, 0);
+            toast2.show();
         }
     }
 
