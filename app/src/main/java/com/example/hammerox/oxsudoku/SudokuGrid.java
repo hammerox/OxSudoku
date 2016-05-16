@@ -10,6 +10,7 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.IntegerRes;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -19,6 +20,7 @@ import android.widget.Toast;
 import com.example.hammerox.oxsudoku.Tools.SquareLayout;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -32,6 +34,8 @@ public class SudokuGrid {
     private List<Boolean> puzzleCorrectAnswers;
     private List<Boolean> puzzleUserInput;
     private List<Integer> puzzleHighlight;
+
+    private List<Boolean> isNumberComplete;
 
     /*Todo - Add input's history*/
 
@@ -52,6 +56,8 @@ public class SudokuGrid {
         puzzleCorrectAnswers = createPuzzleCorrectAnswers();
         puzzleUserInput = createPuzzleUserInput();
         puzzleHighlight = createPuzzleHighlight();
+
+        isNumberComplete = createNumberCheckList();
     }
 
     public void drawPuzzle(final Activity activity, final View rootView) {
@@ -143,12 +149,23 @@ public class SudokuGrid {
     }
 
     public void commitChanges(Activity activity, TextView view) {
+        int size = 9 * 9;
         int activeKey = SudokuKeyboard.getActiveKey();
         int indexOfClick = getIndexFromView(activity, view);
         int[] position = getPositionFromIndex(indexOfClick);
         int clickedRow = position[0];
         int clickedCol = position[1];
         List<Integer> rowColBox = getRowColBoxIndexes(clickedRow, clickedCol);
+
+        // Checking if there was a number before new input.
+        int oldNumber = 0;
+        Boolean isSubtituting = false;
+        try {
+            oldNumber = Integer.valueOf(view.getText().toString());
+            if (oldNumber > 0) {
+                isSubtituting = true;
+            }
+        } catch (NumberFormatException e) {}
 
         // Updating lastInput.
         if (lastInput >= 0) {
@@ -188,6 +205,22 @@ public class SudokuGrid {
                 puzzleHighlight.set(i, 1);
             }
         }
+
+        // Updating isNumberComplete.
+        int numberCounter = 0;
+        for (int i = 0; i < size; i++) {
+            if (puzzleUserAnswers.get(i) == activeKey) numberCounter++;
+            if (numberCounter == 9) {
+                int listsIndex = activeKey - 1;
+                isNumberComplete.set(listsIndex, true);
+            }
+        }
+        if (isSubtituting) {
+            int listsIndex = oldNumber - 1;
+            isNumberComplete.set(listsIndex, false);
+            SudokuKeyboard.showButton(activity, oldNumber);
+        }
+
 
         // Checking if puzzle is complete.
         int count = 0;
@@ -351,6 +384,12 @@ public class SudokuGrid {
                 if (intensity == 0) puzzleHighlight.set(i, 1);
             }
         }
+    }
+
+    public List<Boolean> createNumberCheckList() {
+        Boolean[] array = new Boolean[9];
+        Arrays.fill(array, false);
+        return Arrays.asList(array);
     }
 
     public List<Integer> getRowColBoxIndexes(int row, int col) {
@@ -628,5 +667,13 @@ public class SudokuGrid {
 
     public void setPuzzleUserInput(List<Boolean> puzzleUserInput) {
         this.puzzleUserInput = puzzleUserInput;
+    }
+
+    public List<Boolean> getIsNumberComplete() {
+        return isNumberComplete;
+    }
+
+    public void setIsNumberComplete(List<Boolean> isNumberComplete) {
+        this.isNumberComplete = isNumberComplete;
     }
 }

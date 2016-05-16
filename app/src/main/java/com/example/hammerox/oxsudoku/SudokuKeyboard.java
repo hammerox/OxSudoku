@@ -3,6 +3,7 @@ package com.example.hammerox.oxsudoku;
 import android.app.Activity;
 import android.content.res.ColorStateList;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.view.Gravity;
@@ -20,7 +21,6 @@ public class SudokuKeyboard {
 /*Todo - Add Undo button*/
 /*Todo - Add Pencil button*/
 /*Todo - Show counters with remaining numbers*/
-/*Todo - Idenfity completed numbers*/
 
     public void drawKeyboard(final Activity activity, final View rootView, final SudokuGrid sudokuGrid) {
 
@@ -51,12 +51,20 @@ public class SudokuKeyboard {
                             int id = activity.getResources()
                                     .getIdentifier(idString, "id", activity.getPackageName());
                             Button lastKey = (Button) rootView.findViewById(id);
+                            int listIndex = activeKey - 1;
+                            Boolean isComplete = sudokuGrid.getIsNumberComplete().get(listIndex);
+                            if (isComplete) {
+                                hideButton(lastKey);
+                            } else {
+                                showButton(lastKey);
+                            }
                             ColorStateList mReleaseColor = ContextCompat
                                     .getColorStateList(activity, R.color.colorMediumGray);
                             ViewCompat.setBackgroundTintList(lastKey, mReleaseColor);
                         }
 
                         // Changes active key's color.
+                        showButton(pressedKey);
                         ColorStateList mPressedColor = ContextCompat
                                 .getColorStateList(activity, R.color.colorAccent);
                         ViewCompat.setBackgroundTintList(pressedKey, mPressedColor);
@@ -66,13 +74,20 @@ public class SudokuKeyboard {
                         sudokuGrid.setPuzzleHighlight(activity, activeKey);
 
                     } else {        // If clicked key is the same as the active key...
-                        // change button's color to default...
+                        // change button's color to default, ...
                         ColorStateList mReleaseColor = ContextCompat
                                 .getColorStateList(activity, R.color.colorMediumGray);
                         ViewCompat.setBackgroundTintList(pressedKey, mReleaseColor);
 
-                        // and undo the highlights.
+                        // hide it if it's complete, ...
+                        int listIndex = activeKey - 1;
+                        Boolean isComplete = sudokuGrid.getIsNumberComplete().get(listIndex);
+                        if (isComplete) hideButton(activity, activeKey);
+
+                        // undo the highlights...
                         sudokuGrid.clearPuzzleHighlight(activity);
+
+                        // and set no active key.
                         activeKey = 0;
                     }
                 }
@@ -112,6 +127,34 @@ public class SudokuKeyboard {
 
             }
         });
+    }
+
+    public static void showButton(Button key) {
+        Drawable mDrawable = key.getBackground();
+        mDrawable.setAlpha(255);
+    }
+
+    public static void hideButton(Button key) {
+        Drawable mDrawable = key.getBackground();
+        mDrawable.setAlpha(0);
+    }
+
+    public static void showButton(Activity activity, int number) {
+        String idString = "key_" + number;
+        int id = activity.getResources()
+                .getIdentifier(idString, "id", activity.getPackageName());
+        Button key = (Button) activity.findViewById(id);
+        Drawable mDrawable = key.getBackground();
+        mDrawable.setAlpha(255);
+    }
+
+    public static void hideButton(Activity activity, int number) {
+        String idString = "key_" + number;
+        int id = activity.getResources()
+                .getIdentifier(idString, "id", activity.getPackageName());
+        Button key = (Button) activity.findViewById(id);
+        Drawable mDrawable = key.getBackground();
+        mDrawable.setAlpha(0);
     }
 
     public static int getActiveKey() {
