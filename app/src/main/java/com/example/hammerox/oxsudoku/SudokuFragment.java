@@ -60,6 +60,7 @@ public class SudokuFragment extends Fragment {
         /*Todo - Center keyboard and add buttons*/
         SudokuKeyboard keyboard = new SudokuKeyboard();
         keyboard.drawKeyboard(getActivity(), rootView, sudokuGrid);
+        keyboard.setClickListeners(rootView);
 
         return rootView;
     }

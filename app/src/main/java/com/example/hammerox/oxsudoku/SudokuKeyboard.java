@@ -66,6 +66,40 @@ public class SudokuKeyboard {
             });
         }
     }
+    
+    public void setClickListeners(final View rootView) {
+        Button leftButton1 = (Button) rootView.findViewById(R.id.left_button_1);
+        leftButton1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        Button leftButton2 = (Button) rootView.findViewById(R.id.left_button_2);
+        leftButton2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        Button rightButton1 = (Button) rootView.findViewById(R.id.right_button_1);
+        rightButton1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        Button rightButton2 = (Button) rootView.findViewById(R.id.right_button_2);
+        rightButton2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+    }
 
     public static int getActiveKey() {
         return activeKey;
