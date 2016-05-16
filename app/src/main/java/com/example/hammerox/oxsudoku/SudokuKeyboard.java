@@ -19,6 +19,8 @@ public class SudokuKeyboard {
 
 /*Todo - Add Undo button*/
 /*Todo - Add Pencil button*/
+/*Todo - Show counters with remaining numbers*/
+/*Todo - Idenfity completed numbers*/
 
     public void drawKeyboard(final Activity activity, final View rootView, final SudokuGrid sudokuGrid) {
 
@@ -39,6 +41,7 @@ public class SudokuKeyboard {
             keyButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    /*Todo - Unselect activeKey*/
                     // On click, make last active key back to default's appearance.
                     if (activeKey != 0) {       // activeKey = 0 means no key was clicked previously.
                         String idString = "key_" + activeKey;

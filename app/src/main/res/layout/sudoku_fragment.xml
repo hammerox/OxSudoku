@@ -18,89 +18,135 @@
         android:background="@color/colorPrimary">
     </com.example.hammerox.oxsudoku.Tools.SquareLayout>
 
-    <com.example.hammerox.oxsudoku.Tools.SquareLayout
-        android:orientation="vertical"
-        android:id="@+id/sudoku_keyboard"
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/sudoku_gridlayout"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true">
+        android:layout_height="wrap_content"
+        android:layout_below="@id/sudoku_gridlayout"
+        android:layout_alignParentBottom="true"
+        android:gravity="center">
 
         <LinearLayout
-            android:id="@+id/sudoku_keyboard_row1"
-            android:orientation="horizontal"
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_margin="5dp"
+            android:layout_weight="1">
+
+            <Button
+                android:id="@+id/left_button_1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
+            <Button
+                android:id="@+id/left_button_2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
+
+        </LinearLayout>
+
+        <com.example.hammerox.oxsudoku.Tools.SquareLayout
+            android:orientation="vertical"
+            android:id="@+id/sudoku_keyboard"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1">
 
-            <Button
-                android:id="@+id/key_1"
+            <LinearLayout
+                android:id="@+id/sudoku_keyboard_row1"
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"/>
-            <Button
-                android:id="@+id/key_2"
+                android:layout_weight="1">
+
+                <Button
+                    android:id="@+id/key_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"/>
+                <Button
+                    android:id="@+id/key_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"/>
+                <Button
+                    android:id="@+id/key_3"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/sudoku_keyboard_row2"
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"/>
-            <Button
-                android:id="@+id/key_3"
+                android:layout_weight="1">
+
+                <Button
+                    android:id="@+id/key_4"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"/>
+                <Button
+                    android:id="@+id/key_5"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"/>
+                <Button
+                    android:id="@+id/key_6"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/sudoku_keyboard_row3"
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"/>
-        </LinearLayout>
+                android:layout_weight="1">
+
+                <Button
+                    android:id="@+id/key_7"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"/>
+                <Button
+                    android:id="@+id/key_8"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"/>
+                <Button
+                    android:id="@+id/key_9"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"/>
+            </LinearLayout>
+
+        </com.example.hammerox.oxsudoku.Tools.SquareLayout>
 
         <LinearLayout
-            android:id="@+id/sudoku_keyboard_row2"
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_margin="5dp"
             android:layout_weight="1">
 
             <Button
-                android:id="@+id/key_4"
+                android:id="@+id/right_button_1"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"/>
             <Button
-                android:id="@+id/key_5"
+                android:id="@+id/right_button_2"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"/>
-            <Button
-                android:id="@+id/key_6"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"/>
+
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/sudoku_keyboard_row3"
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
-
-            <Button
-                android:id="@+id/key_7"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"/>
-            <Button
-                android:id="@+id/key_8"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"/>
-            <Button
-                android:id="@+id/key_9"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"/>
-        </LinearLayout>
-
-    </com.example.hammerox.oxsudoku.Tools.SquareLayout>
-
+    </LinearLayout>
 
 </RelativeLayout>
