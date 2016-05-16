@@ -57,7 +57,6 @@ public class SudokuFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.sudoku_fragment, container, false);
         sudokuGrid.drawPuzzle(getActivity(), rootView);
 
-        /*Todo - Center keyboard and add buttons*/
         SudokuKeyboard keyboard = new SudokuKeyboard();
         keyboard.drawKeyboard(getActivity(), rootView, sudokuGrid);
         keyboard.setClickListeners(rootView);
@@ -106,6 +105,7 @@ public class SudokuFragment extends Fragment {
         }
 
         /*Todo - Add 'new game' option*/
+        /*Todo - Add 'reset game' option*/
         return super.onOptionsItemSelected(item);
     }
 

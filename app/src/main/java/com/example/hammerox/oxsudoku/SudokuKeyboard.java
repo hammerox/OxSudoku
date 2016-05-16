@@ -41,32 +41,45 @@ public class SudokuKeyboard {
             keyButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    /*Todo - Unselect activeKey*/
-                    // On click, make last active key back to default's appearance.
-                    if (activeKey != 0) {       // activeKey = 0 means no key was clicked previously.
-                        String idString = "key_" + activeKey;
-                        int id = activity.getResources()
-                                .getIdentifier(idString, "id", activity.getPackageName());
-                        Button lastKey = (Button) rootView.findViewById(id);
+                    Button pressedKey = (Button)v;
+                    int pressedKeyNumber = Integer.valueOf(pressedKey.getText().toString());
+
+                    if (pressedKeyNumber != activeKey) {    // If clicked key is different from active key...
+                        // On click, make last active key back to default's appearance.
+                        if (activeKey != 0) {       // activeKey = 0 means no key was clicked previously.
+                            String idString = "key_" + activeKey;
+                            int id = activity.getResources()
+                                    .getIdentifier(idString, "id", activity.getPackageName());
+                            Button lastKey = (Button) rootView.findViewById(id);
+                            ColorStateList mReleaseColor = ContextCompat
+                                    .getColorStateList(activity, R.color.colorMediumGray);
+                            ViewCompat.setBackgroundTintList(lastKey, mReleaseColor);
+                        }
+
+                        // Changes active key's color.
+                        ColorStateList mPressedColor = ContextCompat
+                                .getColorStateList(activity, R.color.colorAccent);
+                        ViewCompat.setBackgroundTintList(pressedKey, mPressedColor);
+                        activeKey = pressedKeyNumber;
+
+                        // Highlight grid's keys
+                        sudokuGrid.setPuzzleHighlight(activity, activeKey);
+
+                    } else {        // If clicked key is the same as the active key...
+                        // change button's color to default...
                         ColorStateList mReleaseColor = ContextCompat
                                 .getColorStateList(activity, R.color.colorMediumGray);
-                        ViewCompat.setBackgroundTintList(lastKey, mReleaseColor);
+                        ViewCompat.setBackgroundTintList(pressedKey, mReleaseColor);
+
+                        // and undo the highlights.
+                        sudokuGrid.clearPuzzleHighlight(activity);
+                        activeKey = 0;
                     }
-
-                    // Changes active key's color.
-                    Button pressedKey = (Button)v;
-                    ColorStateList mPressedColor = ContextCompat
-                            .getColorStateList(activity, R.color.colorAccent);
-                    ViewCompat.setBackgroundTintList(pressedKey, mPressedColor);
-                    activeKey = Integer.valueOf(pressedKey.getText().toString());
-
-                    // Highlight grid's keys
-                    sudokuGrid.setPuzzleHighlight(activity, activeKey);
                 }
             });
         }
     }
-    
+
     public void setClickListeners(final View rootView) {
         Button leftButton1 = (Button) rootView.findViewById(R.id.left_button_1);
         leftButton1.setOnClickListener(new View.OnClickListener() {
