@@ -33,6 +33,7 @@ public class SudokuGrid {
     private List<Boolean> puzzleUserInput;
     private List<Integer> puzzleHighlight;
 
+    /*Todo - Add input's history*/
 
     public SudokuGrid() {
         /* The puzzle is generated on class creation.
@@ -160,7 +161,6 @@ public class SudokuGrid {
 
         // Setting new value.
         view.setText(String.valueOf(activeKey));
-        int mColorNew = ContextCompat.getColor(activity, R.color.colorPrimary);
         view.setTextColor(Color.BLUE);
 
         // Updating puzzleUserAnswers.
@@ -178,9 +178,7 @@ public class SudokuGrid {
         }
 
         // Updating puzzleHighlight Level 2
-        /*Todo - Create highlight level for last added number*/
-        setColorFilter(activity, clickedRow, clickedCol,
-                view.getBackground(), 2);
+        setColorFilter(activity, clickedRow, clickedCol, view.getBackground(), 2);
         puzzleHighlight.set(indexOfClick, 2);
 
         // Updating puzzleHighlight Level 1
@@ -290,8 +288,6 @@ public class SudokuGrid {
             int intensity = puzzleHighlight.get(i);
             if (intensity != 0) {
                 setIntensityColor(activity, i, 0);
-            }
-            if (puzzleHighlight.get(i) != 0) {
                 puzzleHighlight.set(i, 0);
             }
         }

@@ -56,6 +56,8 @@ public class SudokuFragment extends Fragment {
         /*Todo - Adjust fragment for horizontal orientation*/
         View rootView = inflater.inflate(R.layout.sudoku_fragment, container, false);
         sudokuGrid.drawPuzzle(getActivity(), rootView);
+
+        /*Todo - Center keyboard and add buttons*/
         SudokuKeyboard keyboard = new SudokuKeyboard();
         keyboard.drawKeyboard(getActivity(), rootView, sudokuGrid);
 
@@ -66,6 +68,7 @@ public class SudokuFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_sudoku, menu);
         super.onCreateOptionsMenu(menu, inflater);
+        /*Todo - Add timer*/
     }
 
     @Override
@@ -100,6 +103,8 @@ public class SudokuFragment extends Fragment {
                 getProgress(wrongCount, correctCount, totalCount);
                 break;
         }
+
+        /*Todo - Add 'new game' option*/
         return super.onOptionsItemSelected(item);
     }
 
