@@ -19,7 +19,6 @@ import com.example.hammerox.oxsudoku.Tools.SquareLayout;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
@@ -50,8 +49,6 @@ public class SudokuGrid {
         SudokuGenerator puzzle = new SudokuGenerator();
         puzzleSolution = puzzle.board;
         puzzleMask = puzzle.mask;
-        /*puzzleSolution = createSolution();
-        puzzleMask = createPuzzleMask();*/
         puzzleUserAnswers = createPuzzleUserAnswers();
         puzzleCorrectAnswers = createPuzzleCorrectAnswers();
         puzzleUserInput = createPuzzleUserInput();
@@ -59,6 +56,7 @@ public class SudokuGrid {
 
         isNumberComplete = createNumberCheckList();
     }
+
 
     public void drawPuzzle(final Activity activity, final View rootView) {
 
@@ -113,18 +111,16 @@ public class SudokuGrid {
                                 int[] position = getPositionFromIndex(indexOfClick);
                                 int clickedRow = position[0];
                                 int clickedCol = position[1];
-                                List<Integer> rowColBox = getRowColBoxIndexes(clickedRow, clickedCol);
+                                List<Integer> rowColBox
+                                        = getRowColBoxIndexes(clickedRow, clickedCol, false);
 
                                 // Checking if user input is valid.
                                 Boolean isValid = true;
-                                List<Integer> invalidIndex = new ArrayList<Integer>();
                                 for (Integer i : rowColBox) {
-                                    if (i != indexOfClick) {
-                                        int answer = puzzleUserAnswers.get(i);
-                                        if (answer == activeKey) {
-                                            isValid = false;
-                                            invalidIndex.add(i);
-                                        }
+                                    int answer = puzzleUserAnswers.get(i);
+                                    if (answer == activeKey) {
+                                        isValid = false;
+                                        break;
                                     }
                                 }
 
@@ -147,6 +143,7 @@ public class SudokuGrid {
 
     }
 
+
     public void commitChanges(Activity activity, TextView view) {
         int size = 9 * 9;
         int activeKey = SudokuKeyboard.getActiveKey();
@@ -154,17 +151,17 @@ public class SudokuGrid {
         int[] position = getPositionFromIndex(indexOfClick);
         int clickedRow = position[0];
         int clickedCol = position[1];
-        List<Integer> rowColBox = getRowColBoxIndexes(clickedRow, clickedCol);
+        List<Integer> rowColBox = getRowColBoxIndexes(clickedRow, clickedCol, false);
 
         // Checking if there was a number before new input.
         int oldNumber = 0;
         Boolean isSubtituting = false;
-        try {
-            oldNumber = Integer.valueOf(view.getText().toString());
-            if (oldNumber > 0) {
-                isSubtituting = true;
-            }
-        } catch (NumberFormatException e) {}
+
+        String oldNumberString = view.getText().toString();
+        if (oldNumberString.length() > 0) {
+            oldNumber = Integer.valueOf(oldNumberString);
+            isSubtituting = true;
+        }
 
         // Updating lastInput.
         if (lastInput >= 0) {
@@ -238,6 +235,7 @@ public class SudokuGrid {
         }
     }
 
+
     public void showConflicts(Activity activity, int clickedRow, int clickedCol, int activeKey) {
         Boolean isOnBox = false;
         Boolean isOnRow = false;
@@ -246,7 +244,7 @@ public class SudokuGrid {
         int clickIndex = getIndexFromPosition(clickedRow, clickedCol);
 
         // Check Box
-        List<Integer> checkBox = getBoxIndexes(clickedRow, clickedCol);
+        List<Integer> checkBox = getBoxIndexes(clickedRow, clickedCol, false);
         for (Integer i : checkBox) {
             if (puzzleUserAnswers.get(i) == activeKey) {
                 isOnBox = true;
@@ -256,7 +254,7 @@ public class SudokuGrid {
         }
 
         // Check Row
-        List<Integer> checkRow = getRowIndexes(clickedRow, clickedCol);
+        List<Integer> checkRow = getRowIndexes(clickedRow, clickedCol, false);
         for (Integer i : checkRow) {
             if (puzzleUserAnswers.get(i) == activeKey) {
                 isOnRow = true;
@@ -266,7 +264,7 @@ public class SudokuGrid {
         }
 
         // Check Col
-        List<Integer> checkCol = getColIndexes(clickedRow, clickedCol);
+        List<Integer> checkCol = getColIndexes(clickedRow, clickedCol, false);
         for (Integer i : checkCol) {
             if (puzzleUserAnswers.get(i) == activeKey) {
                 isOnCol = true;
@@ -309,90 +307,16 @@ public class SudokuGrid {
 
     }
 
-    public List<Integer> createSolution() {
-        int[] ints =   {6,2,7,3,8,9,4,1,5,
-                        8,9,4,1,7,5,3,6,2,
-                        1,3,5,6,4,2,7,8,9,
-                        9,8,2,7,6,3,1,5,4,
-                        4,5,3,2,9,1,8,7,6,
-                        7,1,6,4,5,8,2,9,3,
-                        3,7,1,9,2,6,5,4,8,
-                        2,6,8,5,1,4,9,3,7,
-                        5,4,9,8,3,7,6,2,1};
-        List<Integer> solution = new ArrayList<Integer>();
-        for (int anInt : ints) {
-            solution.add(anInt);
-        }
-        return solution;
-    }
-
-    public List<Boolean> createPuzzleMask() {
-        boolean[] bols =   {false,false,true,   true,false,true,    true,false,false,
-                            true,false,false,   true,false,true,    false,false,true,
-                            false,false,false,  false,true,false,   false,false,false,
-
-                            false,true,false,   false,true,false,   false,true,false,
-                            true,false,true,    true,false,true,    true,false,true,
-                            false,true,false,   false,true,false,   false,true,false,
-
-                            false,false,false,  false,true,false,   false,false,false,
-                            true,false,false,   true,false,true,    false,false,true,
-                            false,false,true,   true,false,true,    true,false,false};
-        List<Boolean> mask = new ArrayList<>();
-        for (boolean bol : bols) {
-            mask.add(bol);
-        }
-        return mask;
-    }
-
-    public List<Integer> createPuzzleUserAnswers() {
-        List<Integer> userAnswers = new ArrayList<>();
-        int size = 9 * 9;
-        for (int i = 0; i < size; i++) {
-            if (puzzleMask.get(i)) {
-                userAnswers.add(puzzleSolution.get(i));
-            } else {
-                userAnswers.add(0);
-            }
-        }
-        return userAnswers;
-    }
-
-    public List<Boolean> createPuzzleCorrectAnswers() {
-        List<Boolean> list = new ArrayList<>();
-        for (Boolean bol : puzzleMask) {
-            list.add(bol);
-        }
-        return list;
-    }
-
-    public List<Boolean> createPuzzleUserInput() {
-        List<Boolean> userInput = new ArrayList<>();
-        int size = 9*9;
-        for (int i = 0; i < size; i++) {
-            userInput.add(false);
-        }
-        return userInput;
-    }
-
-    public List<Integer> createPuzzleHighlight() {
-        List<Integer> list = new ArrayList<>();
-        int size = 9*9;
-        for (int i = 0; i < size; i++) {
-            list.add(0);
-        }
-        return list;
-    }
 
     public void clearPuzzleHighlight(Activity activity) {
         // This makes puzzleHighlight as default.
         int size = 9*9;
         for (int i = 0; i < size; i++) {
-            int intensity = puzzleHighlight.get(i);
             setIntensityColor(activity, i, 0);
             puzzleHighlight.set(i, 0);
         }
     }
+
 
     public void updatePuzzleHighlight(Activity activity, int activeKey) {
         int size = 9*9;
@@ -426,45 +350,22 @@ public class SudokuGrid {
         }
     }
 
+
     public void setHighlightLevel1(int row, int col) {
-        List<Integer> allIndexes = getRowColBoxIndexes(row, col);
+        List<Integer> allIndexes = getRowColBoxIndexes(row, col, false);
         for (Integer i : allIndexes) {
             int intensity = puzzleHighlight.get(i);
             if (intensity == 0) puzzleHighlight.set(i, 1);
         }
     }
 
-    public List<Boolean> createNumberCheckList() {
-        Boolean[] array = new Boolean[9];
-        Arrays.fill(array, false);
-        return Arrays.asList(array);
-    }
-
-    public List<Integer> getRowColBoxIndexes(int row, int col) {
-        List<Integer> indexes = new ArrayList<>();
-        // Box
-        List<Integer> boxList = getBoxIndexes(row, col);
-        indexes.addAll(boxList);
-        // Row
-        List<Integer> rowList = getRowIndexes(row, col);
-        indexes.addAll(rowList);
-        // Column
-        List<Integer> colList = getColIndexes(row, col);
-        indexes.addAll(colList);
-        // Removing duplicates
-        HashSet hashSet = new HashSet();
-        hashSet.addAll(indexes);
-        indexes.clear();
-        indexes.addAll(hashSet);
-
-        return indexes;
-    }
 
     public void setIntensityColor(Activity activity, int index, int highlightLevel) {
         int id = getIdFromIndex(activity, index);
         Drawable mDrawable = activity.findViewById(id).getBackground();
         setColorFilter(activity, mDrawable, highlightLevel);
     }
+
 
     public Drawable getGridDrawable(Activity activity, int row, int col) {
         /*  Different drawables are used according to its grid position, as shown on the diagram:
@@ -524,6 +425,7 @@ public class SudokuGrid {
         return mDrawable;
     }
 
+
     public void setColorFilter(Activity activity, Drawable mDrawable, int highlightLevel) {
         /* Highlight level 0 = Background.
         *  Highlight level 1 = Check area.
@@ -547,7 +449,30 @@ public class SudokuGrid {
                 new PorterDuffColorFilter(mColor, PorterDuff.Mode.MULTIPLY));
     }
 
-    public List<Integer> getBoxIndexes(int row, int col) {
+
+    public List<Integer> getRowColBoxIndexes(int row, int col, Boolean includeClickedPosition) {
+        List<Integer> indexes = new ArrayList<>();
+        // Box
+        List<Integer> boxList = getBoxIndexes(row, col, includeClickedPosition);
+        indexes.addAll(boxList);
+        // Row
+        List<Integer> rowList = getRowIndexes(row, col, includeClickedPosition);
+        indexes.addAll(rowList);
+        // Column
+        List<Integer> colList = getColIndexes(row, col, includeClickedPosition);
+        indexes.addAll(colList);
+        // Removing duplicates
+        HashSet hashSet = new HashSet();
+        hashSet.addAll(indexes);
+        indexes.clear();
+        indexes.addAll(hashSet);
+
+        return indexes;
+    }
+
+
+    public List<Integer> getBoxIndexes(int row, int col, Boolean includeClickedPosition) {
+        int clickedIndex = getIndexFromPosition(row, col);
         int[] boxIndexes = new int[] {};
         List<Integer> indexes = new ArrayList<>();
         switch (row) {
@@ -596,15 +521,18 @@ public class SudokuGrid {
         }
 
         for (int i : boxIndexes) {
-            indexes.add(i);
+            Boolean isToAdd = (clickedIndex != i) || includeClickedPosition;
+            if (isToAdd) indexes.add(i);
         }
         return indexes;
     }
 
-    public List<Integer> getRowIndexes(int row, int col) {
+
+    public List<Integer> getRowIndexes(int row, int col, Boolean includeClickedPosition) {
         List<Integer> rowIndexes = new ArrayList<>();
         for (int r = 1; r <= 9; r++) {
-            if (r != row) {
+            Boolean isToAdd = (r != row) || includeClickedPosition;
+            if (isToAdd) {
                 int i = getIndexFromPosition(r, col);
                 rowIndexes.add(i);
             }
@@ -612,16 +540,21 @@ public class SudokuGrid {
         return rowIndexes;
     }
 
-    public List<Integer> getColIndexes(int row, int col) {
+
+    public List<Integer> getColIndexes(int row, int col, Boolean includeClickedPosition) {
         List<Integer> colIndexes = new ArrayList<>();
         for (int c = 1; c <= 9; c++) {
-            if (c != col) {
+            Boolean isToAdd = (c != col) || includeClickedPosition;
+            if (isToAdd) {
                 int i = getIndexFromPosition(row, c);
                 colIndexes.add(i);
             }
         }
         return colIndexes;
     }
+
+
+    //////////  CONVERTERS //////////
 
     public int getIndexFromView(Activity activity, TextView view) {
         // Gets a grid's TextView and returns its index.
@@ -653,7 +586,100 @@ public class SudokuGrid {
                 .getIdentifier(idString, "id", activity.getPackageName());
     }
 
-    // Getters and Setters
+
+    //////////  LIST CREATERS //////////
+
+    public List<Integer> createPuzzleUserAnswers() {
+        List<Integer> userAnswers = new ArrayList<>();
+        int size = 9 * 9;
+        for (int i = 0; i < size; i++) {
+            if (puzzleMask.get(i)) {
+                userAnswers.add(puzzleSolution.get(i));
+            } else {
+                userAnswers.add(0);
+            }
+        }
+        return userAnswers;
+    }
+
+
+    public List<Boolean> createPuzzleCorrectAnswers() {
+        List<Boolean> list = new ArrayList<>();
+        for (Boolean bol : puzzleMask) {
+            list.add(bol);
+        }
+        return list;
+    }
+
+
+    public List<Boolean> createPuzzleUserInput() {
+        List<Boolean> userInput = new ArrayList<>();
+        int size = 9*9;
+        for (int i = 0; i < size; i++) {
+            userInput.add(false);
+        }
+        return userInput;
+    }
+
+
+    public List<Integer> createPuzzleHighlight() {
+        List<Integer> list = new ArrayList<>();
+        int size = 9*9;
+        for (int i = 0; i < size; i++) {
+            list.add(0);
+        }
+        return list;
+    }
+
+
+    public List<Boolean> createNumberCheckList() {
+        Boolean[] array = new Boolean[9];
+        Arrays.fill(array, false);
+        return Arrays.asList(array);
+    }
+
+
+    //////////  DEBUG METHODS //////////
+
+    public List<Integer> createDebugSolution() {
+        int[] ints =   {6,2,7,3,8,9,4,1,5,
+                8,9,4,1,7,5,3,6,2,
+                1,3,5,6,4,2,7,8,9,
+                9,8,2,7,6,3,1,5,4,
+                4,5,3,2,9,1,8,7,6,
+                7,1,6,4,5,8,2,9,3,
+                3,7,1,9,2,6,5,4,8,
+                2,6,8,5,1,4,9,3,7,
+                5,4,9,8,3,7,6,2,1};
+        List<Integer> solution = new ArrayList<Integer>();
+        for (int anInt : ints) {
+            solution.add(anInt);
+        }
+        return solution;
+    }
+
+
+    public List<Boolean> createDebugMask() {
+        boolean[] bols =   {false,false,true,   true,false,true,    true,false,false,
+                true,false,false,   true,false,true,    false,false,true,
+                false,false,false,  false,true,false,   false,false,false,
+
+                false,true,false,   false,true,false,   false,true,false,
+                true,false,true,    true,false,true,    true,false,true,
+                false,true,false,   false,true,false,   false,true,false,
+
+                false,false,false,  false,true,false,   false,false,false,
+                true,false,false,   true,false,true,    false,false,true,
+                false,false,true,   true,false,true,    true,false,false};
+        List<Boolean> mask = new ArrayList<>();
+        for (boolean bol : bols) {
+            mask.add(bol);
+        }
+        return mask;
+    }
+
+
+    //////////  GETTERS AND SETTERS //////////
 
     public List<Boolean> getPuzzleCorrectAnswers() {
         return puzzleCorrectAnswers;
