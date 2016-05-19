@@ -25,7 +25,9 @@ import java.util.List;
 
 public class SudokuGrid {
 
-    int lastInput = -1;
+    final static int GRID_SIZE = 81;
+
+    private int lastInput = -1;
 
     private List<Integer> puzzleSolution;
     private List<Boolean> puzzleMask;
@@ -145,7 +147,6 @@ public class SudokuGrid {
 
 
     public void commitChanges(Activity activity, TextView view) {
-        int size = 9 * 9;
         int activeKey = SudokuKeyboard.getActiveKey();
         int indexOfClick = getIndexFromView(activity, view);
         int[] position = getPositionFromIndex(indexOfClick);
@@ -204,7 +205,7 @@ public class SudokuGrid {
 
         // Updating isNumberComplete.
         int numberCounter = 0;
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < GRID_SIZE; i++) {
             if (puzzleUserAnswers.get(i) == activeKey) numberCounter++;
             if (numberCounter == 9) {
                 int listsIndex = activeKey - 1;
@@ -311,8 +312,7 @@ public class SudokuGrid {
 
     public void clearPuzzleHighlight(Activity activity) {
         // This makes puzzleHighlight as default.
-        int size = 9*9;
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < GRID_SIZE; i++) {
             setIntensityColor(activity, i, 0);
             puzzleHighlight.set(i, 0);
         }
@@ -320,12 +320,11 @@ public class SudokuGrid {
 
 
     public void updatePuzzleHighlight(Activity activity, int activeKey) {
-        int size = 9*9;
         clearPuzzleHighlight(activity);
 
         // Setting highlight level 2 to activeKey's numbers .
         List<Integer> highlightList = new ArrayList<>();
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < GRID_SIZE; i++) {
             int highlightLevel = 2;
             int numberOnCell = puzzleUserAnswers.get(i);
             if (numberOnCell == activeKey) {
@@ -592,8 +591,7 @@ public class SudokuGrid {
 
     public List<Integer> createPuzzleUserAnswers() {
         List<Integer> userAnswers = new ArrayList<>();
-        int size = 9 * 9;
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < GRID_SIZE; i++) {
             if (puzzleMask.get(i)) {
                 userAnswers.add(puzzleSolution.get(i));
             } else {
@@ -615,8 +613,7 @@ public class SudokuGrid {
 
     public List<Boolean> createPuzzleUserInput() {
         List<Boolean> userInput = new ArrayList<>();
-        int size = 9*9;
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < GRID_SIZE; i++) {
             userInput.add(false);
         }
         return userInput;
@@ -625,8 +622,7 @@ public class SudokuGrid {
 
     public List<Integer> createPuzzleHighlight() {
         List<Integer> list = new ArrayList<>();
-        int size = 9*9;
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < GRID_SIZE; i++) {
             list.add(0);
         }
         return list;
