@@ -241,7 +241,6 @@ public class SudokuGrid {
         Boolean isOnRow = false;
         Boolean isOnCol = false;
         List<Integer> conflictIndexes = new ArrayList<>();
-        int clickIndex = getIndexFromPosition(clickedRow, clickedCol);
 
         // Check Box
         List<Integer> checkBox = getBoxIndexes(clickedRow, clickedCol, false);
@@ -276,21 +275,23 @@ public class SudokuGrid {
         // Draw
         if (isOnBox) {
             for (Integer i : checkBox) {
-                if (clickIndex != i) {
-                    int id = getIdFromIndex(activity, i);
-                    Drawable cell = activity.findViewById(id).getBackground();
-                    setColorFilter(activity, cell, 3);
-                }
+                int id = getIdFromIndex(activity, i);
+                Drawable cell = activity.findViewById(id).getBackground();
+                setColorFilter(activity, cell, 3);
             }
 
-        } else if (isOnRow) {
+        }
+
+        if (isOnRow) {
             for (Integer i : checkRow) {
                 int id = getIdFromIndex(activity, i);
                 Drawable cell = activity.findViewById(id).getBackground();
                 setColorFilter(activity, cell, 3);
             }
 
-        } else if (isOnCol) {
+        }
+
+        if (isOnCol) {
             for (Integer i : checkCol) {
                 int id = getIdFromIndex(activity, i);
                 Drawable cell = activity.findViewById(id).getBackground();
