@@ -334,13 +334,10 @@ public class SudokuGrid {
         List<Integer> highlightList = new ArrayList<>();
         for (int i = 0; i < size; i++) {
             int highlightLevel = 2;
-            int solution = puzzleSolution.get(i);
-            if (solution == activeKey) {
-                Boolean needsHighlight = puzzleMask.get(i) || puzzleUserInput.get(i);
-                if (needsHighlight) {
-                    puzzleHighlight.set(i, highlightLevel);
-                    highlightList.add(i);
-                }
+            int numberOnCell = puzzleUserAnswers.get(i);
+            if (numberOnCell == activeKey) {
+                puzzleHighlight.set(i, highlightLevel);
+                highlightList.add(i);
             }
         }
 
