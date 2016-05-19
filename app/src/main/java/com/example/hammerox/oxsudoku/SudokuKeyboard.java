@@ -71,7 +71,7 @@ public class SudokuKeyboard {
                         activeKey = pressedKeyNumber;
 
                         // Highlight grid's keys
-                        sudokuGrid.setPuzzleHighlight(activity, activeKey);
+                        sudokuGrid.updatePuzzleHighlight(activity, activeKey);
 
                     } else {        // If clicked key is the same as the active key...
                         // change button's color to default, ...

@@ -7,10 +7,8 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.IntegerRes;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -21,6 +19,8 @@ import com.example.hammerox.oxsudoku.Tools.SquareLayout;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 
@@ -87,7 +87,7 @@ public class SudokuGrid {
                         1.0f));
                     // Appearance
                 Drawable mDrawable = getGridDrawable(activity, row, col);
-                setColorFilter(activity, row, col, mDrawable, 0);
+                setColorFilter(activity, mDrawable, 0);
                 textView.setBackground(mDrawable);
                 textView.setGravity(Gravity.CENTER);
                 textView.setTypeface(Typeface.DEFAULT_BOLD);
@@ -130,12 +130,11 @@ public class SudokuGrid {
 
                                 // If user input is valid, commit changes.
                                 // If user input is not valid, warn and show conflicts.
+                                updatePuzzleHighlight(activity, activeKey);
                                 if (isValid) {
                                     commitChanges(activity, clickedText);
                                 } else {
-                                    Toast toast = Toast.makeText(activity, "You can't break the rules", Toast.LENGTH_LONG);
-                                    toast.setGravity(Gravity.CENTER, 0, 0);
-                                    toast.show();
+                                    showConflicts(activity, clickedRow, clickedCol, activeKey);
                                 }
                             }
                         }
@@ -195,7 +194,7 @@ public class SudokuGrid {
         }
 
         // Updating puzzleHighlight Level 2
-        setColorFilter(activity, clickedRow, clickedCol, view.getBackground(), 2);
+        setColorFilter(activity, view.getBackground(), 2);
         puzzleHighlight.set(indexOfClick, 2);
 
         // Updating puzzleHighlight Level 1
@@ -237,6 +236,77 @@ public class SudokuGrid {
             toast2.setGravity(Gravity.CENTER, 0, 0);
             toast2.show();
         }
+    }
+
+    public void showConflicts(Activity activity, int clickedRow, int clickedCol, int activeKey) {
+        Boolean isOnBox = false;
+        Boolean isOnRow = false;
+        Boolean isOnCol = false;
+        List<Integer> conflictIndexes = new ArrayList<>();
+        int clickIndex = getIndexFromPosition(clickedRow, clickedCol);
+
+        // Check Box
+        List<Integer> checkBox = getBoxIndexes(clickedRow, clickedCol);
+        for (Integer i : checkBox) {
+            if (puzzleUserAnswers.get(i) == activeKey) {
+                isOnBox = true;
+                conflictIndexes.add(i);
+                break;
+            }
+        }
+
+        // Check Row
+        List<Integer> checkRow = getRowIndexes(clickedRow, clickedCol);
+        for (Integer i : checkRow) {
+            if (puzzleUserAnswers.get(i) == activeKey) {
+                isOnRow = true;
+                conflictIndexes.add(i);
+                break;
+            }
+        }
+
+        // Check Col
+        List<Integer> checkCol = getColIndexes(clickedRow, clickedCol);
+        for (Integer i : checkCol) {
+            if (puzzleUserAnswers.get(i) == activeKey) {
+                isOnCol = true;
+                conflictIndexes.add(i);
+                break;
+            }
+        }
+
+        // Draw
+        if (isOnBox) {
+            for (Integer i : checkBox) {
+                if (clickIndex != i) {
+                    int id = getIdFromIndex(activity, i);
+                    Drawable cell = activity.findViewById(id).getBackground();
+                    setColorFilter(activity, cell, 3);
+                }
+            }
+
+        } else if (isOnRow) {
+            for (Integer i : checkRow) {
+                int id = getIdFromIndex(activity, i);
+                Drawable cell = activity.findViewById(id).getBackground();
+                setColorFilter(activity, cell, 3);
+            }
+
+        } else if (isOnCol) {
+            for (Integer i : checkCol) {
+                int id = getIdFromIndex(activity, i);
+                Drawable cell = activity.findViewById(id).getBackground();
+                setColorFilter(activity, cell, 3);
+            }
+        }
+
+        // Mark conflicting cells.
+        for (Integer i : conflictIndexes) {
+            int id = getIdFromIndex(activity, i);
+            Drawable cell = activity.findViewById(id).getBackground();
+            setColorFilter(activity, cell, 4);
+        }
+
     }
 
     public List<Integer> createSolution() {
@@ -319,14 +389,12 @@ public class SudokuGrid {
         int size = 9*9;
         for (int i = 0; i < size; i++) {
             int intensity = puzzleHighlight.get(i);
-            if (intensity != 0) {
-                setIntensityColor(activity, i, 0);
-                puzzleHighlight.set(i, 0);
-            }
+            setIntensityColor(activity, i, 0);
+            puzzleHighlight.set(i, 0);
         }
     }
 
-    public void setPuzzleHighlight(Activity activity, int activeKey) {
+    public void updatePuzzleHighlight(Activity activity, int activeKey) {
         int size = 9*9;
         clearPuzzleHighlight(activity);
 
@@ -359,27 +427,10 @@ public class SudokuGrid {
     }
 
     public void setHighlightLevel1(int row, int col) {
-        // Box
-        int[] boxIndexes = getBoxIndexes(row, col);
-        for (int i : boxIndexes) {
+        List<Integer> allIndexes = getRowColBoxIndexes(row, col);
+        for (Integer i : allIndexes) {
             int intensity = puzzleHighlight.get(i);
             if (intensity == 0) puzzleHighlight.set(i, 1);
-        }
-        // Row
-        for (int r = 1; r <= 9; r++) {
-            if (r != row) {
-                int i = getIndexFromPosition(r, col);
-                int intensity = puzzleHighlight.get(i);
-                if (intensity == 0) puzzleHighlight.set(i, 1);
-            }
-        }
-        // Column
-        for (int c = 1; c <= 9; c++) {
-            if (c != col) {
-                int i = getIndexFromPosition(row, c);
-                int intensity = puzzleHighlight.get(i);
-                if (intensity == 0) puzzleHighlight.set(i, 1);
-            }
         }
     }
 
@@ -392,32 +443,27 @@ public class SudokuGrid {
     public List<Integer> getRowColBoxIndexes(int row, int col) {
         List<Integer> indexes = new ArrayList<>();
         // Box
-        int[] boxIndexes = getBoxIndexes(row, col);
-        for (int i : boxIndexes) {
-            indexes.add(i);
-        }
+        List<Integer> boxList = getBoxIndexes(row, col);
+        indexes.addAll(boxList);
         // Row
-        for (int r = 1; r <= 9; r++) {
-            if (r != row) {
-                int i = getIndexFromPosition(r, col);
-                indexes.add(i);
-            }
-        }
+        List<Integer> rowList = getRowIndexes(row, col);
+        indexes.addAll(rowList);
         // Column
-        for (int c = 1; c <= 9; c++) {
-            if (c != col) {
-                int i = getIndexFromPosition(row, c);
-                indexes.add(i);
-            }
-        }
+        List<Integer> colList = getColIndexes(row, col);
+        indexes.addAll(colList);
+        // Removing duplicates
+        HashSet hashSet = new HashSet();
+        hashSet.addAll(indexes);
+        indexes.clear();
+        indexes.addAll(hashSet);
+
         return indexes;
     }
 
     public void setIntensityColor(Activity activity, int index, int highlightLevel) {
-        int[] position = getPositionFromIndex(index);
         int id = getIdFromIndex(activity, index);
         Drawable mDrawable = activity.findViewById(id).getBackground();
-        setColorFilter(activity, position[0], position[1], mDrawable, highlightLevel);
+        setColorFilter(activity, mDrawable, highlightLevel);
     }
 
     public Drawable getGridDrawable(Activity activity, int row, int col) {
@@ -478,83 +524,32 @@ public class SudokuGrid {
         return mDrawable;
     }
 
-    public void setColorFilter(Activity activity, int row, int col,
-                               Drawable mDrawable, int highlightLevel) {
-        /*  Grid uses different colors, with w = white and g = gray.
-        *       1 2 3 4 5 6 7 8 9
-        *       -----------------
-        *   1 | g g g w w w g g g
-        *   2 | g g g w w w g g g
-        *   3 | g g g w w w g g g
-        *   4 | w w w g g g w w w
-        *   5 | w w w g g g w w w
-        *   6 | w w w g g g w w w
-        *   7 | g g g w w w g g g
-        *   8 | g g g w w w g g g
-        *   9 | g g g w w w g g g  */
+    public void setColorFilter(Activity activity, Drawable mDrawable, int highlightLevel) {
+        /* Highlight level 0 = Background.
+        *  Highlight level 1 = Check area.
+        *  Highlight level 2 = Active number.
+        *  Highlight level 3 = Conflict area.
+        *  Highlight level 4 = Conflicting cell.
+        *  */
         int mColor;
-        if (col == 4 || col == 5 || col == 6) {
-            switch (row) {
-                case 4:
-                case 5:
-                case 6:
-                    if (highlightLevel == 0) {
-                        mColor = Color.WHITE;
-                    } else if (highlightLevel == 1) {
-                        mColor = ContextCompat.getColor(activity, R.color.colorHighlightWhite);
-                    } else {
-                        mColor = ContextCompat.getColor(activity, R.color.colorHighlightStrong);
-                    }
-                    mDrawable.setColorFilter(
-                            new PorterDuffColorFilter(mColor, PorterDuff.Mode.MULTIPLY));
-                    break;
-                default:
-                    if (highlightLevel == 0) {
-                        mColor = Color.WHITE;
-                    } else if (highlightLevel == 1) {
-                        mColor = ContextCompat.getColor(activity, R.color.colorHighlightWhite);
-                    } else {
-                        mColor = ContextCompat.getColor(activity, R.color.colorHighlightStrong);
-                    }
-                    mDrawable.setColorFilter(
-                            new PorterDuffColorFilter(mColor, PorterDuff.Mode.MULTIPLY));
-                    break;
-            }
+        if (highlightLevel == 0) {
+            mColor = Color.WHITE;
+        } else if (highlightLevel == 1) {
+            mColor = ContextCompat.getColor(activity, R.color.colorHighlightWhite);
+        } else if (highlightLevel == 2) {
+            mColor = ContextCompat.getColor(activity, R.color.colorHighlightStrong);
+        } else if (highlightLevel == 3) {
+            mColor = ContextCompat.getColor(activity, R.color.colorWarnArea);
         } else {
-            switch (row) {
-                case 1:
-                case 2:
-                case 3:
-                case 7:
-                case 8:
-                case 9:
-                    if (highlightLevel == 0) {
-                        mColor = Color.WHITE;
-                    } else if (highlightLevel == 1) {
-                        mColor = ContextCompat.getColor(activity, R.color.colorHighlightWhite);
-                    } else {
-                        mColor = ContextCompat.getColor(activity, R.color.colorHighlightStrong);
-                    }
-                    mDrawable.setColorFilter(
-                            new PorterDuffColorFilter(mColor, PorterDuff.Mode.MULTIPLY));
-                    break;
-                default:
-                    if (highlightLevel == 0) {
-                        mColor = Color.WHITE;
-                    } else if (highlightLevel == 1) {
-                        mColor = ContextCompat.getColor(activity, R.color.colorHighlightWhite);
-                    } else {
-                        mColor = ContextCompat.getColor(activity, R.color.colorHighlightStrong);
-                    }
-                    mDrawable.setColorFilter(
-                            new PorterDuffColorFilter(mColor, PorterDuff.Mode.MULTIPLY));
-                    break;
-            }
+            mColor = ContextCompat.getColor(activity, R.color.colorWarn);
         }
+        mDrawable.setColorFilter(
+                new PorterDuffColorFilter(mColor, PorterDuff.Mode.MULTIPLY));
     }
 
-    public int[] getBoxIndexes(int row, int col) {
+    public List<Integer> getBoxIndexes(int row, int col) {
         int[] boxIndexes = new int[] {};
+        List<Integer> indexes = new ArrayList<>();
         switch (row) {
             case 1:
             case 2:
@@ -599,7 +594,33 @@ public class SudokuGrid {
                 }
                 break;
         }
-        return boxIndexes;
+
+        for (int i : boxIndexes) {
+            indexes.add(i);
+        }
+        return indexes;
+    }
+
+    public List<Integer> getRowIndexes(int row, int col) {
+        List<Integer> rowIndexes = new ArrayList<>();
+        for (int r = 1; r <= 9; r++) {
+            if (r != row) {
+                int i = getIndexFromPosition(r, col);
+                rowIndexes.add(i);
+            }
+        }
+        return rowIndexes;
+    }
+
+    public List<Integer> getColIndexes(int row, int col) {
+        List<Integer> colIndexes = new ArrayList<>();
+        for (int c = 1; c <= 9; c++) {
+            if (c != col) {
+                int i = getIndexFromPosition(row, c);
+                colIndexes.add(i);
+            }
+        }
+        return colIndexes;
     }
 
     public int getIndexFromView(Activity activity, TextView view) {
