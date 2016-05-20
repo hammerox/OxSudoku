@@ -10,6 +10,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
+/*
+*
+* Algorithm taken from:
+* http://stackoverflow.com/questions/6924216/how-to-generate-sudoku-boards-with-unique-solutions
+* User: Doc Brown
+*
+* */
+
 public class SudokuGenerator {
 
     List<Integer> board;
