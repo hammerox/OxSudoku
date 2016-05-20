@@ -96,7 +96,7 @@ public class SudokuKeyboard {
     }
 
     public void setClickListeners(final View rootView) {
-        Button leftButton1 = (Button) rootView.findViewById(R.id.left_button_1);
+/*        Button leftButton1 = (Button) rootView.findViewById(R.id.left_button_1);
         leftButton1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -126,7 +126,7 @@ public class SudokuKeyboard {
             public void onClick(View v) {
 
             }
-        });
+        });*/
     }
 
     public static void showButton(Button key) {

@@ -33,13 +33,17 @@
             android:layout_margin="5dp"
             android:layout_weight="1">
 
-            <Button
+            <ImageButton
                 android:id="@+id/left_button_1"
+                android:src="@drawable/pencil"
+                android:layout_gravity="center"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"/>
-            <Button
+            <ImageButton
                 android:id="@+id/left_button_2"
+                android:src="@drawable/eraser"
+                android:layout_gravity="center"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"/>
@@ -134,13 +138,18 @@
             android:layout_margin="5dp"
             android:layout_weight="1">
 
-            <Button
+            <ImageButton
                 android:id="@+id/right_button_1"
+                android:src="@drawable/check"
+                android:layout_gravity="center"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"/>
-            <Button
+
+            <ImageButton
                 android:id="@+id/right_button_2"
+                android:src="@drawable/undo"
+                android:layout_gravity="center"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"/>
