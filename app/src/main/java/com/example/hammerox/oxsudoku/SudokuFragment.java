@@ -4,23 +4,22 @@ import android.app.Fragment;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.SystemClock;
+import android.support.v4.view.MenuItemCompat;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
+import android.widget.Chronometer;
 
 
 public class SudokuFragment extends Fragment {
 
     private SudokuGrid sudokuGrid;
+    static Chronometer chronometer;
+    static long mLastStopTime = 0;
 
     private OnFragmentInteractionListener mListener;
 
@@ -68,7 +67,10 @@ public class SudokuFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_sudoku, menu);
         super.onCreateOptionsMenu(menu, inflater);
-        /*Todo - Add timer*/
+
+        MenuItem timerItem = menu.findItem(R.id.chronometer);
+        chronometer = (Chronometer) MenuItemCompat.getActionView(timerItem);
+        chronometer.start();
     }
 
     @Override
@@ -109,5 +111,41 @@ public class SudokuFragment extends Fragment {
 
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
+    }
+
+
+    @Override
+    public void onResume() {
+        if (chronometer != null)
+            chronoStart();
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        chronoPause();
+        super.onPause();
+    }
+
+    public static void chronoStart()
+    {
+        // on first start
+        if ( mLastStopTime == 0 )
+            chronometer.setBase( SystemClock.elapsedRealtime() );
+            // on resume after pause
+        else
+        {
+            long intervalOnPause = (SystemClock.elapsedRealtime() - mLastStopTime);
+            chronometer.setBase( chronometer.getBase() + intervalOnPause );
+        }
+
+        chronometer.start();
+    }
+
+
+    public static void chronoPause()
+    {
+        chronometer.stop();
+        mLastStopTime = SystemClock.elapsedRealtime();
     }
 }

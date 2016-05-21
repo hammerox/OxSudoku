@@ -48,9 +48,12 @@ public class SudokuGrid {
         * puzzleUserInput = Boolean. Is true if contains user value.
         * puzzleHightlight = Integer. 0 shows no highlight, 1 shows partial and 2 shows full highlight.
         * */
-        SudokuGenerator puzzle = new SudokuGenerator();
+
+        puzzleSolution = createDebugSolution();
+        puzzleMask = createDebugMask();
+        /*SudokuGenerator puzzle = new SudokuGenerator();
         puzzleSolution = puzzle.board;
-        puzzleMask = puzzle.mask;
+        puzzleMask = puzzle.mask;*/
         puzzleUserAnswers = createPuzzleUserAnswers();
         puzzleCorrectAnswers = createPuzzleCorrectAnswers();
         puzzleUserInput = createPuzzleUserInput();

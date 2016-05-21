@@ -9,9 +9,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        SudokuFragment sudokuFragment = new SudokuFragment();
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
-                    .add(R.id.sudoku_container, new SudokuFragment())
+                    .add(R.id.sudoku_container, sudokuFragment)
                     .commit();
         }
     }
