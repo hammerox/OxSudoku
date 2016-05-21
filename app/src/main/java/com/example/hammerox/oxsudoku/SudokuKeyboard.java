@@ -9,6 +9,7 @@ import android.support.v4.view.ViewCompat;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 
 
 public class SudokuKeyboard {
@@ -96,7 +97,7 @@ public class SudokuKeyboard {
     }
 
     public void setClickListeners(final View rootView) {
-/*        Button leftButton1 = (Button) rootView.findViewById(R.id.left_button_1);
+        ImageButton leftButton1 = (ImageButton) rootView.findViewById(R.id.left_button_1);
         leftButton1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -104,7 +105,7 @@ public class SudokuKeyboard {
             }
         });
 
-        Button leftButton2 = (Button) rootView.findViewById(R.id.left_button_2);
+        ImageButton leftButton2 = (ImageButton) rootView.findViewById(R.id.left_button_2);
         leftButton2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -112,7 +113,7 @@ public class SudokuKeyboard {
             }
         });
 
-        Button rightButton1 = (Button) rootView.findViewById(R.id.right_button_1);
+        ImageButton rightButton1 = (ImageButton) rootView.findViewById(R.id.right_button_1);
         rightButton1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -120,13 +121,13 @@ public class SudokuKeyboard {
             }
         });
 
-        Button rightButton2 = (Button) rootView.findViewById(R.id.right_button_2);
+        ImageButton rightButton2 = (ImageButton) rootView.findViewById(R.id.right_button_2);
         rightButton2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
             }
-        });*/
+        });
     }
 
     public static void showButton(Button key) {
