@@ -25,3 +25,16 @@
                 Roger Alien
 
 
+4. Como fazer um botão ser transparente e clicável ao mesmo tempo.
+            Apenas lembrete:
+                http://stackoverflow.com/questions/3402787/how-to-have-a-transparent-imagebutton-android
+                lory105
+
+5. Nota sobre android:gravity.
+            android:gravity altera a posição dos childs.
+            android:layout_gravity altera sua própria posição com relação ao parent.
+            android:layout_centerInParent funciona apenas dentro de RelativeLayouts
+
+6. Nota sobre Sudoku.
+            Achei um bom texto sobre algoritimos de Sudoku:
+                http://zhangroup.aporc.org/images/files/Paper_3485.pdf
