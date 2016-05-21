@@ -10,6 +10,10 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class SudokuKeyboard {
@@ -96,7 +100,7 @@ public class SudokuKeyboard {
         }
     }
 
-    public void setClickListeners(final View rootView) {
+    public void setClickListeners(final Activity activity, final View rootView, final SudokuGrid sudokuGrid) {
         ImageButton leftButton1 = (ImageButton) rootView.findViewById(R.id.left_button_1);
         leftButton1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -117,7 +121,31 @@ public class SudokuKeyboard {
         rightButton1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                int wrongCount = 0; int correctCount = 0; int totalCount = 0;
+                List<List> wrongArray = new ArrayList<>();
+                List<Boolean> puzzleMask = sudokuGrid.getPuzzleMask();
+                List<Boolean> puzzleCorrectAnswers = sudokuGrid.getPuzzleCorrectAnswers();
+                List<Boolean> puzzleUserInput = sudokuGrid.getPuzzleUserInput();
+                // Compares all user inputs with correct answers. If wrong, it stores the position
+                // of the wrong answer into wrongArray. Counters are used to calculate puzzle's
+                // progression.
+                for (int row = 1; row <= 9; row++) {
+                    for (int col = 1; col <= 9; col++) {
+                        int index = 9 * (row - 1) + col - 1;
+                        if (!puzzleCorrectAnswers.get(index) && puzzleUserInput.get(index)) {
+                            List<Integer> toAdd = new ArrayList<>();
+                            toAdd.add(row);
+                            toAdd.add(col);
+                            wrongArray.add(toAdd);
+                            wrongCount++;
+                        } else if (puzzleCorrectAnswers.get(index) && puzzleUserInput.get(index)) {
+                            correctCount++;
+                        }
+                        if (!puzzleMask.get(index)) totalCount++;
+                    }
+                }
+                // Printing on screen if there are mistakes or not.
+                getProgress(activity, wrongCount, correctCount, totalCount);
             }
         });
 
@@ -129,6 +157,23 @@ public class SudokuKeyboard {
             }
         });
     }
+
+
+    public void getProgress(Activity activity, int wrongCount, int correctCount, int totalCount){
+        if (wrongCount != 0) {
+            if (wrongCount == 1) {
+                Toast.makeText(activity, "There is 1 mistake",
+                        Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(activity, "There are " + wrongCount + " mistakes",
+                        Toast.LENGTH_LONG).show();
+            }
+        } else {
+            Toast.makeText(activity, "Everything is alright! \n Progress: "
+                    + correctCount + "/" + totalCount, Toast.LENGTH_LONG).show();
+        }
+    }
+
 
     public static void showButton(Button key) {
         Drawable mDrawable = key.getBackground();
