@@ -37,8 +37,8 @@ public class SudokuGenerator {
             int value = (i % 9) + 1;
             int randIndex = random.nextInt(80);
             if (newBoard.get(randIndex) == 0) {
-                int randRow = getPositionFromIndex(randIndex)[0];
-                int randCol = getPositionFromIndex(randIndex)[1];
+                int randRow = GridPosition.getPositionFromIndex(randIndex)[0];
+                int randCol = GridPosition.getPositionFromIndex(randIndex)[1];
                 List<Integer> checkList = getRowColBoxIndexes(randRow, randCol);
                 for (Integer index : checkList) {
                     int checkValue = newBoard.get(index);
@@ -141,8 +141,8 @@ public class SudokuGenerator {
                 break;
             } else {
                 if (toFill.get(i)) {
-                    int row = getPositionFromIndex(i)[0];
-                    int col = getPositionFromIndex(i)[1];
+                    int row = GridPosition.getPositionFromIndex(i)[0];
+                    int col = GridPosition.getPositionFromIndex(i)[1];
                     List<Integer> checkList = getRowColBoxIndexes(row, col);
                     List<Integer> availableNumbers;
                     if (isBacktracking) {
@@ -212,8 +212,8 @@ public class SudokuGenerator {
         Boolean isValid = true;
         int size = 9 * 9;
         for (int i = 0; i < size; i++) {                        // For every cell on the board,...
-            int row = getPositionFromIndex(i)[0];
-            int col = getPositionFromIndex(i)[1];
+            int row = GridPosition.getPositionFromIndex(i)[0];
+            int col = GridPosition.getPositionFromIndex(i)[1];
             List<Integer> checkList = getRowColBoxIndexes(row, col);
             List<Integer> availableValue                        // get all possible values to insert.
                     = getAvailableNumbers(board, checkList);
@@ -292,7 +292,7 @@ public class SudokuGenerator {
             }
         } else {
             for (int i = 0; i < size; i++) {
-                int row = getPositionFromIndex(i)[0];
+                int row = GridPosition.getPositionFromIndex(i)[0];
                 board.add(row);
             }
         }
@@ -303,9 +303,10 @@ public class SudokuGenerator {
         List<Integer> rotatedBoard = createBoard(true);
         int size = 9 * 9;
         for (int i = 0; i < size; i++) {
-            int row = getPositionFromIndex(i)[0];
+            int row = GridPosition.getPositionFromIndex(i)[0];
             int newRow = swapWith(row);
-            int index = getIndexFromPosition(newRow, getPositionFromIndex(i)[1]);
+            int index = GridPosition.getIndexFromPosition(
+                    newRow, GridPosition.getPositionFromIndex(i)[1]);
             int value = list.get(i);
             rotatedBoard.set(index, value);
         }
@@ -316,9 +317,10 @@ public class SudokuGenerator {
         List<Integer> rotatedBoard = createBoard(true);
         int size = 9 * 9;
         for (int i = 0; i < size; i++) {
-            int col = getPositionFromIndex(i)[1];
+            int col = GridPosition.getPositionFromIndex(i)[1];
             int newCol = swapWith(col);
-            int index = getIndexFromPosition(getPositionFromIndex(i)[0], newCol);
+            int index = GridPosition.getIndexFromPosition(
+                    GridPosition.getPositionFromIndex(i)[0], newCol);
             int value = list.get(i);
             rotatedBoard.set(index, value);
         }
@@ -329,11 +331,11 @@ public class SudokuGenerator {
         List<Integer> rotatedBoard = createBoard(true);
         int size = 9 * 9;
         for (int i = 0; i < size; i++) {
-            int row = getPositionFromIndex(i)[0];
-            int col = getPositionFromIndex(i)[1];
+            int row = GridPosition.getPositionFromIndex(i)[0];
+            int col = GridPosition.getPositionFromIndex(i)[1];
             int newRow = col;
             int newCol = row;
-            int index = getIndexFromPosition(newRow, newCol);
+            int index = GridPosition.getIndexFromPosition(newRow, newCol);
             int value = list.get(i);
             rotatedBoard.set(index, value);
         }
@@ -379,21 +381,21 @@ public class SudokuGenerator {
         // Box
         int[] boxIndexes = getBoxIndexes(row, col);
         for (int i : boxIndexes) {
-            if (i != getIndexFromPosition(row, col)) {
+            if (i != GridPosition.getIndexFromPosition(row, col)) {
                 indexes.add(i);
             }
         }
         // Row
         for (int r = 1; r <= 9; r++) {
             if (r != row) {
-                int i = getIndexFromPosition(r, col);
+                int i = GridPosition.getIndexFromPosition(r, col);
                 indexes.add(i);
             }
         }
         // Column
         for (int c = 1; c <= 9; c++) {
             if (c != col) {
-                int i = getIndexFromPosition(row, c);
+                int i = GridPosition.getIndexFromPosition(row, c);
                 indexes.add(i);
             }
         }
@@ -447,16 +449,6 @@ public class SudokuGenerator {
                 break;
         }
         return boxIndexes;
-    }
-
-    public static int[] getPositionFromIndex(int index) {
-        int row = index / 9 + 1;
-        int col = index % 9 + 1;
-        return new int[] {row,col};
-    }
-
-    public static int getIndexFromPosition(int row, int col) {
-        return 9 * (row - 1) + col - 1;
     }
 
     public List<Integer> getBoard() {

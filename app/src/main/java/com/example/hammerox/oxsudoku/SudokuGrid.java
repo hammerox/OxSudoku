@@ -109,12 +109,13 @@ public class SudokuGrid {
                             int activeKey = SudokuKeyboard.getActiveKey();
                             if (activeKey != 0) {       // A key from keyboard must be selected.
                                 TextView clickedText = (TextView) v;
-                                int indexOfClick = getIndexFromView(activity, clickedText);
-                                int[] position = getPositionFromIndex(indexOfClick);
+                                int indexOfClick =
+                                        GridPosition.getIndexFromView(activity, clickedText);
+                                int[] position = GridPosition.getPositionFromIndex(indexOfClick);
                                 int clickedRow = position[0];
                                 int clickedCol = position[1];
-                                List<Integer> rowColBox
-                                        = getRowColBoxIndexes(clickedRow, clickedCol, false);
+                                List<Integer> rowColBox =
+                                        GridPosition.getRowColBoxIndexes(clickedRow, clickedCol, false);
 
                                 // Checking if user input is valid.
                                 Boolean isValid = true;
@@ -148,11 +149,11 @@ public class SudokuGrid {
 
     public void commitChanges(Activity activity, TextView view) {
         int activeKey = SudokuKeyboard.getActiveKey();
-        int indexOfClick = getIndexFromView(activity, view);
-        int[] position = getPositionFromIndex(indexOfClick);
+        int indexOfClick = GridPosition.getIndexFromView(activity, view);
+        int[] position = GridPosition.getPositionFromIndex(indexOfClick);
         int clickedRow = position[0];
         int clickedCol = position[1];
-        List<Integer> rowColBox = getRowColBoxIndexes(clickedRow, clickedCol, false);
+        List<Integer> rowColBox = GridPosition.getRowColBoxIndexes(clickedRow, clickedCol, false);
 
         // Checking if there was a number before new input.
         int oldNumber = 0;
@@ -166,7 +167,7 @@ public class SudokuGrid {
 
         // Updating lastInput.
         if (lastInput >= 0) {
-            int id = getIdFromIndex(activity, lastInput);
+            int id = GridPosition.getIdFromIndex(activity, lastInput);
             TextView lastInputCell = (TextView) activity.findViewById(id);
             int mColorOld = ContextCompat.getColor(activity, R.color.colorAccent);
             lastInputCell.setTextColor(mColorOld);
@@ -244,7 +245,7 @@ public class SudokuGrid {
         List<Integer> conflictIndexes = new ArrayList<>();
 
         // Check Box
-        List<Integer> checkBox = getBoxIndexes(clickedRow, clickedCol, false);
+        List<Integer> checkBox = GridPosition.getBoxIndexes(clickedRow, clickedCol, false);
         for (Integer i : checkBox) {
             if (puzzleUserAnswers.get(i) == activeKey) {
                 isOnBox = true;
@@ -254,7 +255,7 @@ public class SudokuGrid {
         }
 
         // Check Row
-        List<Integer> checkRow = getRowIndexes(clickedRow, clickedCol, false);
+        List<Integer> checkRow = GridPosition.getRowIndexes(clickedRow, clickedCol, false);
         for (Integer i : checkRow) {
             if (puzzleUserAnswers.get(i) == activeKey) {
                 isOnRow = true;
@@ -264,7 +265,7 @@ public class SudokuGrid {
         }
 
         // Check Col
-        List<Integer> checkCol = getColIndexes(clickedRow, clickedCol, false);
+        List<Integer> checkCol = GridPosition.getColIndexes(clickedRow, clickedCol, false);
         for (Integer i : checkCol) {
             if (puzzleUserAnswers.get(i) == activeKey) {
                 isOnCol = true;
@@ -276,7 +277,7 @@ public class SudokuGrid {
         // Draw
         if (isOnBox) {
             for (Integer i : checkBox) {
-                int id = getIdFromIndex(activity, i);
+                int id = GridPosition.getIdFromIndex(activity, i);
                 Drawable cell = activity.findViewById(id).getBackground();
                 setColorFilter(activity, cell, 3);
             }
@@ -285,7 +286,7 @@ public class SudokuGrid {
 
         if (isOnRow) {
             for (Integer i : checkRow) {
-                int id = getIdFromIndex(activity, i);
+                int id = GridPosition.getIdFromIndex(activity, i);
                 Drawable cell = activity.findViewById(id).getBackground();
                 setColorFilter(activity, cell, 3);
             }
@@ -294,7 +295,7 @@ public class SudokuGrid {
 
         if (isOnCol) {
             for (Integer i : checkCol) {
-                int id = getIdFromIndex(activity, i);
+                int id = GridPosition.getIdFromIndex(activity, i);
                 Drawable cell = activity.findViewById(id).getBackground();
                 setColorFilter(activity, cell, 3);
             }
@@ -302,7 +303,7 @@ public class SudokuGrid {
 
         // Mark conflicting cells.
         for (Integer i : conflictIndexes) {
-            int id = getIdFromIndex(activity, i);
+            int id = GridPosition.getIdFromIndex(activity, i);
             Drawable cell = activity.findViewById(id).getBackground();
             setColorFilter(activity, cell, 4);
         }
@@ -335,7 +336,7 @@ public class SudokuGrid {
 
         for (Integer index : highlightList) {
             // Setting highlight level 1 to all rows and columns containing level 2.
-            int[] position = getPositionFromIndex(index);
+            int[] position = GridPosition.getPositionFromIndex(index);
             int row = position[0];
             int col = position[1];
             setHighlightLevel1(row, col);
@@ -352,7 +353,7 @@ public class SudokuGrid {
 
 
     public void setHighlightLevel1(int row, int col) {
-        List<Integer> allIndexes = getRowColBoxIndexes(row, col, false);
+        List<Integer> allIndexes = GridPosition.getRowColBoxIndexes(row, col, false);
         for (Integer i : allIndexes) {
             int intensity = puzzleHighlight.get(i);
             if (intensity == 0) puzzleHighlight.set(i, 1);
@@ -361,7 +362,7 @@ public class SudokuGrid {
 
 
     public void setIntensityColor(Activity activity, int index, int highlightLevel) {
-        int id = getIdFromIndex(activity, index);
+        int id = GridPosition.getIdFromIndex(activity, index);
         Drawable mDrawable = activity.findViewById(id).getBackground();
         setColorFilter(activity, mDrawable, highlightLevel);
     }
@@ -447,143 +448,6 @@ public class SudokuGrid {
         }
         mDrawable.setColorFilter(
                 new PorterDuffColorFilter(mColor, PorterDuff.Mode.MULTIPLY));
-    }
-
-
-    public List<Integer> getRowColBoxIndexes(int row, int col, Boolean includeClickedPosition) {
-        List<Integer> indexes = new ArrayList<>();
-        // Box
-        List<Integer> boxList = getBoxIndexes(row, col, includeClickedPosition);
-        indexes.addAll(boxList);
-        // Row
-        List<Integer> rowList = getRowIndexes(row, col, includeClickedPosition);
-        indexes.addAll(rowList);
-        // Column
-        List<Integer> colList = getColIndexes(row, col, includeClickedPosition);
-        indexes.addAll(colList);
-        // Removing duplicates
-        HashSet hashSet = new HashSet();
-        hashSet.addAll(indexes);
-        indexes.clear();
-        indexes.addAll(hashSet);
-
-        return indexes;
-    }
-
-
-    public List<Integer> getBoxIndexes(int row, int col, Boolean includeClickedPosition) {
-        int clickedIndex = getIndexFromPosition(row, col);
-        int[] boxIndexes = new int[] {};
-        List<Integer> indexes = new ArrayList<>();
-        switch (row) {
-            case 1:
-            case 2:
-            case 3:
-                if (col == 1 || col == 2 || col == 3) {
-                    boxIndexes = new int[]{0, 1, 2, 9, 10, 11, 18, 19, 20};
-
-                } else if (col == 4 || col == 5 || col == 6) {
-                    boxIndexes = new int[]{3, 4, 5, 12, 13, 14, 21, 22, 23};
-
-                } else if (col == 7 || col == 8 || col == 9) {
-                    boxIndexes = new int[]{6, 7, 8, 15, 16, 17, 24, 25, 26};
-
-                }
-                break;
-            case 4:
-            case 5:
-            case 6:
-                if (col == 1 || col == 2 || col == 3) {
-                    boxIndexes = new int[]{27,28,29,36,37,38,45,46,47};
-
-                } else if (col == 4 || col == 5 || col == 6) {
-                    boxIndexes = new int[]{30,31,32,39,40,41,48,49,50};
-
-                } else if (col == 7 || col == 8 || col == 9) {
-                    boxIndexes = new int[]{33,34,35,42,43,44,51,52,53};
-
-                }
-                break;
-            case 7:
-            case 8:
-            case 9:
-                if (col == 1 || col == 2 || col == 3) {
-                    boxIndexes = new int[]{54,55,56,63,64,65,72,73,74};
-
-                } else if (col == 4 || col == 5 || col == 6) {
-                    boxIndexes = new int[]{57,58,59,66,67,68,75,76,77};
-
-                } else if (col == 7 || col == 8 || col == 9) {
-                    boxIndexes = new int[]{60,61,62,69,70,71,78,79,80};
-
-                }
-                break;
-        }
-
-        for (int i : boxIndexes) {
-            Boolean isToAdd = (clickedIndex != i) || includeClickedPosition;
-            if (isToAdd) indexes.add(i);
-        }
-        return indexes;
-    }
-
-
-    public List<Integer> getRowIndexes(int row, int col, Boolean includeClickedPosition) {
-        List<Integer> rowIndexes = new ArrayList<>();
-        for (int r = 1; r <= 9; r++) {
-            Boolean isToAdd = (r != row) || includeClickedPosition;
-            if (isToAdd) {
-                int i = getIndexFromPosition(r, col);
-                rowIndexes.add(i);
-            }
-        }
-        return rowIndexes;
-    }
-
-
-    public List<Integer> getColIndexes(int row, int col, Boolean includeClickedPosition) {
-        List<Integer> colIndexes = new ArrayList<>();
-        for (int c = 1; c <= 9; c++) {
-            Boolean isToAdd = (c != col) || includeClickedPosition;
-            if (isToAdd) {
-                int i = getIndexFromPosition(row, c);
-                colIndexes.add(i);
-            }
-        }
-        return colIndexes;
-    }
-
-
-    //////////  CONVERTERS //////////
-
-    public int getIndexFromView(Activity activity, TextView view) {
-        // Gets a grid's TextView and returns its index.
-        int viewId = view.getId();
-        String viewIdName = activity.getResources()
-                .getResourceEntryName(viewId);
-        String viewRowCol = viewIdName.split("_")[1];
-        int rowIndex = Integer.valueOf(viewRowCol.substring(0,1));
-        int colIndex = Integer.valueOf(viewRowCol.substring(1,2));
-        return 9 * (rowIndex - 1) + colIndex - 1;
-    }
-
-    public int[] getPositionFromIndex(int index) {
-        int row = index / 9 + 1;
-        int col = index % 9 + 1;
-        return new int[] {row,col};
-    }
-
-    public int getIndexFromPosition(int row, int col) {
-        return 9 * (row - 1) + col - 1;
-    }
-
-    public int getIdFromIndex(Activity activity, int index) {
-        int[] position = getPositionFromIndex(index);
-        int row = position[0];
-        int col = position[1];
-        String idString = "major_" + row + col;
-        return activity.getResources()
-                .getIdentifier(idString, "id", activity.getPackageName());
     }
 
 
