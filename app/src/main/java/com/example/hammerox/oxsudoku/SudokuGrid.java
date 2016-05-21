@@ -10,6 +10,7 @@ import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -19,7 +20,6 @@ import com.example.hammerox.oxsudoku.Tools.SquareLayout;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 
 
@@ -103,47 +103,70 @@ public class SudokuGrid {
                     textView.setTextColor(mColor);
                     textView.isClickable();
                         // Interaction
-                    textView.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            int activeKey = SudokuKeyboard.getActiveKey();
-                            if (activeKey != 0) {       // A key from keyboard must be selected.
-                                TextView clickedText = (TextView) v;
-                                int indexOfClick =
-                                        GridPosition.getIndexFromView(activity, clickedText);
-                                int[] position = GridPosition.getPositionFromIndex(indexOfClick);
-                                int clickedRow = position[0];
-                                int clickedCol = position[1];
-                                List<Integer> rowColBox =
-                                        GridPosition.getRowColBoxIndexes(clickedRow, clickedCol, false);
-
-                                // Checking if user input is valid.
-                                Boolean isValid = true;
-                                for (Integer i : rowColBox) {
-                                    int answer = puzzleUserAnswers.get(i);
-                                    if (answer == activeKey) {
-                                        isValid = false;
-                                        break;
-                                    }
-                                }
-
-                                // If user input is valid, commit changes.
-                                // If user input is not valid, warn and show conflicts.
-                                updatePuzzleHighlight(activity, activeKey);
-                                if (isValid) {
-                                    commitChanges(activity, clickedText);
-                                } else {
-                                    showConflicts(activity, clickedRow, clickedCol, activeKey);
-                                }
-                            }
-                        }
-                    });
+                    setCellClickListener(activity, textView);
+                    setCellTouchListener(activity, textView);
                 }
                 linearLayout.addView(textView);
             }
             gridLayout.addView(linearLayout);
         }
 
+    }
+
+
+    public void setCellTouchListener(final Activity activity, final TextView cell) {
+        cell.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    setColorFilter(activity, v.getBackground(), 4);
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    int i = GridPosition.getIndexFromView(activity, cell);
+                    int intensity = puzzleHighlight.get(i);
+                    setColorFilter(activity, v.getBackground(), intensity);
+                }
+                return false;
+            }
+        });
+    }
+
+
+    public void setCellClickListener(final Activity activity, TextView cell) {
+        cell.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int activeKey = SudokuKeyboard.getActiveKey();
+                if (activeKey != 0) {       // A key from keyboard must be selected.
+                    TextView clickedText = (TextView) v;
+                    int indexOfClick =
+                            GridPosition.getIndexFromView(activity, clickedText);
+                    int[] position = GridPosition.getPositionFromIndex(indexOfClick);
+                    int clickedRow = position[0];
+                    int clickedCol = position[1];
+                    List<Integer> rowColBox =
+                            GridPosition.getRowColBoxIndexes(clickedRow, clickedCol, false);
+
+                    // Checking if user input is valid.
+                    Boolean isValid = true;
+                    for (Integer i : rowColBox) {
+                        int answer = puzzleUserAnswers.get(i);
+                        if (answer == activeKey) {
+                            isValid = false;
+                            break;
+                        }
+                    }
+
+                    // If user input is valid, commit changes.
+                    // If user input is not valid, warn and show conflicts.
+                    updatePuzzleHighlight(activity, activeKey);
+                    if (isValid) {
+                        commitChanges(activity, clickedText);
+                    } else {
+                        showConflicts(activity, clickedRow, clickedCol, activeKey);
+                    }
+                }
+            }
+        });
     }
 
 
