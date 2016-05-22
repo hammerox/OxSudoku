@@ -123,9 +123,9 @@ public class SudokuKeyboard {
             public void onClick(View v) {
                 int wrongCount = 0; int correctCount = 0; int totalCount = 0;
                 List<List> wrongArray = new ArrayList<>();
-                List<Boolean> puzzleMask = sudokuGrid.getPuzzleMask();
-                List<Boolean> puzzleCorrectAnswers = sudokuGrid.getPuzzleCorrectAnswers();
-                List<Boolean> puzzleUserInput = sudokuGrid.getPuzzleUserInput();
+                List<Boolean> puzzleMask = sudokuGrid.getHasSolution();
+                List<Boolean> puzzleCorrectAnswers = sudokuGrid.getIsAnswerCorrect();
+                List<Boolean> puzzleUserInput = sudokuGrid.getHasUserInput();
                 // Compares all user inputs with correct answers. If wrong, it stores the position
                 // of the wrong answer into wrongArray. Counters are used to calculate puzzle's
                 // progression.

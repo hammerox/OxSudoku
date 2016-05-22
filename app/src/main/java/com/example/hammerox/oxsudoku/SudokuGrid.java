@@ -30,10 +30,10 @@ public class SudokuGrid {
     private int lastInput = -1;
 
     private List<Integer> puzzleSolution;
-    private List<Boolean> puzzleMask;
-    private List<Integer> puzzleUserAnswers;
-    private List<Boolean> puzzleCorrectAnswers;
-    private List<Boolean> puzzleUserInput;
+    private List<Boolean> hasSolution;
+    private List<Integer> puzzleAnswers;
+    private List<Boolean> isAnswerCorrect;
+    private List<Boolean> hasUserInput;
     private List<Integer> puzzleHighlight;
 
     private List<Boolean> isNumberComplete;
@@ -43,20 +43,20 @@ public class SudokuGrid {
     public SudokuGrid() {
         /* The puzzle is generated on class creation.
         * puzzleSolution = Integer. Contains all correct answers.
-        * puzzleMask = Boolean. Show respective solution if true. False will demand user input.
-        * puzzleCorrectAnswers = Boolean. Is true if respective user's input matches solution.
-        * puzzleUserInput = Boolean. Is true if contains user value.
+        * hasSolution = Boolean. Show respective solution if true. False will demand user input.
+        * isAnswerCorrect = Boolean. Is true if respective user's input matches solution.
+        * hasUserInput = Boolean. Is true if contains user value.
         * puzzleHightlight = Integer. 0 shows no highlight, 1 shows partial and 2 shows full highlight.
         * */
 
         puzzleSolution = createDebugSolution();
-        puzzleMask = createDebugMask();
+        hasSolution = createDebugMask();
         /*SudokuGenerator puzzle = new SudokuGenerator();
         puzzleSolution = puzzle.board;
-        puzzleMask = puzzle.mask;*/
-        puzzleUserAnswers = createPuzzleUserAnswers();
-        puzzleCorrectAnswers = createPuzzleCorrectAnswers();
-        puzzleUserInput = createPuzzleUserInput();
+        hasSolution = puzzle.mask;*/
+        puzzleAnswers = createPuzzleAnswers();
+        isAnswerCorrect = createIsAnswerCorrect();
+        hasUserInput = createPuzzleUserInput();
         puzzleHighlight = createPuzzleHighlight();
 
         isNumberComplete = createNumberCheckList();
@@ -68,50 +68,50 @@ public class SudokuGrid {
         SquareLayout gridLayout = (SquareLayout) rootView.findViewById(R.id.sudoku_gridlayout);
         for (int row = 1; row <= 9; row++) {
             // Creating a LinearLayout for each row
-            LinearLayout linearLayout = new LinearLayout(activity);
-            linearLayout.setOrientation(LinearLayout.HORIZONTAL);
-            linearLayout.setLayoutParams(new LinearLayout.LayoutParams(
+            LinearLayout cellLayout = new LinearLayout(activity);
+            cellLayout.setOrientation(LinearLayout.HORIZONTAL);
+            cellLayout.setLayoutParams(new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     1.0f));
 
             for (int col = 1; col <= 9; col++) {
                 // Creating a TextView for each square on the grid.
-                TextView textView = new TextView(activity);
+                TextView answerView = new TextView(activity);
                     // ID
                 String idString = "major_" + row + col;
                 int id = activity.getResources()
                         .getIdentifier(idString, "id", activity.getPackageName());
-                textView.setId(id);
+                answerView.setId(id);
                     // LayoutParams
-                textView.setLayoutParams(new LinearLayout.LayoutParams(
+                answerView.setLayoutParams(new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT,
                         LinearLayout.LayoutParams.MATCH_PARENT,
                         1.0f));
                     // Appearance
                 Drawable mDrawable = getGridDrawable(activity, row, col);
                 setColorFilter(activity, mDrawable, 0);
-                textView.setBackground(mDrawable);
-                textView.setGravity(Gravity.CENTER);
-                textView.setTypeface(Typeface.DEFAULT_BOLD);
-                textView.setTextSize(30);
+                answerView.setBackground(mDrawable);
+                answerView.setGravity(Gravity.CENTER);
+                answerView.setTypeface(Typeface.DEFAULT_BOLD);
+                answerView.setTextSize(30);
 
                 int index = 9 * (row - 1) + col - 1;
-                // If puzzleMask is true, show number. Otherwise, demand user input;
-                if (puzzleMask.get(index)) {
-                    textView.setText(String.valueOf(puzzleSolution.get(index)));
+                // If hasSolution is true, show number. Otherwise, demand user input;
+                if (hasSolution.get(index)) {
+                    answerView.setText(String.valueOf(puzzleSolution.get(index)));
                 } else {
                     // User's TextView should be clickable and have a different color.
                     int mColor = ContextCompat.getColor(activity, R.color.colorAccent);
-                    textView.setTextColor(mColor);
-                    textView.isClickable();
+                    answerView.setTextColor(mColor);
+                    answerView.isClickable();
                         // Interaction
-                    setCellClickListener(activity, textView);
-                    setCellTouchListener(activity, textView);
+                    setCellClickListener(activity, answerView);
+                    setCellTouchListener(activity, answerView);
                 }
-                linearLayout.addView(textView);
+                cellLayout.addView(answerView);
             }
-            gridLayout.addView(linearLayout);
+            gridLayout.addView(cellLayout);
         }
 
     }
@@ -152,7 +152,7 @@ public class SudokuGrid {
                     // Checking if user input is valid.
                     Boolean isValid = true;
                     for (Integer i : rowColBox) {
-                        int answer = puzzleUserAnswers.get(i);
+                        int answer = puzzleAnswers.get(i);
                         if (answer == activeKey) {
                             isValid = false;
                             break;
@@ -204,18 +204,18 @@ public class SudokuGrid {
         view.setText(String.valueOf(activeKey));
         view.setTextColor(Color.BLUE);
 
-        // Updating puzzleUserAnswers.
-        puzzleUserAnswers.set(indexOfClick, activeKey);
+        // Updating puzzleAnswers.
+        puzzleAnswers.set(indexOfClick, activeKey);
 
-        // Updating puzzleUserInput.
-        puzzleUserInput.set(indexOfClick, true);
+        // Updating hasUserInput.
+        hasUserInput.set(indexOfClick, true);
 
-        // Updating puzzleCorrectAnswers.
+        // Updating isAnswerCorrect.
         int solution = puzzleSolution.get(indexOfClick);
         if (solution == activeKey) {
-            puzzleCorrectAnswers.set(indexOfClick, true);
+            isAnswerCorrect.set(indexOfClick, true);
         } else {
-            puzzleCorrectAnswers.set(indexOfClick, false);
+            isAnswerCorrect.set(indexOfClick, false);
         }
 
         // Updating puzzleHighlight Level 2
@@ -233,7 +233,7 @@ public class SudokuGrid {
         // Updating isNumberComplete.
         int numberCounter = 0;
         for (int i = 0; i < GRID_SIZE; i++) {
-            if (puzzleUserAnswers.get(i) == activeKey) numberCounter++;
+            if (puzzleAnswers.get(i) == activeKey) numberCounter++;
             if (numberCounter == 9) {
                 int listsIndex = activeKey - 1;
                 isNumberComplete.set(listsIndex, true);
@@ -248,11 +248,11 @@ public class SudokuGrid {
 
         // Checking if puzzle is complete.
         int count = 0;
-        for (Boolean answer : puzzleCorrectAnswers) {
+        for (Boolean answer : isAnswerCorrect) {
             if (answer) count++;
         }
         float correctAnswersRatio
-                = (float) count / (float) puzzleCorrectAnswers.size();
+                = (float) count / (float) isAnswerCorrect.size();
         if (correctAnswersRatio == 1) {
             Toast toast = Toast.makeText(activity, "CONGRATULATIONS!", Toast.LENGTH_LONG);
             toast.setGravity(Gravity.CENTER, 0, 0);
@@ -273,7 +273,7 @@ public class SudokuGrid {
         // Check Box
         List<Integer> checkBox = GridPosition.getBoxIndexes(clickedRow, clickedCol, false);
         for (Integer i : checkBox) {
-            if (puzzleUserAnswers.get(i) == activeKey) {
+            if (puzzleAnswers.get(i) == activeKey) {
                 isOnBox = true;
                 conflictIndexes.add(i);
                 break;
@@ -283,7 +283,7 @@ public class SudokuGrid {
         // Check Row
         List<Integer> checkRow = GridPosition.getRowIndexes(clickedRow, clickedCol, false);
         for (Integer i : checkRow) {
-            if (puzzleUserAnswers.get(i) == activeKey) {
+            if (puzzleAnswers.get(i) == activeKey) {
                 isOnRow = true;
                 conflictIndexes.add(i);
                 break;
@@ -293,7 +293,7 @@ public class SudokuGrid {
         // Check Col
         List<Integer> checkCol = GridPosition.getColIndexes(clickedRow, clickedCol, false);
         for (Integer i : checkCol) {
-            if (puzzleUserAnswers.get(i) == activeKey) {
+            if (puzzleAnswers.get(i) == activeKey) {
                 isOnCol = true;
                 conflictIndexes.add(i);
                 break;
@@ -353,7 +353,7 @@ public class SudokuGrid {
         List<Integer> highlightList = new ArrayList<>();
         for (int i = 0; i < GRID_SIZE; i++) {
             int highlightLevel = 2;
-            int numberOnCell = puzzleUserAnswers.get(i);
+            int numberOnCell = puzzleAnswers.get(i);
             if (numberOnCell == activeKey) {
                 puzzleHighlight.set(i, highlightLevel);
                 highlightList.add(i);
@@ -479,10 +479,10 @@ public class SudokuGrid {
 
     //////////  LIST CREATERS //////////
 
-    public List<Integer> createPuzzleUserAnswers() {
+    public List<Integer> createPuzzleAnswers() {
         List<Integer> userAnswers = new ArrayList<>();
         for (int i = 0; i < GRID_SIZE; i++) {
-            if (puzzleMask.get(i)) {
+            if (hasSolution.get(i)) {
                 userAnswers.add(puzzleSolution.get(i));
             } else {
                 userAnswers.add(0);
@@ -492,9 +492,9 @@ public class SudokuGrid {
     }
 
 
-    public List<Boolean> createPuzzleCorrectAnswers() {
+    public List<Boolean> createIsAnswerCorrect() {
         List<Boolean> list = new ArrayList<>();
-        for (Boolean bol : puzzleMask) {
+        for (Boolean bol : hasSolution) {
             list.add(bol);
         }
         return list;
@@ -568,20 +568,20 @@ public class SudokuGrid {
 
     //////////  GETTERS AND SETTERS //////////
 
-    public List<Boolean> getPuzzleCorrectAnswers() {
-        return puzzleCorrectAnswers;
+    public List<Boolean> getIsAnswerCorrect() {
+        return isAnswerCorrect;
     }
 
-    public void setPuzzleCorrectAnswers(List<Boolean> puzzleCorrectAnswers) {
-        this.puzzleCorrectAnswers = puzzleCorrectAnswers;
+    public void setIsAnswerCorrect(List<Boolean> isAnswerCorrect) {
+        this.isAnswerCorrect = isAnswerCorrect;
     }
 
-    public List<Boolean> getPuzzleMask() {
-        return puzzleMask;
+    public List<Boolean> getHasSolution() {
+        return hasSolution;
     }
 
-    public void setPuzzleMask(List<Boolean> puzzleMask) {
-        this.puzzleMask = puzzleMask;
+    public void setHasSolution(List<Boolean> hasSolution) {
+        this.hasSolution = hasSolution;
     }
 
     public List<Integer> getPuzzleSolution() {
@@ -592,12 +592,12 @@ public class SudokuGrid {
         this.puzzleSolution = puzzleSolution;
     }
 
-    public List<Boolean> getPuzzleUserInput() {
-        return puzzleUserInput;
+    public List<Boolean> getHasUserInput() {
+        return hasUserInput;
     }
 
-    public void setPuzzleUserInput(List<Boolean> puzzleUserInput) {
-        this.puzzleUserInput = puzzleUserInput;
+    public void setHasUserInput(List<Boolean> hasUserInput) {
+        this.hasUserInput = hasUserInput;
     }
 
     public List<Boolean> getIsNumberComplete() {
