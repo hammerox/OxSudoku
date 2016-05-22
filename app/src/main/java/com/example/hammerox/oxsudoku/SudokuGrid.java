@@ -26,6 +26,7 @@ import java.util.List;
 public class SudokuGrid {
 
     final static int GRID_SIZE = 81;
+    final static int KEYBOARD_SIZE = 9;
 
     private int lastInput = -1;
 
@@ -35,7 +36,8 @@ public class SudokuGrid {
     private List<Boolean> isAnswerCorrect;
     private List<Boolean> hasUserInput;
     private List<Integer> puzzleHighlight;
-
+    private List<List<Integer>> puzzlePencil;
+    private List<Boolean> hasPencil;
     private List<Boolean> isNumberComplete;
 
     /*Todo - Add input's history*/
@@ -55,11 +57,12 @@ public class SudokuGrid {
         puzzleSolution = puzzle.board;
         hasSolution = puzzle.mask;*/
         puzzleAnswers = createPuzzleAnswers();
-        isAnswerCorrect = createIsAnswerCorrect();
-        hasUserInput = createPuzzleUserInput();
+        isAnswerCorrect = createBooleanGrid(GRID_SIZE, false);
+        hasUserInput = createBooleanGrid(GRID_SIZE, false);
         puzzleHighlight = createPuzzleHighlight();
-
-        isNumberComplete = createNumberCheckList();
+        puzzlePencil = createPuzzlePencil();
+        hasPencil = createBooleanGrid(GRID_SIZE, false);
+        isNumberComplete = createBooleanGrid(KEYBOARD_SIZE, false);
     }
 
 
@@ -492,21 +495,10 @@ public class SudokuGrid {
     }
 
 
-    public List<Boolean> createIsAnswerCorrect() {
-        List<Boolean> list = new ArrayList<>();
-        for (Boolean bol : hasSolution) {
-            list.add(bol);
-        }
-        return list;
-    }
-
-
-    public List<Boolean> createPuzzleUserInput() {
-        List<Boolean> userInput = new ArrayList<>();
-        for (int i = 0; i < GRID_SIZE; i++) {
-            userInput.add(false);
-        }
-        return userInput;
+    public List<Boolean> createBooleanGrid(int size, Boolean booleanToFill) {
+        Boolean[] array = new Boolean[size];
+        Arrays.fill(array, booleanToFill);
+        return Arrays.asList(array);
     }
 
 
@@ -519,10 +511,12 @@ public class SudokuGrid {
     }
 
 
-    public List<Boolean> createNumberCheckList() {
-        Boolean[] array = new Boolean[9];
-        Arrays.fill(array, false);
-        return Arrays.asList(array);
+    public List<List<Integer>> createPuzzlePencil() {
+        List<List<Integer>> pencilList = new ArrayList<>();
+        for (int i = 0; i < GRID_SIZE; i++) {
+            pencilList.add(new ArrayList<Integer>());
+        }
+        return pencilList;
     }
 
 
