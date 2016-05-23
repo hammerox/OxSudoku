@@ -248,4 +248,20 @@ public class SudokuKeyboard {
     public static void setActiveKey(int activeKey) {
         SudokuKeyboard.activeKey = activeKey;
     }
+
+    public static Boolean getEraseMode() {
+        return eraseMode;
+    }
+
+    public static void setEraseMode(Boolean eraseMode) {
+        SudokuKeyboard.eraseMode = eraseMode;
+    }
+
+    public static Boolean getPencilMode() {
+        return pencilMode;
+    }
+
+    public static void setPencilMode(Boolean pencilMode) {
+        SudokuKeyboard.pencilMode = pencilMode;
+    }
 }

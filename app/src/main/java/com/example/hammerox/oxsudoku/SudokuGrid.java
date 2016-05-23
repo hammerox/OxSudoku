@@ -97,7 +97,7 @@ public class SudokuGrid {
                     answerView.setTextColor(mColor);
                     answerView.isClickable();
                         // Interaction
-                    setCellClickListener(activity, answerView);
+                    setCellClickListener(activity, rowLayout, answerView, pencilView);
                     setCellTouchListener(activity, answerView);
                 }
                 rowLayout.addView(answerView);
@@ -125,39 +125,48 @@ public class SudokuGrid {
     }
 
 
-    public void setCellClickListener(final Activity activity, TextView cell) {
-        cell.setOnClickListener(new View.OnClickListener() {
+    public void setCellClickListener(final Activity activity,
+                                     final LinearLayout rowLayout, TextView answerView, final TableLayout pencilView) {
+        answerView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                TextView clickedText = (TextView) v;
+                int indexOfClick =
+                        GridPosition.getIndexFromView(activity, clickedText);
+                int[] position = GridPosition.getPositionFromIndex(indexOfClick);
+                int clickedRow = position[0];
+                int clickedCol = position[1];
+                List<Integer> rowColBox =
+                        GridPosition.getRowColBoxIndexes(clickedRow, clickedCol, false);
+                Boolean pencilMode = SudokuKeyboard.getPencilMode();
+                Boolean eraseMode = SudokuKeyboard.getEraseMode();
                 int activeKey = SudokuKeyboard.getActiveKey();
-                if (activeKey != 0) {       // A key from keyboard must be selected.
-                    TextView clickedText = (TextView) v;
-                    int indexOfClick =
-                            GridPosition.getIndexFromView(activity, clickedText);
-                    int[] position = GridPosition.getPositionFromIndex(indexOfClick);
-                    int clickedRow = position[0];
-                    int clickedCol = position[1];
-                    List<Integer> rowColBox =
-                            GridPosition.getRowColBoxIndexes(clickedRow, clickedCol, false);
 
-                    // Checking if user input is valid.
-                    Boolean isValid = true;
-                    for (Integer i : rowColBox) {
-                        int answer = puzzleAnswers.get(i);
-                        if (answer == activeKey) {
-                            isValid = false;
-                            break;
+                if (!pencilMode) {
+                    if (activeKey != 0) {       // A key from keyboard must be selected.
+                        // Checking if user input is valid.
+                        Boolean isValid = true;
+                        for (Integer i : rowColBox) {
+                            int answer = puzzleAnswers.get(i);
+                            if (answer == activeKey) {
+                                isValid = false;
+                                break;
+                            }
+                        }
+
+                        // If user input is valid, commit changes.
+                        // If user input is not valid, warn and show conflicts.
+                        updatePuzzleHighlight(activity, activeKey);
+                        if (isValid) {
+                            commitChanges(activity, clickedText);
+                        } else {
+                            showConflicts(activity, clickedRow, clickedCol, activeKey);
                         }
                     }
-
-                    // If user input is valid, commit changes.
-                    // If user input is not valid, warn and show conflicts.
-                    updatePuzzleHighlight(activity, activeKey);
-                    if (isValid) {
-                        commitChanges(activity, clickedText);
-                    } else {
-                        showConflicts(activity, clickedRow, clickedCol, activeKey);
-                    }
+                } else {
+                    int positionOnParent = clickedCol - 1;
+                    rowLayout.removeViewAt(positionOnParent);
+                    rowLayout.addView(pencilView, positionOnParent);
                 }
             }
         });
@@ -415,9 +424,16 @@ public class SudokuGrid {
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 1.0f));
+        Drawable mDrawable = getGridDrawable(activity, row, col);
+        setColorFilter(activity, mDrawable, 0);
+        pencilView.setBackground(mDrawable);
 
         for (int i = 0; i < 3; i++) {
             TableRow tableRow = new TableRow(activity);
+            tableRow.setLayoutParams(new TableLayout.LayoutParams(
+                    TableLayout.LayoutParams.MATCH_PARENT,
+                    TableLayout.LayoutParams.MATCH_PARENT,
+                    1.0f));
 
             for (int j = 0; j < 3; j++) {
                 TextView textView = new TextView(activity);
@@ -425,11 +441,15 @@ public class SudokuGrid {
                 idString = "" + row + col + position;
                 id = Integer.valueOf(idString);
                 textView.setId(id);
+
+                textView.setLayoutParams(new TableRow.LayoutParams(
+                        TableRow.LayoutParams.MATCH_PARENT,
+                        TableRow.LayoutParams.MATCH_PARENT,
+                1.0f));
+
                 textView.setGravity(Gravity.CENTER);
                 textView.setTextSize(10);
-                textView.setText(position + "");
-                ColorStateList mColor = ContextCompat.getColorStateList(activity, R.color.colorMediumGray);
-                textView.setTextColor(mColor);
+                textView.setText(String.valueOf(position));
 
                 tableRow.addView(textView);
             }
