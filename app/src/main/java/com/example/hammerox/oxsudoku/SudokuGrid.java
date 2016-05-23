@@ -2,6 +2,7 @@ package com.example.hammerox.oxsudoku;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
@@ -13,6 +14,8 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -72,35 +75,19 @@ public class SudokuGrid {
         SquareLayout gridLayout = (SquareLayout) rootView.findViewById(R.id.sudoku_gridlayout);
         for (int row = 1; row <= 9; row++) {
             // Creating a LinearLayout for each row
-            LinearLayout cellLayout = new LinearLayout(activity);
-            cellLayout.setOrientation(LinearLayout.HORIZONTAL);
-            cellLayout.setLayoutParams(new LinearLayout.LayoutParams(
+            LinearLayout rowLayout = new LinearLayout(activity);
+            rowLayout.setOrientation(LinearLayout.HORIZONTAL);
+            rowLayout.setLayoutParams(new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     1.0f));
 
             for (int col = 1; col <= 9; col++) {
-                // Creating a TextView for each square on the grid.
-                TextView answerView = new TextView(activity);
-                    // ID
-                String idString = "major_" + row + col;
-                int id = activity.getResources()
-                        .getIdentifier(idString, "id", activity.getPackageName());
-                answerView.setId(id);
-                    // LayoutParams
-                answerView.setLayoutParams(new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        1.0f));
-                    // Appearance
-                Drawable mDrawable = getGridDrawable(activity, row, col);
-                setColorFilter(activity, mDrawable, 0);
-                answerView.setBackground(mDrawable);
-                answerView.setGravity(Gravity.CENTER);
-                answerView.setTypeface(Typeface.DEFAULT_BOLD);
-                answerView.setTextSize(30);
+                // Creating views for answers and scratch for each square on the grid.
+                TextView answerView = createAnswerSlot(activity, row, col);
+                TableLayout pencilView = createPencilSlot(activity, row, col);
 
-                int index = 9 * (row - 1) + col - 1;
+                int index = GridPosition.getIndexFromPosition(row, col);
                 // If hasSolution is true, show number. Otherwise, demand user input;
                 if (hasSolution.get(index)) {
                     answerView.setText(String.valueOf(puzzleSolution.get(index)));
@@ -113,9 +100,9 @@ public class SudokuGrid {
                     setCellClickListener(activity, answerView);
                     setCellTouchListener(activity, answerView);
                 }
-                cellLayout.addView(answerView);
+                rowLayout.addView(answerView);
             }
-            gridLayout.addView(cellLayout);
+            gridLayout.addView(rowLayout);
         }
 
     }
@@ -388,6 +375,68 @@ public class SudokuGrid {
             int intensity = puzzleHighlight.get(i);
             if (intensity == 0) puzzleHighlight.set(i, 1);
         }
+    }
+
+
+    public TextView createAnswerSlot(Activity activity, int row, int col) {
+        TextView answerView = new TextView(activity);
+
+        // ID
+        String idString = "major_" + row + col;
+        int id = activity.getResources()
+                .getIdentifier(idString, "id", activity.getPackageName());
+        answerView.setId(id);
+        // LayoutParams
+        answerView.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                1.0f));
+        // Appearance
+        Drawable mDrawable = getGridDrawable(activity, row, col);
+        setColorFilter(activity, mDrawable, 0);
+        answerView.setBackground(mDrawable);
+        answerView.setGravity(Gravity.CENTER);
+        answerView.setTypeface(Typeface.DEFAULT_BOLD);
+        answerView.setTextSize(30);
+
+        return answerView;
+    }
+
+
+    public TableLayout createPencilSlot(Activity activity, int row, int col) {
+        TableLayout pencilView = new TableLayout(activity);
+        // ID
+        String idString = "pencil_" + row + col;
+        int id = activity.getResources()
+                .getIdentifier(idString, "id", activity.getPackageName());
+        pencilView.setId(id);
+        // LayoutParams
+        pencilView.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                1.0f));
+
+        for (int i = 0; i < 3; i++) {
+            TableRow tableRow = new TableRow(activity);
+
+            for (int j = 0; j < 3; j++) {
+                TextView textView = new TextView(activity);
+                int position = 3 * i + j + 1;
+                idString = "" + row + col + position;
+                id = Integer.valueOf(idString);
+                textView.setId(id);
+                textView.setGravity(Gravity.CENTER);
+                textView.setTextSize(10);
+                textView.setText(position + "");
+                ColorStateList mColor = ContextCompat.getColorStateList(activity, R.color.colorMediumGray);
+                textView.setTextColor(mColor);
+
+                tableRow.addView(textView);
+            }
+            pencilView.addView(tableRow);
+        }
+
+        return pencilView;
     }
 
 

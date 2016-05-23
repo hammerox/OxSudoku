@@ -102,4 +102,97 @@
     <item name="major_97" type="id"/>
     <item name="major_98" type="id"/>
     <item name="major_99" type="id"/>
+
+
+    <!--IDs reserved for pencil number containers (TableLayout)-->
+    <!--Where 'pencil_(row)(col)'-->
+    <item name="pencil_11" type="id"/>
+    <item name="pencil_12" type="id"/>
+    <item name="pencil_13" type="id"/>
+    <item name="pencil_14" type="id"/>
+    <item name="pencil_15" type="id"/>
+    <item name="pencil_16" type="id"/>
+    <item name="pencil_17" type="id"/>
+    <item name="pencil_18" type="id"/>
+    <item name="pencil_19" type="id"/>
+
+    <item name="pencil_21" type="id"/>
+    <item name="pencil_22" type="id"/>
+    <item name="pencil_23" type="id"/>
+    <item name="pencil_24" type="id"/>
+    <item name="pencil_25" type="id"/>
+    <item name="pencil_26" type="id"/>
+    <item name="pencil_27" type="id"/>
+    <item name="pencil_28" type="id"/>
+    <item name="pencil_29" type="id"/>
+
+    <item name="pencil_31" type="id"/>
+    <item name="pencil_32" type="id"/>
+    <item name="pencil_33" type="id"/>
+    <item name="pencil_34" type="id"/>
+    <item name="pencil_35" type="id"/>
+    <item name="pencil_36" type="id"/>
+    <item name="pencil_37" type="id"/>
+    <item name="pencil_38" type="id"/>
+    <item name="pencil_39" type="id"/>
+
+    <item name="pencil_41" type="id"/>
+    <item name="pencil_42" type="id"/>
+    <item name="pencil_43" type="id"/>
+    <item name="pencil_44" type="id"/>
+    <item name="pencil_45" type="id"/>
+    <item name="pencil_46" type="id"/>
+    <item name="pencil_47" type="id"/>
+    <item name="pencil_48" type="id"/>
+    <item name="pencil_49" type="id"/>
+
+    <item name="pencil_51" type="id"/>
+    <item name="pencil_52" type="id"/>
+    <item name="pencil_53" type="id"/>
+    <item name="pencil_54" type="id"/>
+    <item name="pencil_55" type="id"/>
+    <item name="pencil_56" type="id"/>
+    <item name="pencil_57" type="id"/>
+    <item name="pencil_58" type="id"/>
+    <item name="pencil_59" type="id"/>
+
+    <item name="pencil_61" type="id"/>
+    <item name="pencil_62" type="id"/>
+    <item name="pencil_63" type="id"/>
+    <item name="pencil_64" type="id"/>
+    <item name="pencil_65" type="id"/>
+    <item name="pencil_66" type="id"/>
+    <item name="pencil_67" type="id"/>
+    <item name="pencil_68" type="id"/>
+    <item name="pencil_69" type="id"/>
+
+    <item name="pencil_71" type="id"/>
+    <item name="pencil_72" type="id"/>
+    <item name="pencil_73" type="id"/>
+    <item name="pencil_74" type="id"/>
+    <item name="pencil_75" type="id"/>
+    <item name="pencil_76" type="id"/>
+    <item name="pencil_77" type="id"/>
+    <item name="pencil_78" type="id"/>
+    <item name="pencil_79" type="id"/>
+
+    <item name="pencil_81" type="id"/>
+    <item name="pencil_82" type="id"/>
+    <item name="pencil_83" type="id"/>
+    <item name="pencil_84" type="id"/>
+    <item name="pencil_85" type="id"/>
+    <item name="pencil_86" type="id"/>
+    <item name="pencil_87" type="id"/>
+    <item name="pencil_88" type="id"/>
+    <item name="pencil_89" type="id"/>
+
+    <item name="pencil_91" type="id"/>
+    <item name="pencil_92" type="id"/>
+    <item name="pencil_93" type="id"/>
+    <item name="pencil_94" type="id"/>
+    <item name="pencil_95" type="id"/>
+    <item name="pencil_96" type="id"/>
+    <item name="pencil_97" type="id"/>
+    <item name="pencil_98" type="id"/>
+    <item name="pencil_99" type="id"/>
 </resources>
