@@ -2,11 +2,13 @@ package com.example.hammerox.oxsudoku;
 
 import android.app.Activity;
 import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -19,6 +21,8 @@ import java.util.List;
 public class SudokuKeyboard {
 
     private static int activeKey = 0;
+    private static Boolean pencilMode = false;
+    private static Boolean eraseMode = false;
 
     public SudokuKeyboard() {
     }
@@ -105,7 +109,25 @@ public class SudokuKeyboard {
         leftButton1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                pencilMode = !pencilMode;
+                for (int i = 1; i <= 9; i++) {
+                    String idString = "key_" + i;
+                    int id = activity.getResources()
+                            .getIdentifier(idString, "id", activity.getPackageName());
+                    Button keyButton = (Button) rootView.findViewById(id);
+                    if (pencilMode) {
+                        if (!eraseMode) {
+                            keyButton.setTextColor(Color.BLUE);
+                        }
+                        keyButton.setTextSize(15);
 
+                    } else {
+                        if (!eraseMode) {
+                            keyButton.setTextColor(Color.BLACK);
+                        }
+                        keyButton.setTextSize(30);
+                    }
+                }
             }
         });
 
@@ -113,7 +135,23 @@ public class SudokuKeyboard {
         leftButton2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                eraseMode = !eraseMode;
+                for (int i = 1; i <= 9; i++) {
+                    String idString = "key_" + i;
+                    int id = activity.getResources()
+                            .getIdentifier(idString, "id", activity.getPackageName());
+                    Button keyButton = (Button) rootView.findViewById(id);
+                    if (eraseMode) {
+                        keyButton.setTextColor(Color.WHITE);
 
+                    } else {
+                        if (pencilMode) {
+                            keyButton.setTextColor(Color.BLUE);
+                        } else {
+                            keyButton.setTextColor(Color.BLACK);
+                        }
+                    }
+                }
             }
         });
 

@@ -56,11 +56,12 @@ public class SudokuGrid {
         /*SudokuGenerator puzzle = new SudokuGenerator();
         puzzleSolution = puzzle.board;
         hasSolution = puzzle.mask;*/
-        puzzleAnswers = createPuzzleAnswers();
+        puzzleAnswers = createAnswerList();
+        puzzleHighlight = createHighlightList();
+        puzzlePencil = createPencilList();
+
         isAnswerCorrect = createBooleanGrid(GRID_SIZE, false);
         hasUserInput = createBooleanGrid(GRID_SIZE, false);
-        puzzleHighlight = createPuzzleHighlight();
-        puzzlePencil = createPuzzlePencil();
         hasPencil = createBooleanGrid(GRID_SIZE, false);
         isNumberComplete = createBooleanGrid(KEYBOARD_SIZE, false);
     }
@@ -467,9 +468,9 @@ public class SudokuGrid {
         if (highlightLevel == 0) {
             mColor = Color.WHITE;
         } else if (highlightLevel == 1) {
-            mColor = ContextCompat.getColor(activity, R.color.colorHighlightWhite);
+            mColor = ContextCompat.getColor(activity, R.color.colorHighlightArea);
         } else if (highlightLevel == 2) {
-            mColor = ContextCompat.getColor(activity, R.color.colorHighlightStrong);
+            mColor = ContextCompat.getColor(activity, R.color.colorHighlight);
         } else if (highlightLevel == 3) {
             mColor = ContextCompat.getColor(activity, R.color.colorWarnArea);
         } else {
@@ -482,7 +483,7 @@ public class SudokuGrid {
 
     //////////  LIST CREATERS //////////
 
-    public List<Integer> createPuzzleAnswers() {
+    public List<Integer> createAnswerList() {
         List<Integer> userAnswers = new ArrayList<>();
         for (int i = 0; i < GRID_SIZE; i++) {
             if (hasSolution.get(i)) {
@@ -502,7 +503,7 @@ public class SudokuGrid {
     }
 
 
-    public List<Integer> createPuzzleHighlight() {
+    public List<Integer> createHighlightList() {
         List<Integer> list = new ArrayList<>();
         for (int i = 0; i < GRID_SIZE; i++) {
             list.add(0);
@@ -511,7 +512,7 @@ public class SudokuGrid {
     }
 
 
-    public List<List<Integer>> createPuzzlePencil() {
+    public List<List<Integer>> createPencilList() {
         List<List<Integer>> pencilList = new ArrayList<>();
         for (int i = 0; i < GRID_SIZE; i++) {
             pencilList.add(new ArrayList<Integer>());

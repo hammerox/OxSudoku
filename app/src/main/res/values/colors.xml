@@ -2,11 +2,12 @@
 <resources>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorPrimaryLight">#888FB5</color>
     <color name="colorAccent">#FF4081</color>
     <color name="colorLightGray">#E5E5E5</color>
     <color name="colorMediumGray">#D7D7D7</color>
-    <color name="colorHighlightStrong">#FF7FAC</color> <!--Same color from colorAccent, with 50% saturation-->
-    <color name="colorHighlightWhite">#FFBFD6</color> <!--Same color from colorAccent, with 25% saturation-->
+    <color name="colorHighlight">#FF7FAC</color> <!--Same color from colorAccent, with 50% saturation-->
+    <color name="colorHighlightArea">#FFBFD6</color> <!--Same color from colorAccent, with 25% saturation-->
     <color name="colorWarn">#FF8432</color>
     <color name="colorWarnArea">#FFBF8F</color>
 </resources>
