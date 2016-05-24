@@ -13,6 +13,7 @@ import android.support.v4.content.res.ResourcesCompat;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewParent;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
@@ -112,7 +113,8 @@ public class SudokuGrid {
                     answerView.setTextColor(mColor);
                     answerView.isClickable();
                         // Interaction
-                    setCellTouchListener(activity, cellView);
+                    setCellTouchListener(activity, answerView);
+                    setCellTouchListener(activity, pencilView);
                     setAnswerClickListener(activity, cellView, answerView, pencilView);
                     setPencilClickListener(activity, cellView, answerView, pencilView);
                 }
@@ -124,18 +126,19 @@ public class SudokuGrid {
 
     }
 
-    /*Todo BUG - TouchListener is not working anymore*/
-    
-    public void setCellTouchListener(final Activity activity, final FrameLayout cell) {
+
+    public void setCellTouchListener(final Activity activity, final View cell) {
         cell.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                FrameLayout parent = (FrameLayout) v.getParent();
+                Drawable background = parent.getBackground();
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    setColorFilter(activity, v.getBackground(), 4);
+                    setColorFilter(activity, background, 4);
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
                     int i = GridPosition.getIndexFromView(cell);
                     int intensity = puzzleHighlight.get(i);
-                    setColorFilter(activity, v.getBackground(), intensity);
+                    setColorFilter(activity, background, intensity);
                 }
                 return false;
             }
