@@ -2,7 +2,6 @@ package com.example.hammerox.oxsudoku;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
@@ -32,7 +31,7 @@ public class SudokuGrid {
     final static int GRID_SIZE = 81;
     final static int KEYBOARD_SIZE = 9;
 
-    private int lastInput = -1;
+    private int lastInputId = -1;
 
     private List<Integer> puzzleSolution;
     private List<Boolean> hasSolution;
@@ -91,7 +90,7 @@ public class SudokuGrid {
                         LinearLayout.LayoutParams.MATCH_PARENT,
                         1.0f));
                 // ID
-                int cellId = GridPosition.getId(row, col, cellView);
+                int cellId = GridPosition.getCellId(row, col, cellView);
                 cellView.setId(cellId);
                 // Appearance
                 Drawable mDrawable = getGridDrawable(activity, row, col);
@@ -113,7 +112,7 @@ public class SudokuGrid {
                     answerView.isClickable();
                         // Interaction
                     setCellClickListener(activity, cellView, answerView, pencilView);
-                    setCellTouchListener(activity, answerView);
+                    setCellTouchListener(activity, cellView);
                 }
                 cellView.addView(answerView);
                 rowLayout.addView(cellView);
@@ -124,14 +123,14 @@ public class SudokuGrid {
     }
 
 
-    public void setCellTouchListener(final Activity activity, final TextView cell) {
+    public void setCellTouchListener(final Activity activity, final FrameLayout cell) {
         cell.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     setColorFilter(activity, v.getBackground(), 4);
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    int i = GridPosition.getIndexFromView(activity, cell);
+                    int i = GridPosition.getIndexFromView(cell);
                     int intensity = puzzleHighlight.get(i);
                     setColorFilter(activity, v.getBackground(), intensity);
                 }
@@ -150,7 +149,7 @@ public class SudokuGrid {
             public void onClick(View v) {
                 TextView clickedText = (TextView) v;
                 int indexOfClick =
-                        GridPosition.getIndexFromView(activity, clickedText);
+                        GridPosition.getIndexFromView(clickedText);
                 int[] position = GridPosition.getPositionFromIndex(indexOfClick);
                 int clickedRow = position[0];
                 int clickedCol = position[1];
@@ -176,7 +175,7 @@ public class SudokuGrid {
                         // If user input is not valid, warn and show conflicts.
                         updatePuzzleHighlight(activity, activeKey);
                         if (isValid) {
-                            commitChanges(activity, clickedText);
+                            commitChanges(activity, cellLayout, clickedText);
                         } else {
                             showConflicts(activity, clickedRow, clickedCol, activeKey);
                         }
@@ -190,9 +189,9 @@ public class SudokuGrid {
     }
 
 
-    public void commitChanges(Activity activity, TextView view) {
+    public void commitChanges(Activity activity, FrameLayout cellView, TextView view) {
         int activeKey = SudokuKeyboard.getActiveKey();
-        int indexOfClick = GridPosition.getIndexFromView(activity, view);
+        int indexOfClick = GridPosition.getIndexFromView(view);
         int[] position = GridPosition.getPositionFromIndex(indexOfClick);
         int clickedRow = position[0];
         int clickedCol = position[1];
@@ -208,14 +207,13 @@ public class SudokuGrid {
             isSubtituting = true;
         }
 
-        // Updating lastInput.
-        if (lastInput >= 0) {
-            int id = GridPosition.getIdFromIndex(activity, lastInput);
-            TextView lastInputCell = (TextView) activity.findViewById(id);
+        // Updating lastInputId.
+        if (lastInputId >= 0) {
+            TextView lastInputCell = (TextView) activity.findViewById(lastInputId);
             int mColorOld = ContextCompat.getColor(activity, R.color.colorAccent);
             lastInputCell.setTextColor(mColorOld);
         }
-        lastInput = indexOfClick;
+        lastInputId = view.getId();
 
         // Setting new value.
         view.setText(String.valueOf(activeKey));
@@ -236,7 +234,7 @@ public class SudokuGrid {
         }
 
         // Updating puzzleHighlight Level 2
-        setColorFilter(activity, view.getBackground(), 2);
+        setColorFilter(activity, cellView.getBackground(), 2);
         puzzleHighlight.set(indexOfClick, 2);
 
         // Updating puzzleHighlight Level 1
@@ -320,7 +318,7 @@ public class SudokuGrid {
         // Draw
         if (isOnBox) {
             for (Integer i : checkBox) {
-                int id = GridPosition.getIdFromIndex(activity, i);
+                int id = GridPosition.getIdFromIndex(i);
                 Drawable cell = activity.findViewById(id).getBackground();
                 setColorFilter(activity, cell, 3);
             }
@@ -329,7 +327,7 @@ public class SudokuGrid {
 
         if (isOnRow) {
             for (Integer i : checkRow) {
-                int id = GridPosition.getIdFromIndex(activity, i);
+                int id = GridPosition.getIdFromIndex(i);
                 Drawable cell = activity.findViewById(id).getBackground();
                 setColorFilter(activity, cell, 3);
             }
@@ -338,7 +336,7 @@ public class SudokuGrid {
 
         if (isOnCol) {
             for (Integer i : checkCol) {
-                int id = GridPosition.getIdFromIndex(activity, i);
+                int id = GridPosition.getIdFromIndex(i);
                 Drawable cell = activity.findViewById(id).getBackground();
                 setColorFilter(activity, cell, 3);
             }
@@ -346,7 +344,7 @@ public class SudokuGrid {
 
         // Mark conflicting cells.
         for (Integer i : conflictIndexes) {
-            int id = GridPosition.getIdFromIndex(activity, i);
+            int id = GridPosition.getIdFromIndex(i);
             Drawable cell = activity.findViewById(id).getBackground();
             setColorFilter(activity, cell, 4);
         }
@@ -407,7 +405,7 @@ public class SudokuGrid {
     public TextView createAnswerSlot(Activity activity, int row, int col) {
         TextView answerView = new TextView(activity);
         // IDs
-        int answerId = GridPosition.getId(row, col, answerView);
+        int answerId = GridPosition.getCellId(row, col, answerView);
         answerView.setId(answerId);
         // LayoutParams
         answerView.setLayoutParams(new FrameLayout.LayoutParams(
@@ -425,7 +423,7 @@ public class SudokuGrid {
     public TableLayout createPencilSlot(Activity activity, int row, int col) {
         TableLayout pencilView = new TableLayout(activity);
         // ID
-        int pencilId = GridPosition.getId(row, col, pencilView);
+        int pencilId = GridPosition.getCellId(row, col, pencilView);
         pencilView.setId(pencilId);
         // LayoutParams
         pencilView.setLayoutParams(new FrameLayout.LayoutParams(
@@ -442,7 +440,7 @@ public class SudokuGrid {
 
                 TextView textView = new TextView(activity);
                 // ID
-                int positionId = GridPosition.getId(row, col, n);
+                int positionId = GridPosition.getPencilId(row, col, n);
                 textView.setId(positionId);
                 // LayoutParams
                 textView.setLayoutParams(new TableRow.LayoutParams(
@@ -467,7 +465,7 @@ public class SudokuGrid {
 
 
     public void setIntensityColor(Activity activity, int index, int highlightLevel) {
-        int id = GridPosition.getIdFromIndex(activity, index);
+        int id = GridPosition.getIdFromIndex(index);
         Drawable mDrawable = activity.findViewById(id).getBackground();
         setColorFilter(activity, mDrawable, highlightLevel);
     }

@@ -1,13 +1,10 @@
 package com.example.hammerox.oxsudoku;
 
 import android.app.Activity;
-import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -120,7 +117,13 @@ public class GridPosition {
     }
 
 
-    public static int getId(int row, int col, View v) {
+    public static int getCellId(int row, int col) {
+        String idString = "" + row + col;
+        return Integer.valueOf(idString);
+    }
+
+
+    public static int getCellId(int row, int col, View v) {
         String idString = "";
         if (v instanceof FrameLayout) {
             idString = "" + row + col;
@@ -133,7 +136,7 @@ public class GridPosition {
     }
 
 
-    public static int getId(int row, int col, int number) {
+    public static int getPencilId(int row, int col, int number) {
         String idString = "1" + number + row + col;
         return Integer.valueOf(idString);
     }
@@ -141,14 +144,13 @@ public class GridPosition {
 
     //////////  CONVERTERS //////////
 
-    public static int getIndexFromView(Activity activity, TextView view) {
-        // Gets a grid's TextView and returns its index.
+    public static int getIndexFromView(View view) {
+        // Gets a grid's View and returns its index.
         int viewId = view.getId();
-        String viewIdName = activity.getResources()
-                .getResourceEntryName(viewId);
-        String viewRowCol = viewIdName.split("_")[1];
-        int rowIndex = Integer.valueOf(viewRowCol.substring(0,1));
-        int colIndex = Integer.valueOf(viewRowCol.substring(1,2));
+        String viewIdString = String.valueOf(viewId);
+        int stringSize = viewIdString.length();
+        int rowIndex = Integer.valueOf(viewIdString.substring(stringSize - 2, stringSize - 1));
+        int colIndex = Integer.valueOf(viewIdString.substring(stringSize - 1, stringSize));
         return 9 * (rowIndex - 1) + colIndex - 1;
     }
 
@@ -162,12 +164,10 @@ public class GridPosition {
         return 9 * (row - 1) + col - 1;
     }
 
-    public static int getIdFromIndex(Activity activity, int index) {
+    public static int getIdFromIndex(int index) {
         int[] position = getPositionFromIndex(index);
         int row = position[0];
         int col = position[1];
-        String idString = "major_" + row + col;
-        return activity.getResources()
-                .getIdentifier(idString, "id", activity.getPackageName());
+        return getCellId(row, col);
     }
 }
