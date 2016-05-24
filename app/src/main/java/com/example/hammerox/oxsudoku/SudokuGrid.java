@@ -124,7 +124,8 @@ public class SudokuGrid {
 
     }
 
-
+    /*Todo BUG - TouchListener is not working anymore*/
+    
     public void setCellTouchListener(final Activity activity, final FrameLayout cell) {
         cell.setOnTouchListener(new View.OnTouchListener() {
             @Override
