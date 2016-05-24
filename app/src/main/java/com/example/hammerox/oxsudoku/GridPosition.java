@@ -1,7 +1,13 @@
 package com.example.hammerox.oxsudoku;
 
 import android.app.Activity;
+import android.util.Log;
+import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.TableLayout;
 import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -111,6 +117,25 @@ public class GridPosition {
             }
         }
         return colIndexes;
+    }
+
+
+    public static int getId(int row, int col, View v) {
+        String idString = "";
+        if (v instanceof FrameLayout) {
+            idString = "" + row + col;
+        } else if (v instanceof TextView) {
+            idString = "10" + row + col;
+        } else if (v instanceof TableLayout) {
+            idString = "20" + row + col;
+        }
+        return Integer.valueOf(idString);
+    }
+
+
+    public static int getId(int row, int col, int number) {
+        String idString = "1" + number + row + col;
+        return Integer.valueOf(idString);
     }
 
 

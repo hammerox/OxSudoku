@@ -13,6 +13,7 @@ import android.support.v4.content.res.ResourcesCompat;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -83,7 +84,21 @@ public class SudokuGrid {
                     1.0f));
 
             for (int col = 1; col <= 9; col++) {
-                // Creating views for answers and scratch for each square on the grid.
+                /*Todo - RESOLVER CONFLITO DE IDs !!!*/
+                FrameLayout cellView = new FrameLayout(activity);
+                cellView.setLayoutParams(new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        1.0f));
+                // ID
+                int cellId = GridPosition.getId(row, col, cellView);
+                cellView.setId(cellId);
+                // Appearance
+                Drawable mDrawable = getGridDrawable(activity, row, col);
+                setColorFilter(activity, mDrawable, 0);
+                cellView.setBackground(mDrawable);
+
+                // Creating views for answers and sketch for each square on the grid.
                 TextView answerView = createAnswerSlot(activity, row, col);
                 TableLayout pencilView = createPencilSlot(activity, row, col);
 
@@ -97,10 +112,11 @@ public class SudokuGrid {
                     answerView.setTextColor(mColor);
                     answerView.isClickable();
                         // Interaction
-                    setCellClickListener(activity, rowLayout, answerView, pencilView);
+                    setCellClickListener(activity, cellView, answerView, pencilView);
                     setCellTouchListener(activity, answerView);
                 }
-                rowLayout.addView(answerView);
+                cellView.addView(answerView);
+                rowLayout.addView(cellView);
             }
             gridLayout.addView(rowLayout);
         }
@@ -126,7 +142,9 @@ public class SudokuGrid {
 
 
     public void setCellClickListener(final Activity activity,
-                                     final LinearLayout rowLayout, TextView answerView, final TableLayout pencilView) {
+                                     final FrameLayout cellLayout,
+                                     TextView answerView,
+                                     final TableLayout pencilView) {
         answerView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -142,8 +160,8 @@ public class SudokuGrid {
                 Boolean eraseMode = SudokuKeyboard.getEraseMode();
                 int activeKey = SudokuKeyboard.getActiveKey();
 
-                if (!pencilMode) {
-                    if (activeKey != 0) {       // A key from keyboard must be selected.
+                if (activeKey != 0) {       // A key from keyboard must be selected.
+                    if (!pencilMode) {
                         // Checking if user input is valid.
                         Boolean isValid = true;
                         for (Integer i : rowColBox) {
@@ -162,11 +180,10 @@ public class SudokuGrid {
                         } else {
                             showConflicts(activity, clickedRow, clickedCol, activeKey);
                         }
+                    } else {
+                        cellLayout.removeAllViews();
+                        cellLayout.addView(pencilView);
                     }
-                } else {
-                    int positionOnParent = clickedCol - 1;
-                    rowLayout.removeViewAt(positionOnParent);
-                    rowLayout.addView(pencilView, positionOnParent);
                 }
             }
         });
@@ -389,21 +406,14 @@ public class SudokuGrid {
 
     public TextView createAnswerSlot(Activity activity, int row, int col) {
         TextView answerView = new TextView(activity);
-
-        // ID
-        String idString = "major_" + row + col;
-        int id = activity.getResources()
-                .getIdentifier(idString, "id", activity.getPackageName());
-        answerView.setId(id);
+        // IDs
+        int answerId = GridPosition.getId(row, col, answerView);
+        answerView.setId(answerId);
         // LayoutParams
-        answerView.setLayoutParams(new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                1.0f));
+        answerView.setLayoutParams(new FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.MATCH_PARENT));
         // Appearance
-        Drawable mDrawable = getGridDrawable(activity, row, col);
-        setColorFilter(activity, mDrawable, 0);
-        answerView.setBackground(mDrawable);
         answerView.setGravity(Gravity.CENTER);
         answerView.setTypeface(Typeface.DEFAULT_BOLD);
         answerView.setTextSize(30);
@@ -415,45 +425,41 @@ public class SudokuGrid {
     public TableLayout createPencilSlot(Activity activity, int row, int col) {
         TableLayout pencilView = new TableLayout(activity);
         // ID
-        String idString = "pencil_" + row + col;
-        int id = activity.getResources()
-                .getIdentifier(idString, "id", activity.getPackageName());
-        pencilView.setId(id);
+        int pencilId = GridPosition.getId(row, col, pencilView);
+        pencilView.setId(pencilId);
         // LayoutParams
-        pencilView.setLayoutParams(new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                1.0f));
-        Drawable mDrawable = getGridDrawable(activity, row, col);
-        setColorFilter(activity, mDrawable, 0);
-        pencilView.setBackground(mDrawable);
+        pencilView.setLayoutParams(new FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.MATCH_PARENT));
 
-        for (int i = 0; i < 3; i++) {
-            TableRow tableRow = new TableRow(activity);
+        TableRow tableRow = new TableRow(activity);
+        for (int n = 1; n <= 9; n++) {
+            // LayoutParams
             tableRow.setLayoutParams(new TableLayout.LayoutParams(
                     TableLayout.LayoutParams.MATCH_PARENT,
                     TableLayout.LayoutParams.MATCH_PARENT,
                     1.0f));
 
-            for (int j = 0; j < 3; j++) {
                 TextView textView = new TextView(activity);
-                int position = 3 * i + j + 1;
-                idString = "" + row + col + position;
-                id = Integer.valueOf(idString);
-                textView.setId(id);
-
+                // ID
+                int positionId = GridPosition.getId(row, col, n);
+                textView.setId(positionId);
+                // LayoutParams
                 textView.setLayoutParams(new TableRow.LayoutParams(
                         TableRow.LayoutParams.MATCH_PARENT,
                         TableRow.LayoutParams.MATCH_PARENT,
                 1.0f));
-
+                // Appearance
                 textView.setGravity(Gravity.CENTER);
                 textView.setTextSize(10);
-                textView.setText(String.valueOf(position));
+                textView.setText(String.valueOf(n));
 
                 tableRow.addView(textView);
+
+            if (n % 3 == 0) {
+                pencilView.addView(tableRow);
+                tableRow = new TableRow(activity);
             }
-            pencilView.addView(tableRow);
         }
 
         return pencilView;
