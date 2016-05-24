@@ -2,6 +2,7 @@ package com.example.hammerox.oxsudoku;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
@@ -32,6 +33,7 @@ public class SudokuGrid {
     final static int KEYBOARD_SIZE = 9;
 
     private int lastInputId = -1;
+    private Boolean lastInputIsPencil;
 
     private List<Integer> puzzleSolution;
     private List<Boolean> hasSolution;
@@ -83,7 +85,6 @@ public class SudokuGrid {
                     1.0f));
 
             for (int col = 1; col <= 9; col++) {
-                /*Todo - RESOLVER CONFLITO DE IDs !!!*/
                 FrameLayout cellView = new FrameLayout(activity);
                 cellView.setLayoutParams(new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT,
@@ -111,8 +112,9 @@ public class SudokuGrid {
                     answerView.setTextColor(mColor);
                     answerView.isClickable();
                         // Interaction
-                    setCellClickListener(activity, cellView, answerView, pencilView);
                     setCellTouchListener(activity, cellView);
+                    setAnswerClickListener(activity, cellView, answerView, pencilView);
+                    setPencilClickListener(activity, cellView, answerView, pencilView);
                 }
                 cellView.addView(answerView);
                 rowLayout.addView(cellView);
@@ -140,10 +142,11 @@ public class SudokuGrid {
     }
 
 
-    public void setCellClickListener(final Activity activity,
-                                     final FrameLayout cellLayout,
-                                     TextView answerView,
-                                     final TableLayout pencilView) {
+    public void setAnswerClickListener(final Activity activity,
+                                       final FrameLayout cellLayout,
+                                       TextView answerView,
+                                       final TableLayout pencilView) {
+
         answerView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -180,12 +183,105 @@ public class SudokuGrid {
                             showConflicts(activity, clickedRow, clickedCol, activeKey);
                         }
                     } else {
+                        int sketchId = GridPosition.getPencilId(clickedRow, clickedCol, activeKey);
+                        TextView sketchView = (TextView) pencilView.findViewById(sketchId);
+
+                        // Updating lastInputId.
+                        if (lastInputId >= 0) {
+                            TextView lastInputCell = (TextView) activity.findViewById(lastInputId);
+                            int mColorOld;
+                            if (lastInputIsPencil) {
+                                mColorOld = ContextCompat.getColor(activity, R.color.colorPrimaryLight);
+                            } else {
+                                mColorOld = ContextCompat.getColor(activity, R.color.colorAccent);
+                            }
+                            lastInputCell.setTextColor(mColorOld);
+                        }
+                        lastInputId = sketchId;
+                        lastInputIsPencil = true;
+
+                        sketchView.setTextColor(Color.BLUE);
+
                         cellLayout.removeAllViews();
                         cellLayout.addView(pencilView);
                     }
                 }
             }
         });
+    }
+
+
+    public void setPencilClickListener(final Activity activity,
+                                       final FrameLayout cellLayout,
+                                       final TextView answerView,
+                                       final TableLayout pencilView) {
+
+        pencilView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TableLayout clickedTable = (TableLayout) v;
+                int indexOfClick =
+                        GridPosition.getIndexFromView(clickedTable);
+                int[] position = GridPosition.getPositionFromIndex(indexOfClick);
+                int clickedRow = position[0];
+                int clickedCol = position[1];
+                List<Integer> rowColBox =
+                        GridPosition.getRowColBoxIndexes(clickedRow, clickedCol, false);
+                Boolean pencilMode = SudokuKeyboard.getPencilMode();
+                Boolean eraseMode = SudokuKeyboard.getEraseMode();
+                int activeKey = SudokuKeyboard.getActiveKey();
+
+                if (activeKey != 0) {       // A key from keyboard must be selected.
+                    if (pencilMode) {
+
+                        int sketchId = GridPosition.getPencilId(clickedRow, clickedCol, activeKey);
+                        TextView sketchView = (TextView) pencilView.findViewById(sketchId);
+
+                        // Updating lastInputId.
+                        if (lastInputId >= 0) {
+                            TextView lastInputCell = (TextView) activity.findViewById(lastInputId);
+                            int mColorOld;
+                            if (lastInputIsPencil) {
+                                mColorOld = ContextCompat.getColor(activity, R.color.colorPrimaryLight);
+                            } else {
+                                mColorOld = ContextCompat.getColor(activity, R.color.colorAccent);
+                            }
+                            lastInputCell.setTextColor(mColorOld);
+                        }
+                        lastInputId = sketchId;
+                        lastInputIsPencil = true;
+
+                        sketchView.setTextColor(Color.BLUE);
+
+                    } else {
+                        // Checking if user input is valid.
+                        Boolean isValid = true;
+                        for (Integer i : rowColBox) {
+                            int answer = puzzleAnswers.get(i);
+                            if (answer == activeKey) {
+                                isValid = false;
+                                break;
+                            }
+                        }
+
+                        // If user input is valid, commit changes.
+                        // If user input is not valid, warn and show conflicts.
+                        updatePuzzleHighlight(activity, activeKey);
+                        if (isValid) {
+                            cellLayout.removeAllViews();
+                            cellLayout.addView(answerView);
+                            commitChanges(activity, cellLayout, answerView);
+                        } else {
+                            showConflicts(activity, clickedRow, clickedCol, activeKey);
+                        }
+
+                    }
+
+
+                }
+            }
+        });
+
     }
 
 
@@ -210,10 +306,16 @@ public class SudokuGrid {
         // Updating lastInputId.
         if (lastInputId >= 0) {
             TextView lastInputCell = (TextView) activity.findViewById(lastInputId);
-            int mColorOld = ContextCompat.getColor(activity, R.color.colorAccent);
+            int mColorOld;
+                    if (lastInputIsPencil) {
+                        mColorOld = ContextCompat.getColor(activity, R.color.colorPrimaryLight);
+                    } else {
+                        mColorOld = ContextCompat.getColor(activity, R.color.colorAccent);
+                    }
             lastInputCell.setTextColor(mColorOld);
         }
         lastInputId = view.getId();
+        lastInputIsPencil = false;
 
         // Setting new value.
         view.setText(String.valueOf(activeKey));
@@ -260,7 +362,7 @@ public class SudokuGrid {
             SudokuKeyboard.showButton(activity, oldNumber);
         }
 
-
+        /*Todo BUG - Game is not sending message when puzzle is completed.*/
         // Checking if puzzle is complete.
         int count = 0;
         for (Boolean answer : isAnswerCorrect) {
@@ -451,6 +553,8 @@ public class SudokuGrid {
                 textView.setGravity(Gravity.CENTER);
                 textView.setTextSize(10);
                 textView.setText(String.valueOf(n));
+                ColorStateList mTransparent = ColorStateList.valueOf(Color.TRANSPARENT);
+                textView.setTextColor(mTransparent);
 
                 tableRow.addView(textView);
 
