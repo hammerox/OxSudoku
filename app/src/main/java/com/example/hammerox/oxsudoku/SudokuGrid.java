@@ -10,6 +10,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
+import android.support.v4.util.Pair;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -43,7 +44,6 @@ public class SudokuGrid {
     private List<Boolean> hasUserInput;
     private List<Integer> puzzleHighlight;
     private List<List<Integer>> puzzlePencil;
-    private List<Boolean> hasPencil;
     private List<Boolean> isNumberComplete;
 
     /*Todo - Add input's history*/
@@ -74,7 +74,6 @@ public class SudokuGrid {
 
         isAnswerCorrect = createBooleanGrid(GRID_SIZE, false);
         hasUserInput = createBooleanGrid(GRID_SIZE, false);
-        hasPencil = createBooleanGrid(GRID_SIZE, false);
         isNumberComplete = createBooleanGrid(KEYBOARD_SIZE, false);
     }
 
@@ -218,7 +217,7 @@ public class SudokuGrid {
             Checking if user input is valid.
             If user input is valid, commit changes.
             If user input is not valid, warn and show conflicts.*/
-        Boolean isValid = isValidInput(indexOfClick, activeKey);
+        Boolean isValid = isValidAnswer(indexOfClick, activeKey);
         updatePuzzleHighlight(activity, activeKey);
         if (isValid) {
             if (needsToSwapViews) {
@@ -242,12 +241,27 @@ public class SudokuGrid {
         *   Update last input and make new changes to clicked layout.*/
         int sketchId = GridPosition.getPencilId(indexOfClick, activeKey);
         TextView sketchView = (TextView) pencilView.findViewById(sketchId);
-        updateLastInput(activity, sketchView, true);
-        if (needsToSwapViews) {
-            cellLayout.removeAllViews();
-            cellLayout.addView(pencilView);
+        Pair testValues = isNewPencilNumber(indexOfClick, activeKey);
+        Boolean isNewPencilNumber = (Boolean) testValues.first;
+
+        if (isNewPencilNumber) {
+            updateLastInput(activity, sketchView, true);
+            if (needsToSwapViews) {
+                cellLayout.removeAllViews();
+                cellLayout.addView(pencilView);
+            }
+            sketchView.setTextColor(Color.BLUE);
+            puzzlePencil.get(indexOfClick).add(activeKey);
+
+        } else {
+            int positionToRemove = (Integer) testValues.second;
+            sketchView.setTextColor(Color.TRANSPARENT);
+            puzzlePencil.get(indexOfClick).remove(positionToRemove);
+            if (sketchId == lastInputId) {
+                lastInputId = -1;
+            }
         }
-        sketchView.setTextColor(Color.BLUE);
+
     }
 
 
@@ -330,7 +344,7 @@ public class SudokuGrid {
     }
 
 
-    public Boolean isValidInput(int clickedRow, int clickedCol, int activeKey) {
+    public Boolean isValidAnswer(int clickedRow, int clickedCol, int activeKey) {
         List<Integer> rowColBox =
                 GridPosition.getRowColBoxIndexes(clickedRow, clickedCol, false);
         for (Integer i : rowColBox) {
@@ -343,20 +357,36 @@ public class SudokuGrid {
     }
 
 
-    public Boolean isValidInput(int index, int activeKey) {
+    public Boolean isValidAnswer(int index, int activeKey) {
         int[] position = GridPosition.getPositionFromIndex(index);
         int row = position[0];
         int col = position[1];
-        return isValidInput(row, col, activeKey);
+        return isValidAnswer(row, col, activeKey);
     }
 
 
-    public void updateLastInput(Activity activity, View newView, Boolean isNewPencil) {
+    public Pair<Boolean, Integer> isNewPencilNumber(int index, int activeKey) {
+        List<Integer> pencilNumbers = puzzlePencil.get(index);
+        if (pencilNumbers.isEmpty()) {
+            return new Pair<>(true, -1);
+        } else {
+            int size = pencilNumbers.size();
+            for (int i = 0; i < size; i++) {
+                if (pencilNumbers.get(i) == activeKey) {
+                    return new Pair<>(false, i);
+                }
+            }
+        }
+        return new Pair<>(true, -1);
+    }
+
+
+    public void updateLastInput(Activity activity, View newView, Boolean isNewInputPencil) {
         // Updating lastInputId.
         if (lastInputId >= 0) {
             TextView lastInputCell = (TextView) activity.findViewById(lastInputId);
             int mColorOld;
-            if (isNewPencil) {
+            if (lastInputIsPencil) {
                 mColorOld = ContextCompat.getColor(activity, R.color.colorPrimaryLight);
             } else {
                 mColorOld = ContextCompat.getColor(activity, R.color.colorAccent);
@@ -364,7 +394,7 @@ public class SudokuGrid {
             lastInputCell.setTextColor(mColorOld);
         }
         lastInputId = newView.getId();
-        this.lastInputIsPencil = isNewPencil;
+        this.lastInputIsPencil = isNewInputPencil;
     }
 
 
