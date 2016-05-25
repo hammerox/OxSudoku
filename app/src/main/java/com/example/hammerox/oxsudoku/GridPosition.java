@@ -142,6 +142,15 @@ public class GridPosition {
     }
 
 
+    public static int getPencilId(int index, int number) {
+        int[] position = getPositionFromIndex(index);
+        int row = position[0];
+        int col = position[1];
+        String idString = "1" + number + row + col;
+        return Integer.valueOf(idString);
+    }
+
+
     //////////  CONVERTERS //////////
 
     public static int getIndexFromView(View view) {

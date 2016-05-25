@@ -167,26 +167,18 @@ public class SudokuGrid {
                 int[] position = GridPosition.getPositionFromIndex(indexOfClick);
                 int clickedRow = position[0];
                 int clickedCol = position[1];
-                List<Integer> rowColBox =
-                        GridPosition.getRowColBoxIndexes(clickedRow, clickedCol, false);
+
                 Boolean pencilMode = SudokuKeyboard.getPencilMode();
                 Boolean eraseMode = SudokuKeyboard.getEraseMode();
                 int activeKey = SudokuKeyboard.getActiveKey();
 
                 if (activeKey != 0) {       // A key from keyboard must be selected.
                     if (!pencilMode) {
-                        // Checking if user input is valid.
-                        Boolean isValid = true;
-                        for (Integer i : rowColBox) {
-                            int answer = puzzleAnswers.get(i);
-                            if (answer == activeKey) {
-                                isValid = false;
-                                break;
-                            }
-                        }
-
-                        // If user input is valid, commit changes.
-                        // If user input is not valid, warn and show conflicts.
+                        /*  NORMAL MODE
+                            Checking if user input is valid.
+                            If user input is valid, commit changes.
+                            If user input is not valid, warn and show conflicts.*/
+                        Boolean isValid = isValidInput(clickedRow, clickedCol, activeKey);
                         updatePuzzleHighlight(activity, activeKey);
                         if (isValid) {
                             commitChanges(activity, cellLayout, clickedText);
@@ -194,25 +186,13 @@ public class SudokuGrid {
                             showConflicts(activity, clickedRow, clickedCol, activeKey);
                         }
                     } else {
+                        /*  PENCIL MODE
+                        *   Update last input and make new changes to clicked layout.*/
                         int sketchId = GridPosition.getPencilId(clickedRow, clickedCol, activeKey);
                         TextView sketchView = (TextView) pencilView.findViewById(sketchId);
 
-                        // Updating lastInputId.
-                        if (lastInputId >= 0) {
-                            TextView lastInputCell = (TextView) activity.findViewById(lastInputId);
-                            int mColorOld;
-                            if (lastInputIsPencil) {
-                                mColorOld = ContextCompat.getColor(activity, R.color.colorPrimaryLight);
-                            } else {
-                                mColorOld = ContextCompat.getColor(activity, R.color.colorAccent);
-                            }
-                            lastInputCell.setTextColor(mColorOld);
-                        }
-                        lastInputId = sketchId;
-                        lastInputIsPencil = true;
-
+                        updateLastInput(activity, sketchView, true);
                         sketchView.setTextColor(Color.BLUE);
-
                         cellLayout.removeAllViews();
                         cellLayout.addView(pencilView);
                     }
@@ -236,47 +216,26 @@ public class SudokuGrid {
                 int[] position = GridPosition.getPositionFromIndex(indexOfClick);
                 int clickedRow = position[0];
                 int clickedCol = position[1];
-                List<Integer> rowColBox =
-                        GridPosition.getRowColBoxIndexes(clickedRow, clickedCol, false);
                 Boolean pencilMode = SudokuKeyboard.getPencilMode();
                 Boolean eraseMode = SudokuKeyboard.getEraseMode();
                 int activeKey = SudokuKeyboard.getActiveKey();
 
                 if (activeKey != 0) {       // A key from keyboard must be selected.
                     if (pencilMode) {
-
+                        /*  PENCIL MODE
+                        *   Update last input and make new changes to clicked layout.*/
                         int sketchId = GridPosition.getPencilId(clickedRow, clickedCol, activeKey);
                         TextView sketchView = (TextView) pencilView.findViewById(sketchId);
 
-                        // Updating lastInputId.
-                        if (lastInputId >= 0) {
-                            TextView lastInputCell = (TextView) activity.findViewById(lastInputId);
-                            int mColorOld;
-                            if (lastInputIsPencil) {
-                                mColorOld = ContextCompat.getColor(activity, R.color.colorPrimaryLight);
-                            } else {
-                                mColorOld = ContextCompat.getColor(activity, R.color.colorAccent);
-                            }
-                            lastInputCell.setTextColor(mColorOld);
-                        }
-                        lastInputId = sketchId;
-                        lastInputIsPencil = true;
-
+                        updateLastInput(activity, sketchView, true);
                         sketchView.setTextColor(Color.BLUE);
 
                     } else {
-                        // Checking if user input is valid.
-                        Boolean isValid = true;
-                        for (Integer i : rowColBox) {
-                            int answer = puzzleAnswers.get(i);
-                            if (answer == activeKey) {
-                                isValid = false;
-                                break;
-                            }
-                        }
-
-                        // If user input is valid, commit changes.
-                        // If user input is not valid, warn and show conflicts.
+                        /*  NORMAL MODE
+                            Checking if user input is valid.
+                            If user input is valid, commit changes.
+                            If user input is not valid, warn and show conflicts.*/
+                        Boolean isValid = isValidInput(clickedRow, clickedCol, activeKey);
                         updatePuzzleHighlight(activity, activeKey);
                         if (isValid) {
                             cellLayout.removeAllViews();
@@ -315,18 +274,7 @@ public class SudokuGrid {
         }
 
         // Updating lastInputId.
-        if (lastInputId >= 0) {
-            TextView lastInputCell = (TextView) activity.findViewById(lastInputId);
-            int mColorOld;
-                    if (lastInputIsPencil) {
-                        mColorOld = ContextCompat.getColor(activity, R.color.colorPrimaryLight);
-                    } else {
-                        mColorOld = ContextCompat.getColor(activity, R.color.colorAccent);
-                    }
-            lastInputCell.setTextColor(mColorOld);
-        }
-        lastInputId = view.getId();
-        lastInputIsPencil = false;
+        updateLastInput(activity, view, false);
 
         // Setting new value.
         view.setText(String.valueOf(activeKey));
@@ -386,6 +334,36 @@ public class SudokuGrid {
             toast2.setGravity(Gravity.CENTER, 0, 0);
             toast2.show();
         }
+    }
+
+
+    public Boolean isValidInput(int clickedRow, int clickedCol, int activeKey) {
+        List<Integer> rowColBox =
+                GridPosition.getRowColBoxIndexes(clickedRow, clickedCol, false);
+        for (Integer i : rowColBox) {
+            int answer = puzzleAnswers.get(i);
+            if (answer == activeKey) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+    public void updateLastInput(Activity activity, View newView, Boolean isNewPencil) {
+        // Updating lastInputId.
+        if (lastInputId >= 0) {
+            TextView lastInputCell = (TextView) activity.findViewById(lastInputId);
+            int mColorOld;
+            if (isNewPencil) {
+                mColorOld = ContextCompat.getColor(activity, R.color.colorPrimaryLight);
+            } else {
+                mColorOld = ContextCompat.getColor(activity, R.color.colorAccent);
+            }
+            lastInputCell.setTextColor(mColorOld);
+        }
+        lastInputId = newView.getId();
+        this.lastInputIsPencil = isNewPencil;
     }
 
 
