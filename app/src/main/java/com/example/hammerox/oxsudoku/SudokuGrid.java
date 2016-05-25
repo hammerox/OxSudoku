@@ -11,6 +11,7 @@ import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.util.Pair;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -124,6 +125,8 @@ public class SudokuGrid {
                     setPencilClickListener(activity, cellView, answerView, pencilView);
                 }
                 cellView.addView(answerView);
+                cellView.addView(pencilView);
+                pencilView.setVisibility(View.GONE);
                 rowLayout.addView(cellView);
             }
             gridLayout.addView(rowLayout);
@@ -164,15 +167,15 @@ public class SudokuGrid {
                 Boolean pencilMode = SudokuKeyboard.getPencilMode();
                 Boolean eraseMode = SudokuKeyboard.getEraseMode();
                 int activeKey = SudokuKeyboard.getActiveKey();
-
+                Log.d("class", v.getClass().toString());
                 if (activeKey != 0) {       // A key from keyboard must be selected.
                     if (pencilMode) {
                         Boolean hasAnswer = getHasUserInput().get(indexOfClick);
                         if (!hasAnswer) {   // Pencil cannot override answer
-                            pencilClick(activity, cellLayout, pencilView, indexOfClick, activeKey, true);
+                            pencilClick(activity, v, cellLayout, pencilView, indexOfClick, activeKey);
                         }
                     } else {
-                        answerClick(activity, cellLayout, answerView, indexOfClick, activeKey, false);
+                        answerClick(activity, v, cellLayout, answerView, indexOfClick, activeKey);
                     }
                 }
             }
@@ -193,12 +196,12 @@ public class SudokuGrid {
                 Boolean pencilMode = SudokuKeyboard.getPencilMode();
                 Boolean eraseMode = SudokuKeyboard.getEraseMode();
                 int activeKey = SudokuKeyboard.getActiveKey();
-
+                Log.d("class", v.getClass().toString());
                 if (activeKey != 0) {       // A key from keyboard must be selected.
                     if (pencilMode) {
-                        pencilClick(activity, cellLayout, pencilView, indexOfClick, activeKey, false);
+                        pencilClick(activity, v, cellLayout, pencilView, indexOfClick, activeKey);
                     } else {
-                        answerClick(activity, cellLayout, answerView, indexOfClick, activeKey, true);
+                        answerClick(activity, v, cellLayout, answerView, indexOfClick, activeKey);
                     }
                 }
             }
@@ -208,10 +211,10 @@ public class SudokuGrid {
 
 
     public void answerClick(Activity activity,
+                            View clickedView,
                             FrameLayout cellLayout,
                             TextView answerView,
-                            int indexOfClick, int activeKey,
-                            Boolean needsToSwapViews) {
+                            int indexOfClick, int activeKey) {
 
         /*  NORMAL MODE (ANSWER MODE)
             Checking if user input is valid.
@@ -220,9 +223,9 @@ public class SudokuGrid {
         Boolean isValid = isValidAnswer(indexOfClick, activeKey);
         updatePuzzleHighlight(activity, activeKey);
         if (isValid) {
-            if (needsToSwapViews) {
-                cellLayout.removeAllViews();
-                cellLayout.addView(answerView);
+            Boolean needsToSwap = needsToSwapViews(clickedView, answerView);
+            if (needsToSwap) {
+                swapViews(clickedView, answerView);
             }
             commitChanges(activity, cellLayout, answerView);
         } else {
@@ -232,10 +235,10 @@ public class SudokuGrid {
 
 
     public void pencilClick(Activity activity,
+                            View clickedView,
                             FrameLayout cellLayout,
                             TableLayout pencilView,
-                            int indexOfClick, int activeKey,
-                            Boolean needsToSwapViews) {
+                            int indexOfClick, int activeKey) {
 
         /*  PENCIL MODE
         *   Update last input and make new changes to clicked layout.*/
@@ -246,9 +249,9 @@ public class SudokuGrid {
 
         if (isNewPencilNumber) {
             updateLastInput(activity, sketchView, true);
-            if (needsToSwapViews) {
-                cellLayout.removeAllViews();
-                cellLayout.addView(pencilView);
+            Boolean needsToSwap = needsToSwapViews(clickedView, pencilView);
+            if (needsToSwap) {
+                swapViews(clickedView, pencilView);
             }
             sketchView.setTextColor(Color.BLUE);
             puzzlePencil.get(indexOfClick).add(activeKey);
@@ -269,9 +272,7 @@ public class SudokuGrid {
         List<Integer> pencilList = puzzlePencil.get(index);
         Boolean containsSomething = !pencilList.isEmpty();
         if (containsSomething) {
-            int size = pencilList.size();
-            for (int i = 0; i < size; i++) {
-                int number = pencilList.get(i);
+            for (Integer number : pencilList) {
                 int idToRemove = GridPosition.getPencilId(index, number);
                 TextView pencil = (TextView) activity.findViewById(idToRemove);
                 pencil.setTextColor(Color.TRANSPARENT);
@@ -298,9 +299,6 @@ public class SudokuGrid {
 
         // Updating lastInputId.
         updateLastInput(activity, view, false);
-        /*Todo BUG - updateLastInput get a null TextView when commiting change:
-        * This happens when you write a pencil number and try to override it with an answer
-        * of a number. Apparently, it only crashes when you try to override a pencil last input. */
 
         // Setting new value.
         view.setText(String.valueOf(activeKey));
@@ -435,6 +433,19 @@ public class SudokuGrid {
         }
         lastInputId = newView.getId();
         this.lastInputIsPencil = isNewInputPencil;
+    }
+
+
+    public Boolean needsToSwapViews(View clickedView, View viewToCompare) {
+        Object clickedClass = clickedView.getClass();
+        Object compareToClass = viewToCompare.getClass();
+        return !clickedClass.equals(compareToClass);
+    }
+
+
+    public void swapViews(View clickedView, View viewToSwap) {
+        clickedView.setVisibility(View.GONE);
+        viewToSwap.setVisibility(View.VISIBLE);
     }
 
 
