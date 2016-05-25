@@ -34,6 +34,14 @@ public class GridPosition {
     }
 
 
+    public static List<Integer> getRowColBoxIndexes(int index, Boolean includeClickedPosition) {
+        int[] position = getPositionFromIndex(index);
+        int row = position[0];
+        int col = position[1];
+        return getRowColBoxIndexes(row, col, includeClickedPosition);
+    }
+
+
     public static List<Integer> getBoxIndexes(int row, int col, Boolean includeClickedPosition) {
         int clickedIndex = getIndexFromPosition(row, col);
         int[] boxIndexes = new int[] {};

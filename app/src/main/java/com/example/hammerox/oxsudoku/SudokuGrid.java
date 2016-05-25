@@ -168,10 +168,10 @@ public class SudokuGrid {
                 int activeKey = SudokuKeyboard.getActiveKey();
 
                 if (activeKey != 0) {       // A key from keyboard must be selected.
-                    if (!pencilMode) {
-                        normalClick(activity, cellLayout, answerView, indexOfClick, activeKey, false);
-                    } else {
+                    if (pencilMode) {
                         pencilClick(activity, cellLayout, pencilView, indexOfClick, activeKey, true);
+                    } else {
+                        normalClick(activity, cellLayout, answerView, indexOfClick, activeKey, false);
                     }
                 }
             }
@@ -240,23 +240,19 @@ public class SudokuGrid {
         *   Update last input and make new changes to clicked layout.*/
         int sketchId = GridPosition.getPencilId(indexOfClick, activeKey);
         TextView sketchView = (TextView) pencilView.findViewById(sketchId);
-
         updateLastInput(activity, sketchView, true);
-        sketchView.setTextColor(Color.BLUE);
         if (needsToSwapViews) {
             cellLayout.removeAllViews();
             cellLayout.addView(pencilView);
         }
+        sketchView.setTextColor(Color.BLUE);
     }
 
 
     public void commitChanges(Activity activity, FrameLayout cellView, TextView view) {
         int activeKey = SudokuKeyboard.getActiveKey();
         int indexOfClick = GridPosition.getIndexFromView(view);
-        int[] position = GridPosition.getPositionFromIndex(indexOfClick);
-        int clickedRow = position[0];
-        int clickedCol = position[1];
-        List<Integer> rowColBox = GridPosition.getRowColBoxIndexes(clickedRow, clickedCol, false);
+        List<Integer> rowColBox = GridPosition.getRowColBoxIndexes(indexOfClick, false);
 
         // Checking if there was a number before new input.
         int oldNumber = 0;
@@ -332,14 +328,6 @@ public class SudokuGrid {
     }
 
 
-    public Boolean isValidInput(int index, int activeKey) {
-        int[] position = GridPosition.getPositionFromIndex(index);
-        int row = position[0];
-        int col = position[1];
-        return isValidInput(row, col, activeKey);
-    }
-
-
     public Boolean isValidInput(int clickedRow, int clickedCol, int activeKey) {
         List<Integer> rowColBox =
                 GridPosition.getRowColBoxIndexes(clickedRow, clickedCol, false);
@@ -350,6 +338,14 @@ public class SudokuGrid {
             }
         }
         return true;
+    }
+
+
+    public Boolean isValidInput(int index, int activeKey) {
+        int[] position = GridPosition.getPositionFromIndex(index);
+        int row = position[0];
+        int col = position[1];
+        return isValidInput(row, col, activeKey);
     }
 
 
