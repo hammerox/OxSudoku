@@ -265,6 +265,22 @@ public class SudokuGrid {
     }
 
 
+    public void clearPencilCell(Activity activity, int index) {
+        List<Integer> pencilList = puzzlePencil.get(index);
+        Boolean containsSomething = !pencilList.isEmpty();
+        if (containsSomething) {
+            int size = pencilList.size();
+            for (int i = 0; i < size; i++) {
+                int number = pencilList.get(i);
+                int idToRemove = GridPosition.getPencilId(index, number);
+                TextView pencil = (TextView) activity.findViewById(idToRemove);
+                pencil.setTextColor(Color.TRANSPARENT);
+                pencilList.remove(0);
+            }
+        }
+    }
+
+
     public void commitChanges(Activity activity, FrameLayout cellView, TextView view) {
         int activeKey = SudokuKeyboard.getActiveKey();
         int indexOfClick = GridPosition.getIndexFromView(view);
@@ -282,6 +298,9 @@ public class SudokuGrid {
 
         // Updating lastInputId.
         updateLastInput(activity, view, false);
+        /*Todo BUG - updateLastInput get a null TextView when commiting change:
+        * This happens when you write a pencil number and try to override it with an answer
+        * of a number. Apparently, it only crashes when you try to override a pencil last input. */
 
         // Setting new value.
         view.setText(String.valueOf(activeKey));
@@ -289,6 +308,9 @@ public class SudokuGrid {
 
         // Updating puzzleAnswers.
         puzzleAnswers.set(indexOfClick, activeKey);
+
+        // Cleaning respective puzzlePencil.
+        clearPencilCell(activity, indexOfClick);
 
         // Updating hasUserInput.
         hasUserInput.set(indexOfClick, true);
@@ -305,13 +327,28 @@ public class SudokuGrid {
         setColorFilter(activity, cellView.getBackground(), 2);
         puzzleHighlight.set(indexOfClick, 2);
 
-        // Updating puzzleHighlight Level 1
+
+        // For every cell on rowColBox...
         for (Integer i : rowColBox) {
+            // Updating puzzleHighlight Level 1
             if (puzzleHighlight.get(i) == 0) {
                 setIntensityColor(activity, i, 1);
                 puzzleHighlight.set(i, 1);
             }
+
+            // Updating puzzlePencil
+            Pair testValues = isNewPencilNumber(i, activeKey);
+            Boolean containsSamePencilNumber = !(Boolean)testValues.first;
+            if (containsSamePencilNumber) {
+                int idToRemove = GridPosition.getPencilId(i, activeKey);
+                TextView sketchView = (TextView) activity.findViewById(idToRemove);
+                sketchView.setTextColor(Color.TRANSPARENT);
+
+                int indexToRemove = (Integer) testValues.second;
+                puzzlePencil.get(i).remove(indexToRemove);
+            }
         }
+
 
         // Updating isNumberComplete.
         int numberCounter = 0;
@@ -366,6 +403,9 @@ public class SudokuGrid {
 
 
     public Pair<Boolean, Integer> isNewPencilNumber(int index, int activeKey) {
+        /*  Check on cell's pencil list if it contains the same input number.
+        *   If it finds an equal number, returns FALSE.
+        *   If it do not find, it returns TRUE. */
         List<Integer> pencilNumbers = puzzlePencil.get(index);
         if (pencilNumbers.isEmpty()) {
             return new Pair<>(true, -1);
