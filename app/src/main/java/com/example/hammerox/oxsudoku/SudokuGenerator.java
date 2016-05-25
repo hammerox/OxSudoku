@@ -22,11 +22,19 @@ public class SudokuGenerator {
 
     List<Integer> board;
     List<Boolean> mask;
+    int emptyCells = 0;
 
     public SudokuGenerator() {
         this.board = startBoard(1);
         this.board = fillBoard(board);
         this.mask = setPuzzle(board, 50);
+    }
+
+    public SudokuGenerator(int emptyCells) {
+        this.board = startBoard(1);
+        this.board = fillBoard(board);
+        this.mask = setPuzzle(board, emptyCells);
+        this.emptyCells = emptyCells;
     }
 
     public List<Integer> startBoard(int iteration) {

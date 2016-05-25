@@ -35,6 +35,7 @@ public class SudokuGrid {
 
     private int lastInputId = -1;
     private Boolean lastInputIsPencil;
+    private int emptyCells;
 
     private List<Integer> puzzleSolution;
     private List<Boolean> hasSolution;
@@ -57,9 +58,15 @@ public class SudokuGrid {
         * puzzleHightlight = Integer. 0 shows no highlight, 1 shows partial and 2 shows full highlight.
         * */
 
+        /*Todo LOW - Don't forget to delete these lines when debugging is finished.*/
+        emptyCells = createDebugEmptyCells();
         puzzleSolution = createDebugSolution();
         hasSolution = createDebugMask();
-        /*SudokuGenerator puzzle = new SudokuGenerator();
+        /**/
+
+        /*
+        emptyCells = 50;
+        SudokuGenerator puzzle = new SudokuGenerator(emptyCells);
         puzzleSolution = puzzle.board;
         hasSolution = puzzle.mask;*/
         puzzleAnswers = createAnswerList();
@@ -366,15 +373,12 @@ public class SudokuGrid {
             SudokuKeyboard.showButton(activity, oldNumber);
         }
 
-        /*Todo BUG - Game is not sending message when puzzle is completed.*/
         // Checking if puzzle is complete.
-        int count = 0;
+        int answerCounter = 0;
         for (Boolean answer : isAnswerCorrect) {
-            if (answer) count++;
+            if (answer) answerCounter++;
         }
-        float correctAnswersRatio
-                = (float) count / (float) isAnswerCorrect.size();
-        if (correctAnswersRatio == 1) {
+        if (answerCounter == emptyCells) {
             Toast toast = Toast.makeText(activity, "CONGRATULATIONS!", Toast.LENGTH_LONG);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
@@ -739,6 +743,11 @@ public class SudokuGrid {
             mask.add(bol);
         }
         return mask;
+    }
+
+
+    public int createDebugEmptyCells() {
+        return 51;
     }
 
 

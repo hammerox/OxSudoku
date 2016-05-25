@@ -28,7 +28,6 @@ public class SudokuKeyboard {
     }
 
 /*Todo - Add Undo button*/
-/*Todo - Add Pencil button*/
 /*Todo - Show counters with remaining numbers*/
 
     public void drawKeyboard(final Activity activity, final View rootView, final SudokuGrid sudokuGrid) {
