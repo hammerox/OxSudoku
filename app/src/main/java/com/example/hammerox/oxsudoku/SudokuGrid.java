@@ -13,7 +13,6 @@ import android.support.v4.content.res.ResourcesCompat;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewParent;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
@@ -169,9 +168,12 @@ public class SudokuGrid {
 
                 if (activeKey != 0) {       // A key from keyboard must be selected.
                     if (pencilMode) {
-                        pencilClick(activity, cellLayout, pencilView, indexOfClick, activeKey, true);
+                        Boolean hasAnswer = getHasUserInput().get(indexOfClick);
+                        if (!hasAnswer) {   // Pencil cannot override answer
+                            pencilClick(activity, cellLayout, pencilView, indexOfClick, activeKey, true);
+                        }
                     } else {
-                        normalClick(activity, cellLayout, answerView, indexOfClick, activeKey, false);
+                        answerClick(activity, cellLayout, answerView, indexOfClick, activeKey, false);
                     }
                 }
             }
@@ -197,7 +199,7 @@ public class SudokuGrid {
                     if (pencilMode) {
                         pencilClick(activity, cellLayout, pencilView, indexOfClick, activeKey, false);
                     } else {
-                        normalClick(activity, cellLayout, answerView, indexOfClick, activeKey, true);
+                        answerClick(activity, cellLayout, answerView, indexOfClick, activeKey, true);
                     }
                 }
             }
@@ -206,13 +208,13 @@ public class SudokuGrid {
     }
 
 
-    public void normalClick(Activity activity,
+    public void answerClick(Activity activity,
                             FrameLayout cellLayout,
                             TextView answerView,
                             int indexOfClick, int activeKey,
                             Boolean needsToSwapViews) {
 
-        /*  NORMAL MODE
+        /*  NORMAL MODE (ANSWER MODE)
             Checking if user input is valid.
             If user input is valid, commit changes.
             If user input is not valid, warn and show conflicts.*/
