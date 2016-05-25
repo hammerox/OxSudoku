@@ -59,16 +59,16 @@ public class SudokuGrid {
         * */
 
         /*Todo LOW - Don't forget to delete these lines when debugging is finished.*/
-        emptyCells = createDebugEmptyCells();
+/*        emptyCells = createDebugEmptyCells();
         puzzleSolution = createDebugSolution();
-        hasSolution = createDebugMask();
+        hasSolution = createDebugMask();*/
         /**/
 
-        /*
-        emptyCells = 50;
-        SudokuGenerator puzzle = new SudokuGenerator(emptyCells);
+        int maxemptyCells = 60;
+        SudokuGenerator puzzle = new SudokuGenerator(maxemptyCells);
+        emptyCells = puzzle.emptyCells;
         puzzleSolution = puzzle.board;
-        hasSolution = puzzle.mask;*/
+        hasSolution = puzzle.mask;
         puzzleAnswers = createAnswerList();
         puzzleHighlight = createHighlightList();
         puzzlePencil = createPencilList();

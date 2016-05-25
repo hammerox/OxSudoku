@@ -30,11 +30,11 @@ public class SudokuGenerator {
         this.mask = setPuzzle(board, 50);
     }
 
-    public SudokuGenerator(int emptyCells) {
+    public SudokuGenerator(int maxEmptyCells) {
         this.board = startBoard(1);
         this.board = fillBoard(board);
-        this.mask = setPuzzle(board, emptyCells);
-        this.emptyCells = emptyCells;
+        this.mask = setPuzzle(board, maxEmptyCells);
+        this.emptyCells = maxEmptyCells;
     }
 
     public List<Integer> startBoard(int iteration) {
@@ -119,6 +119,7 @@ public class SudokuGenerator {
                 break;                                  // Stop if the number of empty cells is enough...
             }
         }
+        this.emptyCells = emptyCellsCounter;
         return fillToMask(emptyCells);                  // and convert it to a mask.
     }
 
