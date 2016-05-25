@@ -155,46 +155,23 @@ public class SudokuGrid {
 
     public void setAnswerClickListener(final Activity activity,
                                        final FrameLayout cellLayout,
-                                       TextView answerView,
+                                       final TextView answerView,
                                        final TableLayout pencilView) {
 
         answerView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TextView clickedText = (TextView) v;
                 int indexOfClick =
-                        GridPosition.getIndexFromView(clickedText);
-                int[] position = GridPosition.getPositionFromIndex(indexOfClick);
-                int clickedRow = position[0];
-                int clickedCol = position[1];
-
+                        GridPosition.getIndexFromView(v);
                 Boolean pencilMode = SudokuKeyboard.getPencilMode();
                 Boolean eraseMode = SudokuKeyboard.getEraseMode();
                 int activeKey = SudokuKeyboard.getActiveKey();
 
                 if (activeKey != 0) {       // A key from keyboard must be selected.
                     if (!pencilMode) {
-                        /*  NORMAL MODE
-                            Checking if user input is valid.
-                            If user input is valid, commit changes.
-                            If user input is not valid, warn and show conflicts.*/
-                        Boolean isValid = isValidInput(clickedRow, clickedCol, activeKey);
-                        updatePuzzleHighlight(activity, activeKey);
-                        if (isValid) {
-                            commitChanges(activity, cellLayout, clickedText);
-                        } else {
-                            showConflicts(activity, clickedRow, clickedCol, activeKey);
-                        }
+                        normalClick(activity, cellLayout, answerView, indexOfClick, activeKey, false);
                     } else {
-                        /*  PENCIL MODE
-                        *   Update last input and make new changes to clicked layout.*/
-                        int sketchId = GridPosition.getPencilId(clickedRow, clickedCol, activeKey);
-                        TextView sketchView = (TextView) pencilView.findViewById(sketchId);
-
-                        updateLastInput(activity, sketchView, true);
-                        sketchView.setTextColor(Color.BLUE);
-                        cellLayout.removeAllViews();
-                        cellLayout.addView(pencilView);
+                        pencilClick(activity, cellLayout, pencilView, indexOfClick, activeKey, true);
                     }
                 }
             }
@@ -210,48 +187,66 @@ public class SudokuGrid {
         pencilView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TableLayout clickedTable = (TableLayout) v;
                 int indexOfClick =
-                        GridPosition.getIndexFromView(clickedTable);
-                int[] position = GridPosition.getPositionFromIndex(indexOfClick);
-                int clickedRow = position[0];
-                int clickedCol = position[1];
+                        GridPosition.getIndexFromView(v);
                 Boolean pencilMode = SudokuKeyboard.getPencilMode();
                 Boolean eraseMode = SudokuKeyboard.getEraseMode();
                 int activeKey = SudokuKeyboard.getActiveKey();
 
                 if (activeKey != 0) {       // A key from keyboard must be selected.
                     if (pencilMode) {
-                        /*  PENCIL MODE
-                        *   Update last input and make new changes to clicked layout.*/
-                        int sketchId = GridPosition.getPencilId(clickedRow, clickedCol, activeKey);
-                        TextView sketchView = (TextView) pencilView.findViewById(sketchId);
-
-                        updateLastInput(activity, sketchView, true);
-                        sketchView.setTextColor(Color.BLUE);
-
+                        pencilClick(activity, cellLayout, pencilView, indexOfClick, activeKey, false);
                     } else {
-                        /*  NORMAL MODE
-                            Checking if user input is valid.
-                            If user input is valid, commit changes.
-                            If user input is not valid, warn and show conflicts.*/
-                        Boolean isValid = isValidInput(clickedRow, clickedCol, activeKey);
-                        updatePuzzleHighlight(activity, activeKey);
-                        if (isValid) {
-                            cellLayout.removeAllViews();
-                            cellLayout.addView(answerView);
-                            commitChanges(activity, cellLayout, answerView);
-                        } else {
-                            showConflicts(activity, clickedRow, clickedCol, activeKey);
-                        }
-
+                        normalClick(activity, cellLayout, answerView, indexOfClick, activeKey, true);
                     }
-
-
                 }
             }
         });
 
+    }
+
+
+    public void normalClick(Activity activity,
+                            FrameLayout cellLayout,
+                            TextView answerView,
+                            int indexOfClick, int activeKey,
+                            Boolean needsToSwapViews) {
+
+        /*  NORMAL MODE
+            Checking if user input is valid.
+            If user input is valid, commit changes.
+            If user input is not valid, warn and show conflicts.*/
+        Boolean isValid = isValidInput(indexOfClick, activeKey);
+        updatePuzzleHighlight(activity, activeKey);
+        if (isValid) {
+            if (needsToSwapViews) {
+                cellLayout.removeAllViews();
+                cellLayout.addView(answerView);
+            }
+            commitChanges(activity, cellLayout, answerView);
+        } else {
+            showConflicts(activity, indexOfClick, activeKey);
+        }
+    }
+
+
+    public void pencilClick(Activity activity,
+                            FrameLayout cellLayout,
+                            TableLayout pencilView,
+                            int indexOfClick, int activeKey,
+                            Boolean needsToSwapViews) {
+
+        /*  PENCIL MODE
+        *   Update last input and make new changes to clicked layout.*/
+        int sketchId = GridPosition.getPencilId(indexOfClick, activeKey);
+        TextView sketchView = (TextView) pencilView.findViewById(sketchId);
+
+        updateLastInput(activity, sketchView, true);
+        sketchView.setTextColor(Color.BLUE);
+        if (needsToSwapViews) {
+            cellLayout.removeAllViews();
+            cellLayout.addView(pencilView);
+        }
     }
 
 
@@ -334,6 +329,14 @@ public class SudokuGrid {
             toast2.setGravity(Gravity.CENTER, 0, 0);
             toast2.show();
         }
+    }
+
+
+    public Boolean isValidInput(int index, int activeKey) {
+        int[] position = GridPosition.getPositionFromIndex(index);
+        int row = position[0];
+        int col = position[1];
+        return isValidInput(row, col, activeKey);
     }
 
 
@@ -437,6 +440,14 @@ public class SudokuGrid {
             setColorFilter(activity, cell, 4);
         }
 
+    }
+
+
+    public void showConflicts(Activity activity, int index, int activeKey) {
+        int[] position = GridPosition.getPositionFromIndex(index);
+        int row = position[0];
+        int col = position[1];
+        showConflicts(activity, row, col, activeKey);
     }
 
 
