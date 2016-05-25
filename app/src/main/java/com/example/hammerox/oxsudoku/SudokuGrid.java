@@ -260,12 +260,12 @@ public class SudokuGrid {
 
         // Checking if there was a number before new input.
         int oldNumber = 0;
-        Boolean isSubtituting = false;
+        Boolean isSubstituting = false;
 
         String oldNumberString = view.getText().toString();
         if (oldNumberString.length() > 0) {
             oldNumber = Integer.valueOf(oldNumberString);
-            isSubtituting = true;
+            isSubstituting = true;
         }
 
         // Updating lastInputId.
@@ -310,7 +310,7 @@ public class SudokuGrid {
                 isNumberComplete.set(listsIndex, true);
             }
         }
-        if (isSubtituting) {
+        if (isSubstituting) {
             int listsIndex = oldNumber - 1;
             isNumberComplete.set(listsIndex, false);
             SudokuKeyboard.showButton(activity, oldNumber);
