@@ -8,7 +8,6 @@ import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.view.Gravity;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -79,7 +78,7 @@ public class SudokuKeyboard {
                         activeKey = pressedKeyNumber;
 
                         // Highlight grid's keys
-                        sudokuGrid.updatePuzzleHighlight(activity, activeKey);
+                        sudokuGrid.showHighlight(activity, activeKey);
 
                     } else {        // If clicked key is the same as the active key...
                         // change button's color to default, ...

@@ -160,14 +160,21 @@ public class GridPosition {
 
     //////////  CONVERTERS //////////
 
-    public static int getIndexFromView(View view) {
-        // Gets a grid's View and returns its index.
+    public static int[] getPositionFromId(View view) {
         int viewId = view.getId();
         String viewIdString = String.valueOf(viewId);
         int stringSize = viewIdString.length();
-        int rowIndex = Integer.valueOf(viewIdString.substring(stringSize - 2, stringSize - 1));
-        int colIndex = Integer.valueOf(viewIdString.substring(stringSize - 1, stringSize));
-        return 9 * (rowIndex - 1) + colIndex - 1;
+        int row = Integer.valueOf(viewIdString.substring(stringSize - 2, stringSize - 1));
+        int col = Integer.valueOf(viewIdString.substring(stringSize - 1, stringSize));
+        return new int[] {row,col};
+    }
+
+    public static int getIndexFromView(View view) {
+        // Gets a grid's View and returns its index.
+        int[] position = getPositionFromId(view);
+        int row = position[0];
+        int col = position[1];
+        return 9 * (row - 1) + col - 1;
     }
 
     public static int[] getPositionFromIndex(int index) {

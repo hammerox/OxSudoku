@@ -11,7 +11,6 @@ import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.util.Pair;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -59,16 +58,16 @@ public class SudokuGrid {
         * */
 
         /*Todo LOW - Don't forget to delete these lines when debugging is finished.*/
-/*        emptyCells = createDebugEmptyCells();
+        emptyCells = createDebugEmptyCells();
         puzzleSolution = createDebugSolution();
-        hasSolution = createDebugMask();*/
+        hasSolution = createDebugMask();
         /**/
 
-        int maxemptyCells = 60;
+/*        int maxemptyCells = 60;
         SudokuGenerator puzzle = new SudokuGenerator(maxemptyCells);
         emptyCells = puzzle.emptyCells;
         puzzleSolution = puzzle.board;
-        hasSolution = puzzle.mask;
+        hasSolution = puzzle.mask;*/
         puzzleAnswers = createAnswerList();
         puzzleHighlight = createHighlightList();
         puzzlePencil = createPencilList();
@@ -121,8 +120,8 @@ public class SudokuGrid {
                         // Interaction
                     setCellTouchListener(activity, answerView);
                     setCellTouchListener(activity, pencilView);
-                    setAnswerClickListener(activity, cellView, answerView, pencilView);
-                    setPencilClickListener(activity, cellView, answerView, pencilView);
+                    setClickOnAnswerCell(activity, cellView, answerView, pencilView);
+                    setClickOnPencilCell(activity, cellView, answerView, pencilView);
                 }
                 cellView.addView(answerView);
                 cellView.addView(pencilView);
@@ -154,10 +153,10 @@ public class SudokuGrid {
     }
 
 
-    public void setAnswerClickListener(final Activity activity,
-                                       final FrameLayout cellLayout,
-                                       final TextView answerView,
-                                       final TableLayout pencilView) {
+    public void setClickOnAnswerCell(final Activity activity,
+                                     final FrameLayout cellLayout,
+                                     final TextView answerView,
+                                     final TableLayout pencilView) {
 
         answerView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -167,15 +166,19 @@ public class SudokuGrid {
                 Boolean pencilMode = SudokuKeyboard.getPencilMode();
                 Boolean eraseMode = SudokuKeyboard.getEraseMode();
                 int activeKey = SudokuKeyboard.getActiveKey();
-                Log.d("class", v.getClass().toString());
-                if (activeKey != 0) {       // A key from keyboard must be selected.
-                    if (pencilMode) {
-                        Boolean hasAnswer = getHasUserInput().get(indexOfClick);
-                        if (!hasAnswer) {   // Pencil cannot override answer
-                            pencilClick(activity, v, cellLayout, pencilView, indexOfClick, activeKey);
+
+                if (eraseMode) {
+                    eraserClick(activity, v, activeKey);
+                } else {
+                    if (activeKey != 0) {       // A key from keyboard must be selected.
+                        if (pencilMode) {
+                            Boolean hasAnswer = getHasUserInput().get(indexOfClick);
+                            if (!hasAnswer) {   // Pencil cannot override answer
+                                pencilClick(activity, v, cellLayout, pencilView, indexOfClick, activeKey);
+                            }
+                        } else {
+                            answerClick(activity, v, cellLayout, answerView, indexOfClick, activeKey);
                         }
-                    } else {
-                        answerClick(activity, v, cellLayout, answerView, indexOfClick, activeKey);
                     }
                 }
             }
@@ -183,10 +186,10 @@ public class SudokuGrid {
     }
 
 
-    public void setPencilClickListener(final Activity activity,
-                                       final FrameLayout cellLayout,
-                                       final TextView answerView,
-                                       final TableLayout pencilView) {
+    public void setClickOnPencilCell(final Activity activity,
+                                     final FrameLayout cellLayout,
+                                     final TextView answerView,
+                                     final TableLayout pencilView) {
 
         pencilView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -196,12 +199,16 @@ public class SudokuGrid {
                 Boolean pencilMode = SudokuKeyboard.getPencilMode();
                 Boolean eraseMode = SudokuKeyboard.getEraseMode();
                 int activeKey = SudokuKeyboard.getActiveKey();
-                Log.d("class", v.getClass().toString());
-                if (activeKey != 0) {       // A key from keyboard must be selected.
-                    if (pencilMode) {
-                        pencilClick(activity, v, cellLayout, pencilView, indexOfClick, activeKey);
-                    } else {
-                        answerClick(activity, v, cellLayout, answerView, indexOfClick, activeKey);
+
+                if (eraseMode) {
+                    eraserClick(activity, v, activeKey);
+                } else {
+                    if (activeKey != 0) {       // A key from keyboard must be selected.
+                        if (pencilMode) {
+                            pencilClick(activity, v, cellLayout, pencilView, indexOfClick, activeKey);
+                        } else {
+                            answerClick(activity, v, cellLayout, answerView, indexOfClick, activeKey);
+                        }
                     }
                 }
             }
@@ -221,7 +228,7 @@ public class SudokuGrid {
             If user input is valid, commit changes.
             If user input is not valid, warn and show conflicts.*/
         Boolean isValid = isValidAnswer(indexOfClick, activeKey);
-        updatePuzzleHighlight(activity, activeKey);
+        showHighlight(activity, activeKey);
         if (isValid) {
             Boolean needsToSwap = needsToSwapViews(clickedView, answerView);
             if (needsToSwap) {
@@ -264,7 +271,35 @@ public class SudokuGrid {
                 lastInputId = -1;
             }
         }
+    }
 
+
+    public void eraserClick(Activity activity, View clickedView, int activeKey) {
+        int index = GridPosition.getIndexFromView(clickedView);
+        if (clickedView instanceof TextView) {
+            TextView viewToErase = (TextView) clickedView;
+            String oldNumberString = viewToErase.getText().toString();
+
+            if (oldNumberString.length() > 0) {
+                int oldNumber = Integer.valueOf(viewToErase.getText().toString());
+                int listsIndex = oldNumber - 1;
+
+                // Updating puzzle.
+                puzzleAnswers.set(index, 0);
+                hasUserInput.set(index, false);
+                isAnswerCorrect.set(index, false);
+                puzzleHighlight.set(index, 0);
+                isNumberComplete.set(listsIndex, false);
+                SudokuKeyboard.showButton(activity, oldNumber);
+                viewToErase.setText("");
+                if (oldNumber == activeKey) {
+                    showHighlight(activity, activeKey);
+                }
+            }
+
+        } else if (clickedView instanceof TableLayout) {
+            clearPencilCell(activity, index);
+        }
     }
 
 
@@ -272,7 +307,9 @@ public class SudokuGrid {
         List<Integer> pencilList = puzzlePencil.get(index);
         Boolean containsSomething = !pencilList.isEmpty();
         if (containsSomething) {
-            for (Integer number : pencilList) {
+            int size = pencilList.size();
+            for (int i = 0; i < size; i++) {
+                int number = pencilList.get(0);
                 int idToRemove = GridPosition.getPencilId(index, number);
                 TextView pencil = (TextView) activity.findViewById(idToRemove);
                 pencil.setTextColor(Color.TRANSPARENT);
@@ -539,7 +576,7 @@ public class SudokuGrid {
     }
 
 
-    public void updatePuzzleHighlight(Activity activity, int activeKey) {
+    public void showHighlight(Activity activity, int activeKey) {
         clearPuzzleHighlight(activity);
 
         // Setting highlight level 2 to activeKey's numbers .
