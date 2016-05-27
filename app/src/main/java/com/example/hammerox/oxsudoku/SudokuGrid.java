@@ -79,6 +79,7 @@ public class SudokuGrid {
         isNumberComplete = createBooleanGrid(KEYBOARD_SIZE, false);
 
         puzzleHistory = new ArrayList<>();
+        takeSnapshot();
     }
 
 
@@ -239,6 +240,7 @@ public class SudokuGrid {
                 swapViews(clickedView, answerView);
             }
             commitChanges(activity, cellLayout, answerView);
+            takeSnapshot();
         } else {
             showConflicts(activity, indexOfClick, activeKey);
         }
@@ -275,6 +277,7 @@ public class SudokuGrid {
                 lastInputId = -1;
             }
         }
+        takeSnapshot();
     }
 
 
@@ -299,10 +302,12 @@ public class SudokuGrid {
                 if (oldNumber == activeKey) {
                     showHighlight(activity, activeKey);
                 }
+                takeSnapshot();
             }
 
         } else if (clickedView instanceof TableLayout) {
             clearPencilCell(activity, index);
+            takeSnapshot();
         }
     }
 
@@ -772,6 +777,15 @@ public class SudokuGrid {
         }
         mDrawable.setColorFilter(
                 new PorterDuffColorFilter(mColor, PorterDuff.Mode.MULTIPLY));
+    }
+
+
+    public void takeSnapshot() {
+        PuzzleSnapshot snapshot
+                = new PuzzleSnapshot(emptyCells, hasSolution, hasUserInput,
+                isAnswerCorrect, isNumberComplete, lastInputId, lastInputIsPencil,
+                puzzleAnswers, puzzlePencil, puzzleSolution);
+        puzzleHistory.add(snapshot);
     }
 
 
