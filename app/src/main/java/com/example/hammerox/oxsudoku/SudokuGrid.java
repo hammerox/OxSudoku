@@ -46,6 +46,8 @@ public class SudokuGrid {
     private List<List<Integer>> puzzlePencil;
     private List<Boolean> isNumberComplete;
 
+    private List<PuzzleSnapshot> puzzleHistory;
+
     /*Todo - Add input's history*/
 
     public SudokuGrid() {
@@ -75,6 +77,8 @@ public class SudokuGrid {
         isAnswerCorrect = createBooleanGrid(GRID_SIZE, false);
         hasUserInput = createBooleanGrid(GRID_SIZE, false);
         isNumberComplete = createBooleanGrid(KEYBOARD_SIZE, false);
+
+        puzzleHistory = new ArrayList<>();
     }
 
 
@@ -896,5 +900,61 @@ public class SudokuGrid {
 
     public void setIsNumberComplete(List<Boolean> isNumberComplete) {
         this.isNumberComplete = isNumberComplete;
+    }
+
+    public int getEmptyCells() {
+        return emptyCells;
+    }
+
+    public void setEmptyCells(int emptyCells) {
+        this.emptyCells = emptyCells;
+    }
+
+    public static int getGridSize() {
+        return GRID_SIZE;
+    }
+
+    public static int getKeyboardSize() {
+        return KEYBOARD_SIZE;
+    }
+
+    public int getLastInputId() {
+        return lastInputId;
+    }
+
+    public void setLastInputId(int lastInputId) {
+        this.lastInputId = lastInputId;
+    }
+
+    public Boolean getLastInputIsPencil() {
+        return lastInputIsPencil;
+    }
+
+    public void setLastInputIsPencil(Boolean lastInputIsPencil) {
+        this.lastInputIsPencil = lastInputIsPencil;
+    }
+
+    public List<Integer> getPuzzleAnswers() {
+        return puzzleAnswers;
+    }
+
+    public void setPuzzleAnswers(List<Integer> puzzleAnswers) {
+        this.puzzleAnswers = puzzleAnswers;
+    }
+
+    public List<Integer> getPuzzleHighlight() {
+        return puzzleHighlight;
+    }
+
+    public void setPuzzleHighlight(List<Integer> puzzleHighlight) {
+        this.puzzleHighlight = puzzleHighlight;
+    }
+
+    public List<List<Integer>> getPuzzlePencil() {
+        return puzzlePencil;
+    }
+
+    public void setPuzzlePencil(List<List<Integer>> puzzlePencil) {
+        this.puzzlePencil = puzzlePencil;
     }
 }
