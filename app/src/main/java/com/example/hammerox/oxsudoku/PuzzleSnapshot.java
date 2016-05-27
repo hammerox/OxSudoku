@@ -1,5 +1,6 @@
 package com.example.hammerox.oxsudoku;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PuzzleSnapshot {
@@ -18,20 +19,6 @@ public class PuzzleSnapshot {
     private List<List<Integer>> puzzlePencil;
     private List<Boolean> isNumberComplete;
 
-    public PuzzleSnapshot(SudokuGrid sudokuGrid) {
-        lastInputId = sudokuGrid.getLastInputId();
-        lastInputIsPencil = sudokuGrid.getLastInputIsPencil();
-        emptyCells = sudokuGrid.getEmptyCells();
-
-        puzzleSolution = sudokuGrid.getPuzzleSolution();
-        hasSolution = sudokuGrid.getHasSolution();
-        puzzleAnswers = sudokuGrid.getPuzzleAnswers();
-        isAnswerCorrect = sudokuGrid.getIsAnswerCorrect();
-        hasUserInput = sudokuGrid.getHasUserInput();
-        puzzlePencil = sudokuGrid.getPuzzlePencil();
-        isNumberComplete = sudokuGrid.getIsNumberComplete();
-    }
-
     public PuzzleSnapshot(int emptyCells,
                           List<Boolean> hasSolution,
                           List<Boolean> hasUserInput,
@@ -44,17 +31,26 @@ public class PuzzleSnapshot {
                           List<Integer> puzzleSolution) {
 
         this.emptyCells = emptyCells;
-        this.hasSolution = hasSolution;
-        this.hasUserInput = hasUserInput;
-        this.isAnswerCorrect = isAnswerCorrect;
-        this.isNumberComplete = isNumberComplete;
+        this.hasSolution = new ArrayList<>(hasSolution);
+        this.hasUserInput = new ArrayList<>(hasUserInput);
+        this.isAnswerCorrect = new ArrayList<>(isAnswerCorrect);
+        this.isNumberComplete = new ArrayList<>(isNumberComplete);
         this.lastInputId = lastInputId;
         this.lastInputIsPencil = lastInputIsPencil;
-        this.puzzleAnswers = puzzleAnswers;
-        this.puzzlePencil = puzzlePencil;
-        this.puzzleSolution = puzzleSolution;
+        this.puzzleAnswers = new ArrayList<>(puzzleAnswers);
+        this.puzzlePencil = copyPuzzlePencil(puzzlePencil);
+        this.puzzleSolution = new ArrayList<>(puzzleSolution);
     }
 
+    public List<List<Integer>> copyPuzzlePencil(List<List<Integer>> original) {
+        List<List<Integer>> copy = new ArrayList<>();
+        int size = original.size();
+        for (int i = 0; i < size; i++) {
+            List<Integer> cellCopy = new ArrayList<>(original.get(i));
+            copy.add(cellCopy);
+        }
+        return copy;
+    }
 
     //////////  GETTERS AND SETTERS //////////
 

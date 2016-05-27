@@ -239,8 +239,8 @@ public class SudokuGrid {
             if (needsToSwap) {
                 swapViews(clickedView, answerView);
             }
-            commitChanges(activity, cellLayout, answerView);
             takeSnapshot();
+            commitChanges(activity, cellLayout, answerView);
         } else {
             showConflicts(activity, indexOfClick, activeKey);
         }
@@ -260,6 +260,7 @@ public class SudokuGrid {
         Pair testValues = isNewPencilNumber(indexOfClick, activeKey);
         Boolean isNewPencilNumber = (Boolean) testValues.first;
 
+        takeSnapshot();
         if (isNewPencilNumber) {
             updateLastInput(activity, sketchView, true);
             Boolean needsToSwap = needsToSwapViews(clickedView, pencilView);
@@ -277,7 +278,6 @@ public class SudokuGrid {
                 lastInputId = -1;
             }
         }
-        takeSnapshot();
     }
 
 
@@ -292,6 +292,7 @@ public class SudokuGrid {
                 int listsIndex = oldNumber - 1;
 
                 // Updating puzzle.
+                takeSnapshot();
                 puzzleAnswers.set(index, 0);
                 hasUserInput.set(index, false);
                 isAnswerCorrect.set(index, false);
@@ -302,12 +303,11 @@ public class SudokuGrid {
                 if (oldNumber == activeKey) {
                     showHighlight(activity, activeKey);
                 }
-                takeSnapshot();
             }
 
         } else if (clickedView instanceof TableLayout) {
-            clearPencilCell(activity, index);
             takeSnapshot();
+            clearPencilCell(activity, index);
         }
     }
 
@@ -790,124 +790,132 @@ public class SudokuGrid {
 
 
     public void undoLastInput(Activity activity) {
-        int listIndex = puzzleHistory.size() - 1;
-        PuzzleSnapshot lastSnapshot = puzzleHistory.get(listIndex);
+        if (puzzleHistory.size() > 1) {
+            int listIndex = puzzleHistory.size() - 1;
+            PuzzleSnapshot lastSnapshot = puzzleHistory.get(listIndex);
 
-        /*Need to compare:
-        * lastInputId
-        * puzzleAnswers
-        * puzzlePencil*/
-
-        // Find if answer has changed.
-        Boolean answerHasChanged = false;
-        int changedIndex = -1;
-        List<Integer> oldAnswerGrid = lastSnapshot.getPuzzleAnswers();
-        for (int i = 0; i < GRID_SIZE; i++) {               // For each cell...
-            int actualAnswer = puzzleAnswers.get(i);
-            int oldAnswer = oldAnswerGrid.get(i);
-            if (actualAnswer != oldAnswer) {                // Check if number has changed.
-                answerHasChanged = true;
-                changedIndex = i;                           // If true, get index of changed cell.
-                break;
-            }
-        }
-
-        if (answerHasChanged) {         // If answer has changed...
-                                        // Get all cell views, ...
-            int cellId = GridPosition.getIdFromIndex(changedIndex);
-            FrameLayout cell = (FrameLayout)activity.findViewById(cellId);
-            TextView answerView = (TextView) cell.getChildAt(0);
-            TableLayout pencilParentView = (TableLayout) cell.getChildAt(1);
-
-                                        // Set answer's view to old answer...
-            int oldAnswer = oldAnswerGrid.get(changedIndex);
-            answerView.setText(String.valueOf(oldAnswer));
-            int answerColor = ContextCompat.getColor(activity, R.color.colorAccent);
-            answerView.setTextColor(answerColor);
-
-                                        // And compare if pencil has changed on the same cell.
-            List<Integer> actualPencilList = getPuzzlePencil().get(changedIndex);
-            List<Integer> oldPencilList = lastSnapshot.getPuzzlePencil().get(changedIndex);
-            Boolean pencilHasChanged = !oldPencilList.equals(actualPencilList);
-
-            if (pencilHasChanged) {     // If pencil has changed...
-                                        // Swap views ...
-                swapViews(answerView, pencilParentView);
-                                        // And add all missing numbers.
-                List<Integer> numberToAdd = comparePencilLists(oldPencilList, actualPencilList);
-                if (!numberToAdd.isEmpty()) {
-                    for (Integer number : numberToAdd) {
-                        int pencilId = GridPosition.getPencilId(changedIndex, number);
-                        TextView pencilView = (TextView) pencilParentView.findViewById(pencilId);
-                        int pencilColor = ContextCompat.getColor(activity, R.color.colorPrimaryLight);
-                        pencilView.setTextColor(pencilColor);
-                    }
-                }
-            }
-                                        // Finally, show all remaining changed pencil views.
-            for (int i = 0; i < GRID_SIZE; i++) {
-                if (i != changedIndex) {
-                    actualPencilList = getPuzzlePencil().get(i);
-                    oldPencilList = lastSnapshot.getPuzzlePencil().get(i);
-                    pencilHasChanged = !oldPencilList.equals(actualPencilList);
-                    if (pencilHasChanged) {
-                        int pencilId = GridPosition.getPencilId(changedIndex, oldAnswer);
-                        TextView pencilView = (TextView) pencilParentView.findViewById(pencilId);
-                        int pencilColor = ContextCompat.getColor(activity, R.color.colorPrimaryLight);
-                        pencilView.setTextColor(pencilColor);
-                    }
-                }
-            }
-
-        } else {                // If answer has not changed...
-                                // Find for the only cell that has changed...
-            for (int i = 0; i < GRID_SIZE; i++) {
-                List<Integer> actualPencilList = getPuzzlePencil().get(i);
-                List<Integer> oldPencilList = lastSnapshot.getPuzzlePencil().get(i);
-                Boolean pencilHasChanged = !oldPencilList.equals(actualPencilList);
-                if (pencilHasChanged) {     // and get its index.
-                    changedIndex = i;
+            // Find if answer has changed.
+            Boolean answerHasChanged = false;
+            int changedIndex = -1;
+            List<Integer> oldAnswerGrid = lastSnapshot.getPuzzleAnswers();
+            for (int i = 0; i < GRID_SIZE; i++) {               // For each cell...
+                int actualAnswer = puzzleAnswers.get(i);
+                int oldAnswer = oldAnswerGrid.get(i);
+                if (actualAnswer != oldAnswer) {                // Check if number has changed.
+                    answerHasChanged = true;
+                    changedIndex = i;                           // If true, get index of changed cell.
                     break;
                 }
             }
 
-            List<Integer> actualPencilList = getPuzzlePencil().get(changedIndex);
-            List<Integer> oldPencilList = lastSnapshot.getPuzzlePencil().get(changedIndex);
-                                            // Show all missing numbers...
-            List<Integer> numberToAdd = comparePencilLists(oldPencilList, actualPencilList);
-            if (!numberToAdd.isEmpty()) {
-                for (Integer number : numberToAdd) {
-                    int pencilId = GridPosition.getPencilId(changedIndex, number);
-                    TextView pencilView = (TextView) activity.findViewById(pencilId);
-                    int pencilColor = ContextCompat.getColor(activity, R.color.colorPrimaryLight);
-                    pencilView.setTextColor(pencilColor);
+            if (answerHasChanged) {         // If answer has changed...
+                // Get all cell views, ...
+                int cellId = GridPosition.getIdFromIndex(changedIndex);
+                FrameLayout cell = (FrameLayout) activity.findViewById(cellId);
+                TextView answerView = (TextView) cell.getChildAt(0);
+                TableLayout pencilParentView = (TableLayout) cell.getChildAt(1);
+
+                // Set answer's view to old answer...
+                int oldAnswer = oldAnswerGrid.get(changedIndex);
+                if (oldAnswer != 0) {
+                    answerView.setText(String.valueOf(oldAnswer));
+                } else {
+                    answerView.setText("");
+                }
+                int answerColor = ContextCompat.getColor(activity, R.color.colorAccent);
+                answerView.setTextColor(answerColor);
+
+                // And compare if pencil has changed on the same cell.
+                List<Integer> actualPencilList = getPuzzlePencil().get(changedIndex);
+                List<Integer> oldPencilList = lastSnapshot.getPuzzlePencil().get(changedIndex);
+                Boolean pencilHasChanged = !oldPencilList.equals(actualPencilList);
+
+                if (pencilHasChanged) {     // If pencil has changed...
+                    // Swap views ...
+                    swapViews(answerView, pencilParentView);
+                    // And add all missing numbers.
+                    List<Integer> numberToAdd = comparePencilLists(oldPencilList, actualPencilList);
+                    if (!numberToAdd.isEmpty()) {
+                        for (Integer number : numberToAdd) {
+                            int pencilId = GridPosition.getPencilId(changedIndex, number);
+                            TextView pencilView = (TextView) pencilParentView.findViewById(pencilId);
+                            int pencilColor = ContextCompat.getColor(activity, R.color.colorPrimaryLight);
+                            pencilView.setTextColor(pencilColor);
+                        }
+                    }
+                }
+                // Finally, show all remaining changed pencil views.
+                for (int i = 0; i < GRID_SIZE; i++) {
+                    if (i != changedIndex) {
+                        actualPencilList = getPuzzlePencil().get(i);
+                        oldPencilList = lastSnapshot.getPuzzlePencil().get(i);
+                        pencilHasChanged = !oldPencilList.equals(actualPencilList);
+                        if (pencilHasChanged) {
+                            int pencilId = GridPosition.getPencilId(changedIndex, oldAnswer);
+                            TextView pencilView = (TextView) pencilParentView.findViewById(pencilId);
+                            int pencilColor = ContextCompat.getColor(activity, R.color.colorPrimaryLight);
+                            pencilView.setTextColor(pencilColor);
+                        }
+                    }
+                }
+
+            } else {                // If answer has not changed...
+                // Find for the only cell that has changed...
+                for (int i = 0; i < GRID_SIZE; i++) {
+                    List<Integer> actualPencilList = getPuzzlePencil().get(i);
+                    List<Integer> oldPencilList = lastSnapshot.getPuzzlePencil().get(i);
+                    Boolean pencilHasChanged = !oldPencilList.equals(actualPencilList);
+                    if (pencilHasChanged) {     // and get its index.
+                        changedIndex = i;
+                        break;
+                    }
+                }
+
+                List<Integer> actualPencilList = getPuzzlePencil().get(changedIndex);
+                List<Integer> oldPencilList = lastSnapshot.getPuzzlePencil().get(changedIndex);
+                // Show all missing numbers...
+                List<Integer> numberToAdd = comparePencilLists(oldPencilList, actualPencilList);
+                if (!numberToAdd.isEmpty()) {
+                    for (Integer number : numberToAdd) {
+                        int pencilId = GridPosition.getPencilId(changedIndex, number);
+                        TextView pencilView = (TextView) activity.findViewById(pencilId);
+                        int pencilColor = ContextCompat.getColor(activity, R.color.colorPrimaryLight);
+                        pencilView.setTextColor(pencilColor);
+                    }
+                }
+                // And hide all left over numbers.
+                List<Integer> numberToRemove = comparePencilLists(actualPencilList, oldPencilList);
+                if (!numberToRemove.isEmpty()) {
+                    for (Integer number : numberToRemove) {
+                        int pencilId = GridPosition.getPencilId(changedIndex, number);
+                        TextView pencilView = (TextView) activity.findViewById(pencilId);
+                        pencilView.setTextColor(Color.TRANSPARENT);
+                    }
                 }
             }
-                                            // And hide all left over numbers.
-            List<Integer> numberToRemove = comparePencilLists(actualPencilList, oldPencilList);
-            if (!numberToRemove.isEmpty()) {
-                for (Integer number : numberToRemove) {
-                    int pencilId = GridPosition.getPencilId(changedIndex, number);
-                    TextView pencilView = (TextView) activity.findViewById(pencilId);
-                    pencilView.setTextColor(Color.TRANSPARENT);
-                }
+
+            // Show user's last input.
+            int oldLastInputId = lastSnapshot.getLastInputId();
+            if (oldLastInputId > 0) {
+                TextView lastInputView = (TextView) activity.findViewById(oldLastInputId);
+                lastInputView.setTextColor(Color.BLUE);
             }
+
+            lastInputId = lastSnapshot.getLastInputId();
+            lastInputIsPencil = lastSnapshot.getLastInputIsPencil();
+            puzzleAnswers = lastSnapshot.getPuzzleAnswers();
+            puzzlePencil = lastSnapshot.getPuzzlePencil();
+            isAnswerCorrect = lastSnapshot.getIsAnswerCorrect();
+            hasUserInput = lastSnapshot.getHasUserInput();
+            isNumberComplete = lastSnapshot.getIsNumberComplete();
+
+            // Update highlight.
+            int activeKey = SudokuKeyboard.getActiveKey();
+            showHighlight(activity, activeKey);
+
+            // Update history.
+            puzzleHistory.remove(listIndex);
         }
-
-        // Show user's last input.
-        int oldLastInputId = lastSnapshot.getLastInputId();
-        TextView lastInputView = (TextView) activity.findViewById(oldLastInputId);
-        lastInputView.setTextColor(Color.BLUE);
-
-        lastInputId = lastSnapshot.getLastInputId();
-        lastInputIsPencil = lastSnapshot.getLastInputIsPencil();
-        puzzleAnswers = lastSnapshot.getPuzzleAnswers();
-        puzzlePencil = lastSnapshot.getPuzzlePencil();
-        isAnswerCorrect = lastSnapshot.getIsAnswerCorrect();
-        hasUserInput = lastSnapshot.getHasUserInput();
-        isNumberComplete = lastSnapshot.getIsNumberComplete();
-
-
     }
 
     public List<Integer> comparePencilLists(List<Integer> firstList, List<Integer> secondList) {

@@ -189,7 +189,7 @@ public class SudokuKeyboard {
         rightButton2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                sudokuGrid.undoLastInput(activity);
             }
         });
     }
