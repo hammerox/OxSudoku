@@ -845,14 +845,15 @@ public class SudokuGrid {
                     }
                 }
                 // Finally, show all remaining changed pencil views.
+                int actualAnswer = puzzleAnswers.get(changedIndex);
                 for (int i = 0; i < GRID_SIZE; i++) {
                     if (i != changedIndex) {
                         actualPencilList = getPuzzlePencil().get(i);
                         oldPencilList = lastSnapshot.getPuzzlePencil().get(i);
                         pencilHasChanged = !oldPencilList.equals(actualPencilList);
                         if (pencilHasChanged) {
-                            int pencilId = GridPosition.getPencilId(changedIndex, oldAnswer);
-                            TextView pencilView = (TextView) pencilParentView.findViewById(pencilId);
+                            int pencilId = GridPosition.getPencilId(i, actualAnswer);
+                            TextView pencilView = (TextView) activity.findViewById(pencilId);
                             int pencilColor = ContextCompat.getColor(activity, R.color.colorPrimaryLight);
                             pencilView.setTextColor(pencilColor);
                         }
