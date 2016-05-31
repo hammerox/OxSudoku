@@ -9,8 +9,8 @@
         app:actionViewClass="android.widget.Chronometer">
     </item>
     <item
-        android:id="@+id/action_check"
-        android:title="@string/action_check"
+        android:id="@+id/action_autofill"
+        android:title="@string/action_autofill"
         android:orderInCategory="90"
         app:showAsAction="never" />
 </menu>

@@ -7,6 +7,8 @@ public class PuzzleSnapshot {
     final static int GRID_SIZE = 81;
     final static int KEYBOARD_SIZE = 9;
 
+    private Boolean lastInputWasFill = false;
+
     private int lastInputId = -1;
     private Boolean lastInputIsPencil;
     private int emptyCells;
@@ -40,6 +42,31 @@ public class PuzzleSnapshot {
         this.puzzleAnswers = new ArrayList<>(puzzleAnswers);
         this.puzzlePencil = copyPuzzlePencil(puzzlePencil);
         this.puzzleSolution = new ArrayList<>(puzzleSolution);
+    }
+
+    public PuzzleSnapshot(int emptyCells,
+                          List<Boolean> hasSolution,
+                          List<Boolean> hasUserInput,
+                          List<Boolean> isAnswerCorrect,
+                          List<Boolean> isNumberComplete,
+                          int lastInputId,
+                          Boolean lastInputIsPencil,
+                          List<Integer> puzzleAnswers,
+                          List<List<Integer>> puzzlePencil,
+                          List<Integer> puzzleSolution,
+                          Boolean lastInputWasFill) {
+
+        this.emptyCells = emptyCells;
+        this.hasSolution = new ArrayList<>(hasSolution);
+        this.hasUserInput = new ArrayList<>(hasUserInput);
+        this.isAnswerCorrect = new ArrayList<>(isAnswerCorrect);
+        this.isNumberComplete = new ArrayList<>(isNumberComplete);
+        this.lastInputId = lastInputId;
+        this.lastInputIsPencil = lastInputIsPencil;
+        this.puzzleAnswers = new ArrayList<>(puzzleAnswers);
+        this.puzzlePencil = copyPuzzlePencil(puzzlePencil);
+        this.puzzleSolution = new ArrayList<>(puzzleSolution);
+        this.lastInputWasFill = lastInputWasFill;
     }
 
     public List<List<Integer>> copyPuzzlePencil(List<List<Integer>> original) {
@@ -141,5 +168,13 @@ public class PuzzleSnapshot {
 
     public void setPuzzleSolution(List<Integer> puzzleSolution) {
         this.puzzleSolution = puzzleSolution;
+    }
+
+    public Boolean getLastInputWasFill() {
+        return lastInputWasFill;
+    }
+
+    public void setLastInputWasFill(Boolean lastInputWasFill) {
+        this.lastInputWasFill = lastInputWasFill;
     }
 }

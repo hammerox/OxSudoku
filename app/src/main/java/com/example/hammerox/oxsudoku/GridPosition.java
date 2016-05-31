@@ -131,6 +131,15 @@ public class GridPosition {
     }
 
 
+    public static int getCellId(int index) {
+        int[] position = getPositionFromIndex(index);
+        int row = position[0];
+        int col = position[1];
+        String idString = "" + row + col;
+        return Integer.valueOf(idString);
+    }
+
+
     public static int getCellId(int row, int col, View v) {
         String idString = "";
         if (v instanceof FrameLayout) {

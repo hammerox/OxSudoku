@@ -77,7 +77,9 @@ public class SudokuFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch (id) {
-            case R.id.action_check:
+            case R.id.action_autofill:
+                sudokuGrid.takeSnapshot(true);
+                sudokuGrid.autoFill(getActivity());
                 break;
         }
 

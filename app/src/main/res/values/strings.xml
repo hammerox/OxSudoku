@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">OxSudoku</string>
-    <string name="action_check">Check progress</string>
+    <string name="action_autofill">Auto Fill</string>
 </resources>
