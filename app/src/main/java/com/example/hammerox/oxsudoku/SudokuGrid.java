@@ -48,7 +48,6 @@ public class SudokuGrid {
 
     private List<PuzzleSnapshot> puzzleHistory;
 
-    /*Todo - Add input's history*/
 
     public SudokuGrid() {
         /* The puzzle is generated on class creation.
@@ -311,21 +310,7 @@ public class SudokuGrid {
     }
 
 
-    public void clearPencilCell(Activity activity, int index) {
-        List<Integer> pencilList = puzzlePencil.get(index);
-        Boolean containsSomething = !pencilList.isEmpty();
-        if (containsSomething) {
-            int size = pencilList.size();
-            for (int i = 0; i < size; i++) {
-                int number = pencilList.get(0);
-                int idToRemove = GridPosition.getPencilId(index, number);
-                TextView pencil = (TextView) activity.findViewById(idToRemove);
-                pencil.setTextColor(Color.TRANSPARENT);
-                pencilList.remove(0);
-            }
-        }
-    }
-
+    //////////  ACTIONS  //////////
 
     public void commitChanges(Activity activity, FrameLayout cellView, TextView view) {
         int activeKey = SudokuKeyboard.getActiveKey();
@@ -433,43 +418,19 @@ public class SudokuGrid {
     }
 
 
-    public Boolean isValidAnswer(int clickedRow, int clickedCol, int activeKey) {
-        List<Integer> rowColBox =
-                GridPosition.getRowColBoxIndexes(clickedRow, clickedCol, false);
-        for (Integer i : rowColBox) {
-            int answer = puzzleAnswers.get(i);
-            if (answer == activeKey) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-
-    public Boolean isValidAnswer(int index, int activeKey) {
-        int[] position = GridPosition.getPositionFromIndex(index);
-        int row = position[0];
-        int col = position[1];
-        return isValidAnswer(row, col, activeKey);
-    }
-
-
-    public Pair<Boolean, Integer> isNewPencilNumber(int index, int activeKey) {
-        /*  Check on cell's pencil list if it contains the same input number.
-        *   If it finds an equal number, returns FALSE.
-        *   If it do not find, it returns TRUE. */
-        List<Integer> pencilNumbers = puzzlePencil.get(index);
-        if (pencilNumbers.isEmpty()) {
-            return new Pair<>(true, -1);
-        } else {
-            int size = pencilNumbers.size();
+    public void clearPencilCell(Activity activity, int index) {
+        List<Integer> pencilList = puzzlePencil.get(index);
+        Boolean containsSomething = !pencilList.isEmpty();
+        if (containsSomething) {
+            int size = pencilList.size();
             for (int i = 0; i < size; i++) {
-                if (pencilNumbers.get(i) == activeKey) {
-                    return new Pair<>(false, i);
-                }
+                int number = pencilList.get(0);
+                int idToRemove = GridPosition.getPencilId(index, number);
+                TextView pencil = (TextView) activity.findViewById(idToRemove);
+                pencil.setTextColor(Color.TRANSPARENT);
+                pencilList.remove(0);
             }
         }
-        return new Pair<>(true, -1);
     }
 
 
@@ -490,13 +451,6 @@ public class SudokuGrid {
     }
 
 
-    public Boolean needsToSwapViews(View clickedView, View viewToCompare) {
-        Object clickedClass = clickedView.getClass();
-        Object compareToClass = viewToCompare.getClass();
-        return !clickedClass.equals(compareToClass);
-    }
-
-
     public void swapViews(View clickedView, View viewToSwap) {
         clickedView.setVisibility(View.GONE);
         viewToSwap.setVisibility(View.VISIBLE);
@@ -508,7 +462,6 @@ public class SudokuGrid {
         Boolean isOnRow = false;
         Boolean isOnCol = false;
         List<Integer> conflictIndexes = new ArrayList<>();
-
         // Check Box
         List<Integer> checkBox = GridPosition.getBoxIndexes(clickedRow, clickedCol, false);
         for (Integer i : checkBox) {
@@ -518,7 +471,6 @@ public class SudokuGrid {
                 break;
             }
         }
-
         // Check Row
         List<Integer> checkRow = GridPosition.getRowIndexes(clickedRow, clickedCol, false);
         for (Integer i : checkRow) {
@@ -528,7 +480,6 @@ public class SudokuGrid {
                 break;
             }
         }
-
         // Check Col
         List<Integer> checkCol = GridPosition.getColIndexes(clickedRow, clickedCol, false);
         for (Integer i : checkCol) {
@@ -538,7 +489,6 @@ public class SudokuGrid {
                 break;
             }
         }
-
         // Draw
         if (isOnBox) {
             for (Integer i : checkBox) {
@@ -546,18 +496,14 @@ public class SudokuGrid {
                 Drawable cell = activity.findViewById(id).getBackground();
                 setColorFilter(activity, cell, 3);
             }
-
         }
-
         if (isOnRow) {
             for (Integer i : checkRow) {
                 int id = GridPosition.getIdFromIndex(i);
                 Drawable cell = activity.findViewById(id).getBackground();
                 setColorFilter(activity, cell, 3);
             }
-
         }
-
         if (isOnCol) {
             for (Integer i : checkCol) {
                 int id = GridPosition.getIdFromIndex(i);
@@ -565,14 +511,12 @@ public class SudokuGrid {
                 setColorFilter(activity, cell, 3);
             }
         }
-
         // Mark conflicting cells.
         for (Integer i : conflictIndexes) {
             int id = GridPosition.getIdFromIndex(i);
             Drawable cell = activity.findViewById(id).getBackground();
             setColorFilter(activity, cell, 4);
         }
-
     }
 
 
@@ -581,15 +525,6 @@ public class SudokuGrid {
         int row = position[0];
         int col = position[1];
         showConflicts(activity, row, col, activeKey);
-    }
-
-
-    public void clearPuzzleHighlight(Activity activity) {
-        // This makes puzzleHighlight as default.
-        for (int i = 0; i < GRID_SIZE; i++) {
-            setIntensityColor(activity, i, 0);
-            puzzleHighlight.set(i, 0);
-        }
     }
 
 
@@ -625,81 +560,6 @@ public class SudokuGrid {
     }
 
 
-    public void setHighlightLevel1(int row, int col) {
-        List<Integer> allIndexes = GridPosition.getRowColBoxIndexes(row, col, false);
-        for (Integer i : allIndexes) {
-            int intensity = puzzleHighlight.get(i);
-            if (intensity == 0) puzzleHighlight.set(i, 1);
-        }
-    }
-
-
-    public TextView createAnswerSlot(Activity activity, int row, int col) {
-        TextView answerView = new TextView(activity);
-        // IDs
-        int answerId = GridPosition.getCellId(row, col, answerView);
-        answerView.setId(answerId);
-        // LayoutParams
-        answerView.setLayoutParams(new FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.MATCH_PARENT,
-                FrameLayout.LayoutParams.MATCH_PARENT));
-        // Appearance
-        answerView.setGravity(Gravity.CENTER);
-        answerView.setTypeface(Typeface.DEFAULT_BOLD);
-        answerView.setTextSize(30);
-
-        return answerView;
-    }
-
-
-    public TableLayout createPencilSlot(Activity activity, int row, int col) {
-        TableLayout pencilView = new TableLayout(activity);
-        // ID
-        int pencilId = GridPosition.getCellId(row, col, pencilView);
-        pencilView.setId(pencilId);
-        // LayoutParams
-        pencilView.setLayoutParams(new FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.MATCH_PARENT,
-                FrameLayout.LayoutParams.MATCH_PARENT));
-
-        TableRow tableRow = new TableRow(activity);
-        for (int n = 1; n <= 9; n++) {
-            // LayoutParams
-            tableRow.setLayoutParams(new TableLayout.LayoutParams(
-                    TableLayout.LayoutParams.MATCH_PARENT,
-                    TableLayout.LayoutParams.MATCH_PARENT,
-                    1.0f));
-
-                TextView textView = new TextView(activity);
-                // ID
-                int positionId = GridPosition.getPencilId(row, col, n);
-                textView.setId(positionId);
-                // LayoutParams
-                textView.setLayoutParams(new TableRow.LayoutParams(
-                        TableRow.LayoutParams.MATCH_PARENT,
-                        TableRow.LayoutParams.MATCH_PARENT,
-                1.0f));
-                // Appearance
-                textView.setGravity(Gravity.CENTER);
-                textView.setTextSize(10);
-                textView.setText(String.valueOf(n));
-                ColorStateList mTransparent = ColorStateList.valueOf(Color.TRANSPARENT);
-                textView.setTextColor(mTransparent);
-
-                tableRow.addView(textView);
-
-            if (n % 3 == 0) {
-                pencilView.addView(tableRow);
-                tableRow = new TableRow(activity);
-            }
-        }
-
-        return pencilView;
-    }
-
-
-    //////////  FEATURES  //////////
-
     public void takeSnapshot() {
         PuzzleSnapshot snapshot
                 = new PuzzleSnapshot(emptyCells, hasSolution, hasUserInput,
@@ -717,6 +577,8 @@ public class SudokuGrid {
         puzzleHistory.add(snapshot);
     }
 
+
+    //////////  FEATURES  //////////
 
     public void undoLastInput(Activity activity) {
         if (!puzzleHistory.isEmpty()) {
@@ -929,6 +791,53 @@ public class SudokuGrid {
     }
 
 
+    public Boolean needsToSwapViews(View clickedView, View viewToCompare) {
+        Object clickedClass = clickedView.getClass();
+        Object compareToClass = viewToCompare.getClass();
+        return !clickedClass.equals(compareToClass);
+    }
+
+
+    public Boolean isValidAnswer(int clickedRow, int clickedCol, int activeKey) {
+        List<Integer> rowColBox =
+                GridPosition.getRowColBoxIndexes(clickedRow, clickedCol, false);
+        for (Integer i : rowColBox) {
+            int answer = puzzleAnswers.get(i);
+            if (answer == activeKey) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+    public Boolean isValidAnswer(int index, int activeKey) {
+        int[] position = GridPosition.getPositionFromIndex(index);
+        int row = position[0];
+        int col = position[1];
+        return isValidAnswer(row, col, activeKey);
+    }
+
+
+    public Pair<Boolean, Integer> isNewPencilNumber(int index, int activeKey) {
+        /*  Check on cell's pencil list if it contains the same input number.
+        *   If it finds an equal number, returns FALSE.
+        *   If it do not find, it returns TRUE. */
+        List<Integer> pencilNumbers = puzzlePencil.get(index);
+        if (pencilNumbers.isEmpty()) {
+            return new Pair<>(true, -1);
+        } else {
+            int size = pencilNumbers.size();
+            for (int i = 0; i < size; i++) {
+                if (pencilNumbers.get(i) == activeKey) {
+                    return new Pair<>(false, i);
+                }
+            }
+        }
+        return new Pair<>(true, -1);
+    }
+
+
     public void setIntensityColor(Activity activity, int index, int highlightLevel) {
         int id = GridPosition.getIdFromIndex(index);
         Drawable mDrawable = activity.findViewById(id).getBackground();
@@ -1019,7 +928,89 @@ public class SudokuGrid {
     }
 
 
-    //////////  LIST CREATERS //////////
+    //////////  CREATERS AND EDITTERS //////////
+
+    public TextView createAnswerSlot(Activity activity, int row, int col) {
+        TextView answerView = new TextView(activity);
+        // IDs
+        int answerId = GridPosition.getCellId(row, col, answerView);
+        answerView.setId(answerId);
+        // LayoutParams
+        answerView.setLayoutParams(new FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.MATCH_PARENT));
+        // Appearance
+        answerView.setGravity(Gravity.CENTER);
+        answerView.setTypeface(Typeface.DEFAULT_BOLD);
+        answerView.setTextSize(30);
+
+        return answerView;
+    }
+
+
+    public TableLayout createPencilSlot(Activity activity, int row, int col) {
+        TableLayout pencilView = new TableLayout(activity);
+        // ID
+        int pencilId = GridPosition.getCellId(row, col, pencilView);
+        pencilView.setId(pencilId);
+        // LayoutParams
+        pencilView.setLayoutParams(new FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.MATCH_PARENT));
+
+        TableRow tableRow = new TableRow(activity);
+        for (int n = 1; n <= 9; n++) {
+            // LayoutParams
+            tableRow.setLayoutParams(new TableLayout.LayoutParams(
+                    TableLayout.LayoutParams.MATCH_PARENT,
+                    TableLayout.LayoutParams.MATCH_PARENT,
+                    1.0f));
+
+            TextView textView = new TextView(activity);
+            // ID
+            int positionId = GridPosition.getPencilId(row, col, n);
+            textView.setId(positionId);
+            // LayoutParams
+            textView.setLayoutParams(new TableRow.LayoutParams(
+                    TableRow.LayoutParams.MATCH_PARENT,
+                    TableRow.LayoutParams.MATCH_PARENT,
+                    1.0f));
+            // Appearance
+            textView.setGravity(Gravity.CENTER);
+            textView.setTextSize(10);
+            textView.setText(String.valueOf(n));
+            ColorStateList mTransparent = ColorStateList.valueOf(Color.TRANSPARENT);
+            textView.setTextColor(mTransparent);
+
+            tableRow.addView(textView);
+
+            if (n % 3 == 0) {
+                pencilView.addView(tableRow);
+                tableRow = new TableRow(activity);
+            }
+        }
+
+        return pencilView;
+    }
+
+
+    public void setHighlightLevel1(int row, int col) {
+        List<Integer> allIndexes = GridPosition.getRowColBoxIndexes(row, col, false);
+        for (Integer i : allIndexes) {
+            int intensity = puzzleHighlight.get(i);
+            if (intensity == 0) puzzleHighlight.set(i, 1);
+        }
+    }
+
+
+    public void clearPuzzleHighlight(Activity activity) {
+        // This makes puzzleHighlight as default.
+        for (int i = 0; i < GRID_SIZE; i++) {
+            setIntensityColor(activity, i, 0);
+            puzzleHighlight.set(i, 0);
+        }
+    }
+
 
     public List<Integer> createAnswerList() {
         List<Integer> userAnswers = new ArrayList<>();
