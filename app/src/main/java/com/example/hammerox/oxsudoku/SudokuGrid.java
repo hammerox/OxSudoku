@@ -410,11 +410,20 @@ public class SudokuGrid {
         }
 
         // Checking if puzzle is complete.
-        int answerCounter = 0;
-        for (Boolean answer : isAnswerCorrect) {
-            if (answer) answerCounter++;
+        List<Integer> wrongArray = new ArrayList<>();
+        int correctCount = 0;
+        int wrongCount = 0;
+        int totalCount = 0;
+        for (int index = 0; index < GRID_SIZE; index++) {
+            if (!isAnswerCorrect.get(index) && hasUserInput.get(index)) {
+                wrongArray.add(index);
+                wrongCount++;
+            } else if (isAnswerCorrect.get(index) && hasUserInput.get(index)) {
+                correctCount++;
+            }
+            if (!hasSolution.get(index)) totalCount++;
         }
-        if (answerCounter == emptyCells) {
+        if (correctCount == totalCount) {
             Toast toast = Toast.makeText(activity, "CONGRATULATIONS!", Toast.LENGTH_LONG);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
