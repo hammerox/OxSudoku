@@ -52,8 +52,8 @@ public class SudokuKeyboard {
                     int pressedKeyNumber = Integer.valueOf(pressedKey.getText().toString());
 
                     if (pressedKeyNumber != activeKey) {    // If clicked key is different from active key...
-                        // On click, make last active key back to default's appearance.
-                        if (activeKey != 0) {       // activeKey = 0 means no key was clicked previously.
+                        // Make last active key back to default's appearance....
+                        if (activeKey != 0) {
                             String idString = "key_" + activeKey;
                             int id = activity.getResources()
                                     .getIdentifier(idString, "id", activity.getPackageName());
@@ -70,15 +70,17 @@ public class SudokuKeyboard {
                             ViewCompat.setBackgroundTintList(lastKey, mReleaseColor);
                         }
 
-                        // Changes active key's color.
+                        // And changes active key's color.
                         showButton(pressedKey);
                         ColorStateList mPressedColor = ContextCompat
                                 .getColorStateList(activity, R.color.colorAccent);
                         ViewCompat.setBackgroundTintList(pressedKey, mPressedColor);
-                        activeKey = pressedKeyNumber;
 
                         // Highlight grid's keys
-                        sudokuGrid.showHighlight(activity, activeKey);
+                        sudokuGrid.showPencilNumbers(activity, activeKey, pressedKeyNumber);
+                        sudokuGrid.showHighlight(activity, pressedKeyNumber);
+
+                        activeKey = pressedKeyNumber;
 
                     } else {        // If clicked key is the same as the active key...
                         // change button's color to default, ...
@@ -92,6 +94,7 @@ public class SudokuKeyboard {
                         if (isComplete) hideButton(activity, activeKey);
 
                         // undo the highlights...
+                        sudokuGrid.clearPencilNumbers(activity, activeKey);
                         sudokuGrid.clearPuzzleHighlight(activity);
 
                         // and set no active key.

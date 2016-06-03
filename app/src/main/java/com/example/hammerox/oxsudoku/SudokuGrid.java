@@ -560,6 +560,17 @@ public class SudokuGrid {
     }
 
 
+    public void showPencilNumbers(Activity activity, int lastKey, int activeKey) {
+        clearPencilNumbers(activity, lastKey);
+
+        for (int i = 0; i < GRID_SIZE; i++) {
+            int activeKeyId = GridPosition.getPencilId(i, activeKey);
+            TextView activeView = (TextView) activity.findViewById(activeKeyId);
+            activeView.setTypeface(Typeface.DEFAULT_BOLD);
+        }
+    }
+
+
     public void takeSnapshot() {
         PuzzleSnapshot snapshot
                 = new PuzzleSnapshot(emptyCells, hasSolution, hasUserInput,
@@ -1008,6 +1019,17 @@ public class SudokuGrid {
         for (int i = 0; i < GRID_SIZE; i++) {
             setIntensityColor(activity, i, 0);
             puzzleHighlight.set(i, 0);
+        }
+    }
+
+
+    public void clearPencilNumbers(Activity activity, int lastKey) {
+        if (lastKey > 0) {
+            for (int i = 0; i < GRID_SIZE; i++) {
+                int lastKeyId = GridPosition.getPencilId(i, lastKey);
+                TextView lastView = (TextView) activity.findViewById(lastKeyId);
+                lastView.setTypeface(Typeface.DEFAULT);
+            }
         }
     }
 
