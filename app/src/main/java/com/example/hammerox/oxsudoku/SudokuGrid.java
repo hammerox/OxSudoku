@@ -45,6 +45,7 @@ public class SudokuGrid {
     private List<Integer> puzzleHighlight;
     private List<List<Integer>> puzzlePencil;
     private List<Boolean> isNumberComplete;
+    private List<List<Boolean>> hasPencil;
 
     private List<PuzzleSnapshot> puzzleHistory;
 
@@ -71,11 +72,12 @@ public class SudokuGrid {
         hasSolution = puzzle.mask;*/
         puzzleAnswers = createAnswerList();
         puzzleHighlight = createHighlightList();
-        puzzlePencil = createPencilList();
+        puzzlePencil = createPencilIntList();
 
         isAnswerCorrect = createBooleanGrid(GRID_SIZE, false);
         hasUserInput = createBooleanGrid(GRID_SIZE, false);
         isNumberComplete = createBooleanGrid(KEYBOARD_SIZE, false);
+        hasPencil = createPencilBolList(false);
 
         puzzleHistory = new ArrayList<>();
     }
@@ -255,8 +257,7 @@ public class SudokuGrid {
         *   Update last input and make new changes to clicked layout.*/
         int sketchId = GridPosition.getPencilId(indexOfClick, activeKey);
         TextView sketchView = (TextView) pencilView.findViewById(sketchId);
-        Pair testValues = isNewPencilNumber(indexOfClick, activeKey);
-        Boolean isNewPencilNumber = (Boolean) testValues.first;
+        Boolean isNewPencilNumber = isNewPencilNumber(indexOfClick, activeKey).first;
 
         takeSnapshot();
         if (isNewPencilNumber) {
@@ -265,13 +266,11 @@ public class SudokuGrid {
             if (needsToSwap) {
                 swapViews(clickedView, pencilView);
             }
+            addPencilNumber(activity, sketchView, indexOfClick, activeKey);
             sketchView.setTextColor(Color.BLUE);
-            puzzlePencil.get(indexOfClick).add(activeKey);
 
         } else {
-            int positionToRemove = (Integer) testValues.second;
-            sketchView.setTextColor(Color.TRANSPARENT);
-            puzzlePencil.get(indexOfClick).remove(positionToRemove);
+            removePencilNumber(activity, indexOfClick, activeKey);
             if (sketchId == lastInputId) {
                 lastInputId = -1;
             }
@@ -368,12 +367,7 @@ public class SudokuGrid {
             Pair testValues = isNewPencilNumber(i, activeKey);
             Boolean containsSamePencilNumber = !(Boolean)testValues.first;
             if (containsSamePencilNumber) {
-                int idToRemove = GridPosition.getPencilId(i, activeKey);
-                TextView sketchView = (TextView) activity.findViewById(idToRemove);
-                sketchView.setTextColor(Color.TRANSPARENT);
-
-                int indexToRemove = (Integer) testValues.second;
-                puzzlePencil.get(i).remove(indexToRemove);
+                removePencilNumber(activity, i, activeKey);
             }
         }
 
@@ -425,10 +419,7 @@ public class SudokuGrid {
             int size = pencilList.size();
             for (int i = 0; i < size; i++) {
                 int number = pencilList.get(0);
-                int idToRemove = GridPosition.getPencilId(index, number);
-                TextView pencil = (TextView) activity.findViewById(idToRemove);
-                pencil.setTextColor(Color.TRANSPARENT);
-                pencilList.remove(0);
+                removePencilNumber(activity, index, number);
             }
         }
     }
@@ -560,13 +551,19 @@ public class SudokuGrid {
     }
 
 
-    public void showPencilNumbers(Activity activity, int lastKey, int activeKey) {
-        clearPencilNumbers(activity, lastKey);
+    public void showPencilHighligh(Activity activity, int lastKey, int activeKey) {
+        clearPencilHighlight(activity, lastKey);
 
         for (int i = 0; i < GRID_SIZE; i++) {
-            int activeKeyId = GridPosition.getPencilId(i, activeKey);
-            TextView activeView = (TextView) activity.findViewById(activeKeyId);
-            activeView.setTypeface(Typeface.DEFAULT_BOLD);
+            if (hasPencil.get(i).get(activeKey - 1)) {
+                int cellId = GridPosition.getCellId(i);
+                FrameLayout cell = (FrameLayout) activity.findViewById(cellId);
+
+                int activeKeyId = GridPosition.getPencilId(i, activeKey);
+                TextView activeView = (TextView) cell.findViewById(activeKeyId);
+
+                activeView.setTextColor(Color.RED);
+            }
         }
     }
 
@@ -575,7 +572,7 @@ public class SudokuGrid {
         PuzzleSnapshot snapshot
                 = new PuzzleSnapshot(emptyCells, hasSolution, hasUserInput,
                 isAnswerCorrect, isNumberComplete, lastInputId, lastInputIsPencil,
-                puzzleAnswers, puzzlePencil, puzzleSolution);
+                puzzleAnswers, puzzlePencil, hasPencil, puzzleSolution);
         puzzleHistory.add(snapshot);
     }
 
@@ -584,7 +581,7 @@ public class SudokuGrid {
         PuzzleSnapshot snapshot
                 = new PuzzleSnapshot(emptyCells, hasSolution, hasUserInput,
                 isAnswerCorrect, isNumberComplete, lastInputId, lastInputIsPencil,
-                puzzleAnswers, puzzlePencil, puzzleSolution, lastInputWasFill);
+                puzzleAnswers, puzzlePencil, hasPencil, puzzleSolution, lastInputWasFill);
         puzzleHistory.add(snapshot);
     }
 
@@ -740,12 +737,19 @@ public class SudokuGrid {
 
     //////////  TOOLS //////////
 
-    public void addPencilNumber(Activity activity, int index, int number) {
-        int pencilId = GridPosition.getPencilId(index, number);
-        TextView pencilView = (TextView) activity.findViewById(pencilId);
+    public void addPencilNumber(Activity activity, TextView pencilView, int index, int number) {
         int pencilColor = ContextCompat.getColor(activity, R.color.colorPrimaryLight);
         pencilView.setTextColor(pencilColor);
         getPuzzlePencil().get(index).add(number);
+        hasPencil.get(index).set(number - 1, true);
+    }
+
+
+    public void addPencilNumber(Activity activity, int index, int number) {
+        int pencilId = GridPosition.getPencilId(index, number);
+        TextView pencilView = (TextView) activity.findViewById(pencilId);
+
+        addPencilNumber(activity, pencilView, index, number);
     }
 
 
@@ -761,6 +765,7 @@ public class SudokuGrid {
                 break;
             }
         }
+        hasPencil.get(index).set(number - 1, false);
     }
 
 
@@ -1023,12 +1028,19 @@ public class SudokuGrid {
     }
 
 
-    public void clearPencilNumbers(Activity activity, int lastKey) {
+    public void clearPencilHighlight(Activity activity, int lastKey) {
         if (lastKey > 0) {
             for (int i = 0; i < GRID_SIZE; i++) {
-                int lastKeyId = GridPosition.getPencilId(i, lastKey);
-                TextView lastView = (TextView) activity.findViewById(lastKeyId);
-                lastView.setTypeface(Typeface.DEFAULT);
+                if (hasPencil.get(i).get(lastKey - 1)) {
+                    int cellId = GridPosition.getCellId(i);
+                    FrameLayout cell = (FrameLayout) activity.findViewById(cellId);
+
+                    int lastKeyId = GridPosition.getPencilId(i, lastKey);
+                    TextView lastView = (TextView) cell.findViewById(lastKeyId);
+
+                    int pencilColor = ContextCompat.getColor(activity, R.color.colorPrimaryLight);
+                    lastView.setTextColor(pencilColor);
+                }
             }
         }
     }
@@ -1063,10 +1075,21 @@ public class SudokuGrid {
     }
 
 
-    public List<List<Integer>> createPencilList() {
+    public List<List<Integer>> createPencilIntList() {
         List<List<Integer>> pencilList = new ArrayList<>();
         for (int i = 0; i < GRID_SIZE; i++) {
             pencilList.add(new ArrayList<Integer>());
+        }
+        return pencilList;
+    }
+
+
+    public List<List<Boolean>> createPencilBolList(Boolean booleanToFill) {
+        List<List<Boolean>> pencilList = new ArrayList<>();
+        for (int index = 0; index < GRID_SIZE; index++) {
+            Boolean[] array = new Boolean[KEYBOARD_SIZE];
+            Arrays.fill(array, booleanToFill);
+            pencilList.add(Arrays.asList(array));
         }
         return pencilList;
     }

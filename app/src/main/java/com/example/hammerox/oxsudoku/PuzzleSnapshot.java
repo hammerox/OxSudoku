@@ -19,6 +19,7 @@ public class PuzzleSnapshot {
     private List<Boolean> isAnswerCorrect;
     private List<Boolean> hasUserInput;
     private List<List<Integer>> puzzlePencil;
+    private List<List<Boolean>> hasPencil;
     private List<Boolean> isNumberComplete;
 
     public PuzzleSnapshot(int emptyCells,
@@ -30,6 +31,7 @@ public class PuzzleSnapshot {
                           Boolean lastInputIsPencil,
                           List<Integer> puzzleAnswers,
                           List<List<Integer>> puzzlePencil,
+                          List<List<Boolean>> hasPencil,
                           List<Integer> puzzleSolution) {
 
         this.emptyCells = emptyCells;
@@ -40,7 +42,8 @@ public class PuzzleSnapshot {
         this.lastInputId = lastInputId;
         this.lastInputIsPencil = lastInputIsPencil;
         this.puzzleAnswers = new ArrayList<>(puzzleAnswers);
-        this.puzzlePencil = copyPuzzlePencil(puzzlePencil);
+        this.puzzlePencil = copyPuzzlePencilInt(puzzlePencil);
+        this.hasPencil = copyPuzzlePencilBol(hasPencil);
         this.puzzleSolution = new ArrayList<>(puzzleSolution);
     }
 
@@ -53,6 +56,7 @@ public class PuzzleSnapshot {
                           Boolean lastInputIsPencil,
                           List<Integer> puzzleAnswers,
                           List<List<Integer>> puzzlePencil,
+                          List<List<Boolean>> hasPencil,
                           List<Integer> puzzleSolution,
                           Boolean lastInputWasFill) {
 
@@ -64,16 +68,27 @@ public class PuzzleSnapshot {
         this.lastInputId = lastInputId;
         this.lastInputIsPencil = lastInputIsPencil;
         this.puzzleAnswers = new ArrayList<>(puzzleAnswers);
-        this.puzzlePencil = copyPuzzlePencil(puzzlePencil);
+        this.puzzlePencil = copyPuzzlePencilInt(puzzlePencil);
+        this.hasPencil = copyPuzzlePencilBol(hasPencil);
         this.puzzleSolution = new ArrayList<>(puzzleSolution);
         this.lastInputWasFill = lastInputWasFill;
     }
 
-    public List<List<Integer>> copyPuzzlePencil(List<List<Integer>> original) {
+    public List<List<Integer>> copyPuzzlePencilInt(List<List<Integer>> original) {
         List<List<Integer>> copy = new ArrayList<>();
         int size = original.size();
         for (int i = 0; i < size; i++) {
             List<Integer> cellCopy = new ArrayList<>(original.get(i));
+            copy.add(cellCopy);
+        }
+        return copy;
+    }
+
+    public List<List<Boolean>> copyPuzzlePencilBol(List<List<Boolean>> original) {
+        List<List<Boolean>> copy = new ArrayList<>();
+        int size = original.size();
+        for (int i = 0; i < size; i++) {
+            List<Boolean> cellCopy = new ArrayList<>(original.get(i));
             copy.add(cellCopy);
         }
         return copy;

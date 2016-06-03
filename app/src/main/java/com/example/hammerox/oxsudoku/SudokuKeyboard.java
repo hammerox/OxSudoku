@@ -77,7 +77,7 @@ public class SudokuKeyboard {
                         ViewCompat.setBackgroundTintList(pressedKey, mPressedColor);
 
                         // Highlight grid's keys
-                        sudokuGrid.showPencilNumbers(activity, activeKey, pressedKeyNumber);
+                        sudokuGrid.showPencilHighligh(activity, activeKey, pressedKeyNumber);
                         sudokuGrid.showHighlight(activity, pressedKeyNumber);
 
                         activeKey = pressedKeyNumber;
@@ -94,7 +94,7 @@ public class SudokuKeyboard {
                         if (isComplete) hideButton(activity, activeKey);
 
                         // undo the highlights...
-                        sudokuGrid.clearPencilNumbers(activity, activeKey);
+                        sudokuGrid.clearPencilHighlight(activity, activeKey);
                         sudokuGrid.clearPuzzleHighlight(activity);
 
                         // and set no active key.
