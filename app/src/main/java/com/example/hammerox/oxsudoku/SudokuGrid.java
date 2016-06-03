@@ -36,6 +36,7 @@ public class SudokuGrid {
     private int lastInputId = -1;
     private Boolean lastInputIsPencil;
     private int emptyCells;
+    private Boolean isPuzzleComplete = false;
 
     private List<Integer> puzzleSolution;
     private List<Boolean> hasSolution;
@@ -402,6 +403,8 @@ public class SudokuGrid {
             if (!hasSolution.get(index)) totalCount++;
         }
         if (correctCount == totalCount) {
+            isPuzzleComplete = true;
+            SudokuFragment.chronoPause();
             Toast toast = Toast.makeText(activity, "CONGRATULATIONS!", Toast.LENGTH_LONG);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
@@ -1236,5 +1239,29 @@ public class SudokuGrid {
 
     public void setPuzzlePencil(List<List<Integer>> puzzlePencil) {
         this.puzzlePencil = puzzlePencil;
+    }
+
+    public List<List<Boolean>> getHasPencil() {
+        return hasPencil;
+    }
+
+    public void setHasPencil(List<List<Boolean>> hasPencil) {
+        this.hasPencil = hasPencil;
+    }
+
+    public Boolean getPuzzleComplete() {
+        return isPuzzleComplete;
+    }
+
+    public void setPuzzleComplete(Boolean puzzleComplete) {
+        isPuzzleComplete = puzzleComplete;
+    }
+
+    public List<PuzzleSnapshot> getPuzzleHistory() {
+        return puzzleHistory;
+    }
+
+    public void setPuzzleHistory(List<PuzzleSnapshot> puzzleHistory) {
+        this.puzzleHistory = puzzleHistory;
     }
 }

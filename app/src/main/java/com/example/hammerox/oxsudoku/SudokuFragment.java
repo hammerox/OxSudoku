@@ -118,8 +118,12 @@ public class SudokuFragment extends Fragment {
 
     @Override
     public void onResume() {
-        if (chronometer != null)
-            chronoStart();
+        if (chronometer != null) {
+            Boolean puzzleIsIncomplete = !sudokuGrid.getPuzzleComplete();
+            if (puzzleIsIncomplete) {
+                chronoStart();
+            }
+        }
         super.onResume();
     }
 
