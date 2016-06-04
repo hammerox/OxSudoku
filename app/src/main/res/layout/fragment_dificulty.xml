@@ -18,6 +18,7 @@
             android:padding="40dp"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
+            android:onClick="selectDificulty"
             android:text="@string/dificulty_easy"/>
 
         <Button
@@ -27,6 +28,7 @@
             android:padding="40dp"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
+            android:onClick="selectDificulty"
             android:text="@string/dificulty_medium"/>
 
         <Button
@@ -36,6 +38,7 @@
             android:padding="40dp"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
+            android:onClick="selectDificulty"
             android:text="@string/dificulty_hard"/>
 
     </LinearLayout>
