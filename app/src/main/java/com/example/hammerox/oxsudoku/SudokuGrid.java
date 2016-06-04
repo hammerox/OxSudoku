@@ -51,7 +51,7 @@ public class SudokuGrid {
     private List<PuzzleSnapshot> puzzleHistory;
 
 
-    public SudokuGrid() {
+    public SudokuGrid(int emptyCells) {
         /* The puzzle is generated on class creation.
         * puzzleSolution = Integer. Contains all correct answers.
         * hasSolution = Boolean. Show respective solution if true. False will demand user input.
@@ -61,16 +61,15 @@ public class SudokuGrid {
         * */
 
         /*Todo LOW - Don't forget to delete these lines when debugging is finished.*/
-        emptyCells = createDebugEmptyCells();
+/*        this.emptyCells = createDebugEmptyCells();
         puzzleSolution = createDebugSolution();
-        hasSolution = createDebugMask();
+        hasSolution = createDebugMask();*/
         /**/
 
-/*        int maxemptyCells = 60;
-        SudokuGenerator puzzle = new SudokuGenerator(maxemptyCells);
-        emptyCells = puzzle.emptyCells;
+        SudokuGenerator puzzle = new SudokuGenerator(emptyCells);
+        this.emptyCells = puzzle.emptyCells;
         puzzleSolution = puzzle.board;
-        hasSolution = puzzle.mask;*/
+        hasSolution = puzzle.mask;
         puzzleAnswers = createAnswerList();
         puzzleHighlight = createHighlightList();
         puzzlePencil = createPencilIntList();

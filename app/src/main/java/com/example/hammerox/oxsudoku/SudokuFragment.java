@@ -2,6 +2,7 @@ package com.example.hammerox.oxsudoku;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -43,8 +44,10 @@ public class SudokuFragment extends Fragment {
             long elapsedInMilliSeconds = TimeUnit.MILLISECONDS.convert(elapsedInNanos, TimeUnit.NANOSECONDS);
             Log.d("onCreate", "elapsedInMilliSeconds: " + elapsedInMilliSeconds + "ms, isValid: " + isValid.toString());
         }*/
+        Intent intent = getActivity().getIntent();
+        int emptyCells = intent.getIntExtra("emptyCells", 0);
 
-        sudokuGrid = new SudokuGrid();      // Generates new puzzle
+        sudokuGrid = new SudokuGrid(emptyCells);      // Generates new puzzle
         setHasOptionsMenu(true);
     }
 
