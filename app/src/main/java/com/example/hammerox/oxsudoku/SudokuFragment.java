@@ -53,7 +53,7 @@ public class SudokuFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         /*Todo - Adjust fragment for horizontal orientation*/
-        View rootView = inflater.inflate(R.layout.sudoku_fragment, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_sudoku, container, false);
         sudokuGrid.drawPuzzle(getActivity(), rootView);
 
         SudokuKeyboard keyboard = new SudokuKeyboard();

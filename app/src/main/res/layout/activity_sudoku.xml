@@ -3,11 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.hammerox.oxsudoku.MainActivity">
+    tools:context=".SudokuActivity">
 
     <FrameLayout
-        android:id="@+id/activity_main_container"
+        android:id="@+id/activity_sudoku_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        tools:layout="@layout/fragment_dificulty" />
 
 </RelativeLayout>

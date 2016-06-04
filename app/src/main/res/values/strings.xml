@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">OxSudoku</string>
     <string name="action_autofill">Auto Fill</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="dificulty_easy">Easy</string>
+    <string name="dificulty_medium">Medium</string>
+    <string name="dificulty_hard">Hard</string>
 </resources>

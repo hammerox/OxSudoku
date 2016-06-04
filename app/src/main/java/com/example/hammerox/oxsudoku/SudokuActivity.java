@@ -3,16 +3,16 @@ package com.example.hammerox.oxsudoku;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-public class MainActivity extends AppCompatActivity {
+public class SudokuActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sudoku);
-        DificultyFragment dificultyFragment = new DificultyFragment();
+        SudokuFragment sudokuFragment = new SudokuFragment();
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
-                    .add(R.id.activity_sudoku_container, dificultyFragment)
+                    .add(R.id.activity_sudoku_container, sudokuFragment)
                     .commit();
         }
     }
