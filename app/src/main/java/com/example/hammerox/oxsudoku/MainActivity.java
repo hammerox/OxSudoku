@@ -14,7 +14,7 @@ public class MainActivity extends AppCompatActivity {
         DificultyFragment dificultyFragment = new DificultyFragment();
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
-                    .add(R.id.activity_sudoku_container, dificultyFragment)
+                    .add(R.id.activity_sudoku_container, new LoadingFragment())
                     .commit();
         }
     }
