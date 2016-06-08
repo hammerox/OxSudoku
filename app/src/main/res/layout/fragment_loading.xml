@@ -11,7 +11,7 @@
         android:layout_centerInParent="true"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        app:rcProgress="30"
+        app:rcProgress="15"
         app:rcMax="100"
         app:rcRadius="25dp"
         app:rcBackgroundPadding="5dp"

@@ -20,24 +20,30 @@ import java.util.Random;
 
 public class SudokuGenerator {
 
+    final static int GRID_SIZE = 81;
+
     List<Integer> board;
-    List<Boolean> mask;
-    int emptyCells = 0;
+    List<Boolean> mask = new ArrayList<>();
+    List<Boolean> emptyCellList;
+    List<Integer> boardToEdit;
+    List<Integer> shuffledIndexes;
+    int maxEmptyCells;
+    int emptyCellsCounter = 0;
 
     public SudokuGenerator() {
-        this.board = startBoard(1);
+        this.board = createBoard(1);
         this.board = fillBoard(board);
-        this.mask = setPuzzle(board, 50);
+        /*setPuzzle(50);*/
     }
 
     public SudokuGenerator(int maxEmptyCells) {
-        this.board = startBoard(1);
+        this.board = createBoard(1);
         this.board = fillBoard(board);
-        this.mask = setPuzzle(board, maxEmptyCells);
-        this.emptyCells = maxEmptyCells;
+        this.maxEmptyCells = maxEmptyCells;
+        /*setPuzzle(maxEmptyCells);*/
     }
 
-    public List<Integer> startBoard(int iteration) {
+    public List<Integer> createBoard(int iteration) {
         List<Integer> newBoard = createBoard(true);
         Random random = new Random();
         for (int i = 0; i < iteration; i++) {
@@ -83,54 +89,53 @@ public class SudokuGenerator {
         return pair.first;
     }
 
-    public List<Boolean> setPuzzle(List<Integer> board, int numberOfEmptyCells) {
+    public void preparePuzzle() {
         // Creating a boolean list. If TRUE, cell is EMPTY. If false, cell contains solution.
         // Setting all initial values to FALSE.
         Boolean[] array = new Boolean[81];
         Arrays.fill(array, false);
-        List<Boolean> emptyCells = Arrays.asList(array);
+        emptyCellList = Arrays.asList(array);
 
         // Shuffling indexes.
-        List<Integer> boardToEdit = new ArrayList<>(board);
-        List<Integer> allIndexes = new ArrayList<>();
-        for (int i = 0; i <= 80; ++i) allIndexes.add(i);
-        Collections.shuffle(allIndexes);
+        boardToEdit = new ArrayList<>(board);
+        shuffledIndexes = new ArrayList<>();
+        for (int i = 0; i <= 80; ++i) shuffledIndexes.add(i);
+        Collections.shuffle(shuffledIndexes);
+    }
 
-        int size = 9 * 9;
-        int emptyCellsCounter = 0;
-        for (int i = 0; i < size; i++) {                // For every cell on the board...
-            int index = allIndexes.get(i);              // pick a random cell, ...
-            emptyCells.set(index, true);                // mark it...
-            boardToEdit.set(index, 0);                  // and make it empty.
-
-            List<Integer> boardCopy = new ArrayList<>(boardToEdit);
-            Pair<List<Integer>, Integer> pair           // Try to solve it...
-                    = doBacktrack(boardCopy, emptyCells, 2);
-            int solutions = pair.second;                // and count the number of possible solutions.
-            Log.d("onCreate", "i: " + i + ", emptyCells: " + emptyCellsCounter + " ,solutions: " + solutions );
-            if (solutions == 1) {                       // If there is a single solution...
-                emptyCellsCounter++;                    // keep changes and count.
-            } else {                                    // If there is more than one solution...
-                emptyCells.set(index, false);           // undo the changes.
-                boardToEdit.set(index, board.get(index));
-            }
-
+    public void setPuzzle(int numberOfEmptyCells) {
+        for (int i = 0; i < GRID_SIZE; i++) {                // For every cell on the board...
+            tryToRemoveCell(i);                         // execute tryToRemoveCell().
             if (emptyCellsCounter == numberOfEmptyCells) {
                 break;                                  // Stop if the number of empty cells is enough...
             }
         }
-        this.emptyCells = emptyCellsCounter;
-        return fillToMask(emptyCells);                  // and convert it to a mask.
+        fillToMask(emptyCellList);                      // and convert it to a mask.
     }
 
-    public static List<Boolean> fillToMask(List<Boolean> fillList) {
-        List<Boolean> mask = new ArrayList<>();
-        int size = 9 * 9;
-        for (int i = 0; i < size; i++) {
+    public void tryToRemoveCell(int iteration) {
+        int index = shuffledIndexes.get(iteration);  // Pick a random cell, ...
+        emptyCellList.set(index, true);             // mark it as empty ...
+        boardToEdit.set(index, 0);                  // and make it empty.
+
+        List<Integer> boardCopy = new ArrayList<>(boardToEdit);
+        Pair<List<Integer>, Integer> pair           // Try to solve it...
+                = doBacktrack(boardCopy, emptyCellList, 2);
+        int solutions = pair.second;                // and count the number of possible solutions.
+        Log.d("onCreate", "i: " + iteration + ", emptyCells: " + emptyCellsCounter + " ,solutions: " + solutions );
+        if (solutions == 1) {                       // If there is a single solution...
+            emptyCellsCounter++;                    // keep changes and count.
+        } else {                                    // If there is more than one solution...
+            emptyCellList.set(index, false);        // undo the changes.
+            boardToEdit.set(index, board.get(index));
+        }
+    }
+
+    public void fillToMask(List<Boolean> fillList) {
+        for (int i = 0; i < GRID_SIZE; i++) {
             Boolean toMask = !fillList.get(i);
             mask.add(toMask);
         }
-        return mask;
     }
 
     public Pair<List<Integer>, Integer> doBacktrack(List<Integer> board,
@@ -139,10 +144,9 @@ public class SudokuGenerator {
         Boolean isBacktracking = false;
         Boolean hasSolution = false;
         List<List> listOfLists = new ArrayList<>();
-        int size = 9 * 9;
         int step = 0;
 
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < GRID_SIZE; i++) {
             step++;
             Boolean isNewCell = listOfLists.isEmpty() || listOfLists.size() <= i;
             if (i == -1) {
@@ -181,7 +185,7 @@ public class SudokuGenerator {
                         isBacktracking = false;
 
                         Boolean isComplete = true;
-                        for (int j = 0; j < size; j++) {
+                        for (int j = 0; j < GRID_SIZE; j++) {
                             if (board.get(j) == 0) {
                                 isComplete = false;
                                 break;
@@ -219,8 +223,7 @@ public class SudokuGenerator {
 
     public static Boolean isValidGame(List<Integer> board) {
         Boolean isValid = true;
-        int size = 9 * 9;
-        for (int i = 0; i < size; i++) {                        // For every cell on the board,...
+        for (int i = 0; i < GRID_SIZE; i++) {                        // For every cell on the board,...
             int row = GridPosition.getPositionFromIndex(i)[0];
             int col = GridPosition.getPositionFromIndex(i)[1];
             List<Integer> checkList = getRowColBoxIndexes(row, col);
@@ -239,8 +242,7 @@ public class SudokuGenerator {
 
     public List<Boolean> createFillList(List<Integer> board) {
         List<Boolean> toFill = new ArrayList<>();
-        int size = 9 * 9;
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < GRID_SIZE; i++) {
             if (board.get(i) == 0) {
                 toFill.add(true);
             } else {
@@ -294,13 +296,12 @@ public class SudokuGenerator {
 
     public List<Integer> createBoard (Boolean createEmpty) {
         List<Integer> board = new ArrayList<>();
-        int size = 9 * 9;
         if (createEmpty) {
-            for (int i = 0; i < size; i++) {
+            for (int i = 0; i < GRID_SIZE; i++) {
                 board.add(0);
             }
         } else {
-            for (int i = 0; i < size; i++) {
+            for (int i = 0; i < GRID_SIZE; i++) {
                 int row = GridPosition.getPositionFromIndex(i)[0];
                 board.add(row);
             }
@@ -310,8 +311,7 @@ public class SudokuGenerator {
 
     public List<Integer> rotateHorizontal(List<Integer> list) {
         List<Integer> rotatedBoard = createBoard(true);
-        int size = 9 * 9;
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < GRID_SIZE; i++) {
             int row = GridPosition.getPositionFromIndex(i)[0];
             int newRow = swapWith(row);
             int index = GridPosition.getIndexFromPosition(
@@ -324,8 +324,7 @@ public class SudokuGenerator {
 
     public List<Integer> rotateVertical(List<Integer> list) {
         List<Integer> rotatedBoard = createBoard(true);
-        int size = 9 * 9;
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < GRID_SIZE; i++) {
             int col = GridPosition.getPositionFromIndex(i)[1];
             int newCol = swapWith(col);
             int index = GridPosition.getIndexFromPosition(
@@ -338,8 +337,7 @@ public class SudokuGenerator {
 
     public List<Integer> rotateDiagonal(List<Integer> list) {
         List<Integer> rotatedBoard = createBoard(true);
-        int size = 9 * 9;
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < GRID_SIZE; i++) {
             int row = GridPosition.getPositionFromIndex(i)[0];
             int col = GridPosition.getPositionFromIndex(i)[1];
             int newRow = col;
@@ -464,4 +462,59 @@ public class SudokuGenerator {
         return board;
     }
 
+    public void setBoard(List<Integer> board) {
+        this.board = board;
+    }
+
+    public List<Integer> getBoardToEdit() {
+        return boardToEdit;
+    }
+
+    public void setBoardToEdit(List<Integer> boardToEdit) {
+        this.boardToEdit = boardToEdit;
+    }
+
+    public List<Boolean> getEmptyCellList() {
+        return emptyCellList;
+    }
+
+    public void setEmptyCellList(List<Boolean> emptyCellList) {
+        this.emptyCellList = emptyCellList;
+    }
+
+    public int getEmptyCellsCounter() {
+        return emptyCellsCounter;
+    }
+
+    public void setEmptyCellsCounter(int emptyCellsCounter) {
+        this.emptyCellsCounter = emptyCellsCounter;
+    }
+
+    public static int getGridSize() {
+        return GRID_SIZE;
+    }
+
+    public List<Boolean> getMask() {
+        return mask;
+    }
+
+    public void setMask(List<Boolean> mask) {
+        this.mask = mask;
+    }
+
+    public int getMaxEmptyCells() {
+        return maxEmptyCells;
+    }
+
+    public void setMaxEmptyCells(int maxEmptyCells) {
+        this.maxEmptyCells = maxEmptyCells;
+    }
+
+    public List<Integer> getShuffledIndexes() {
+        return shuffledIndexes;
+    }
+
+    public void setShuffledIndexes(List<Integer> shuffledIndexes) {
+        this.shuffledIndexes = shuffledIndexes;
+    }
 }

@@ -67,7 +67,7 @@ public class SudokuGrid {
         /**/
 
         SudokuGenerator puzzle = new SudokuGenerator(emptyCells);
-        this.emptyCells = puzzle.emptyCells;
+        this.emptyCells = puzzle.emptyCellsCounter;
         puzzleSolution = puzzle.board;
         hasSolution = puzzle.mask;
         puzzleAnswers = createAnswerList();
