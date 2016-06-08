@@ -1,11 +1,11 @@
 package com.example.hammerox.oxsudoku;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -78,12 +78,6 @@ public class SudokuFragment extends Fragment {
         /*Todo - Add 'new game' option*/
         /*Todo - Add 'reset game' option*/
         return super.onOptionsItemSelected(item);
-    }
-
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
     }
 
     @Override

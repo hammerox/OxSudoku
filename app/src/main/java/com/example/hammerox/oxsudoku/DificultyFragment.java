@@ -1,9 +1,8 @@
 package com.example.hammerox.oxsudoku;
 
-import android.app.Fragment;
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,12 +29,6 @@ public class DificultyFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_dificulty, container, false);
     }
 
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -54,6 +47,6 @@ public class DificultyFragment extends Fragment {
     }
 
     public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(Uri uri);
+        void openLoader();
     }
 }

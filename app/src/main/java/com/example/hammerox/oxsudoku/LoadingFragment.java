@@ -1,10 +1,9 @@
 package com.example.hammerox.oxsudoku;
 
-import android.app.Fragment;
 import android.content.Context;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +25,17 @@ public class LoadingFragment extends Fragment {
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
@@ -42,23 +52,6 @@ public class LoadingFragment extends Fragment {
         return v;
     }
 
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
     @Override
     public void onDetach() {
         super.onDetach();
@@ -66,7 +59,7 @@ public class LoadingFragment extends Fragment {
     }
 
     public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(Uri uri);
+        void openPuzzle(SudokuGenerator sudokuGenerator);
     }
 
     public class LoadPuzzleTask extends AsyncTask<SudokuGenerator, Float, SudokuGenerator> {
@@ -79,6 +72,9 @@ public class LoadingFragment extends Fragment {
                 sudokuGenerator.tryToRemoveCell(i);
                 float completePercentage = 100 * (float) i / (float) size;
                 publishProgress(completePercentage);
+                if (sudokuGenerator.emptyCellsCounter == sudokuGenerator.maxEmptyCells) {
+                    break;                                  // Stop if the number of empty cells is enough...
+                }
             }
             return sudokuGenerator;
         }
@@ -93,8 +89,11 @@ public class LoadingFragment extends Fragment {
 
         @Override
         protected void onPostExecute(SudokuGenerator sudokuGenerator) {
+            progressBar.setProgress(100);
             List<Boolean> fillList = sudokuGenerator.emptyCellList;
             sudokuGenerator.fillToMask(fillList);
+
+            mListener.openPuzzle(sudokuGenerator);
             super.onPostExecute(sudokuGenerator);
         }
     }

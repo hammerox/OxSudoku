@@ -103,10 +103,10 @@ public class SudokuGenerator {
         Collections.shuffle(shuffledIndexes);
     }
 
-    public void setPuzzle(int numberOfEmptyCells) {
+    public void setPuzzle() {
         for (int i = 0; i < GRID_SIZE; i++) {                // For every cell on the board...
             tryToRemoveCell(i);                         // execute tryToRemoveCell().
-            if (emptyCellsCounter == numberOfEmptyCells) {
+            if (emptyCellsCounter == maxEmptyCells) {
                 break;                                  // Stop if the number of empty cells is enough...
             }
         }
