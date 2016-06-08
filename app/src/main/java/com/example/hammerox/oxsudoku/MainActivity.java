@@ -8,8 +8,12 @@ import android.os.Bundle;
 import android.view.View;
 
 public class MainActivity extends AppCompatActivity
-        implements LoadingFragment.OnFragmentInteractionListener,
-        DificultyFragment.OnFragmentInteractionListener {
+        implements LoadingFragment.OnFragmentInteractionListener {
+
+    public final static String BUNDLE_NAME = "emptyCells";
+    public final static int DIFICULTY_EASY = 45;
+    public final static int DIFICULTY_MEDIUM = 55;
+    public final static int DIFICULTY_HARD = 80;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,47 +21,53 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_sudoku);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.activity_sudoku_container, new LoadingFragment())
+                    .add(R.id.activity_sudoku_container, new DificultyFragment())
                     .commit();
         }
     }
 
     public void selectDificulty(View v) {
-        Intent intent = new Intent(this, SudokuActivity.class);
-
+        Bundle bundle = new Bundle();
         int id = v.getId();
         switch (id) {
             case R.id.dificulty_easy:
-                intent.putExtra("emptyCells", 45);
+                bundle.putInt(BUNDLE_NAME, DIFICULTY_EASY);
                 break;
             case R.id.dificulty_medium:
-                intent.putExtra("emptyCells", 55);
+                bundle.putInt(BUNDLE_NAME, DIFICULTY_MEDIUM);
                 break;
             case R.id.dificulty_hard:
-                intent.putExtra("emptyCells", 80);
+                bundle.putInt(BUNDLE_NAME, DIFICULTY_HARD);
                 break;
         }
-
-        startActivity(intent);
+        openLoader(bundle);
     }
 
-    @Override
-    public void openLoader() {
+    public void openLoader(Bundle bundle) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.activity_sudoku_container, new LoadingFragment());
+        LoadingFragment loadingFragment = new LoadingFragment();
+        loadingFragment.setArguments(bundle);
+        fragmentTransaction.replace(R.id.activity_sudoku_container, loadingFragment);
         fragmentTransaction.commit();
     }
 
     @Override
     public void openPuzzle(SudokuGenerator sudokuGenerator) {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        DificultyFragment dificultyFragment = new DificultyFragment();
-        fragmentTransaction.replace(R.id.activity_sudoku_container, dificultyFragment);
-        fragmentTransaction.commit();
-
         Intent intent = new Intent(this, SudokuActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent, 0);
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == RESULT_OK) {
+            if(requestCode == 0) {
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                DificultyFragment dificultyFragment = new DificultyFragment();
+                fragmentTransaction.replace(R.id.activity_sudoku_container, dificultyFragment);
+                fragmentTransaction.commit();
+            }
+        }
     }
 }

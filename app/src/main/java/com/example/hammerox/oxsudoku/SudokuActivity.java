@@ -16,6 +16,7 @@ public class SudokuActivity extends AppCompatActivity
                     .add(R.id.activity_sudoku_container, new SudokuFragment())
                     .commit();
         }
+        setResult(RESULT_OK);
     }
 
     @Override

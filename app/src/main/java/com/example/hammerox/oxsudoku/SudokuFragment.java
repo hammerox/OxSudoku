@@ -32,10 +32,8 @@ public class SudokuFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Intent intent = getActivity().getIntent();
-        int emptyCells = intent.getIntExtra("emptyCells", 0);
-
-        sudokuGrid = new SudokuGrid(emptyCells);      // Generates new puzzle
+        SudokuGenerator puzzle = FileManager.loadPuzzle(getActivity(), FileManager.EASY);
+        sudokuGrid = new SudokuGrid(puzzle);      // Generates new puzzle
         setHasOptionsMenu(true);
     }
 
@@ -46,7 +44,6 @@ public class SudokuFragment extends Fragment {
         /*Todo - Adjust fragment for horizontal orientation*/
         View rootView = inflater.inflate(R.layout.fragment_sudoku, container, false);
         sudokuGrid.drawPuzzle(getActivity(), rootView);
-        sudokuGrid.autoFill(getActivity());
 
         SudokuKeyboard keyboard = new SudokuKeyboard();
         keyboard.drawKeyboard(getActivity(), rootView, sudokuGrid);

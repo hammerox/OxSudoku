@@ -47,8 +47,10 @@ public class LoadingFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_loading, container, false);
         progressBar = (RoundCornerProgressBar) v.findViewById(R.id.loading_progressbar);
         progressBar.setProgress(minimumProgressValue);
+
+        int dificulty = getArguments().getInt(MainActivity.BUNDLE_NAME);
         LoadPuzzleTask puzzleLoader = new LoadPuzzleTask();
-        puzzleLoader.execute(new SudokuGenerator(50));
+        puzzleLoader.execute(new SudokuGenerator(dificulty));
         return v;
     }
 
@@ -92,6 +94,8 @@ public class LoadingFragment extends Fragment {
             progressBar.setProgress(100);
             List<Boolean> fillList = sudokuGenerator.emptyCellList;
             sudokuGenerator.fillToMask(fillList);
+
+            FileManager.savePuzzle(getActivity(), sudokuGenerator, FileManager.EASY);
 
             mListener.openPuzzle(sudokuGenerator);
             super.onPostExecute(sudokuGenerator);
