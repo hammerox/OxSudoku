@@ -27,7 +27,14 @@ public class IntroFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_intro, container, false);
+        View v =  inflater.inflate(R.layout.fragment_intro, container, false);
+        v.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.onIntroInteraction();
+            }
+        });
+        return v;
     }
 
     @Override
@@ -42,6 +49,6 @@ public class IntroFragment extends Fragment {
     }
 
     public interface OnFragmentInteractionListener {
-        void onIntroInteraction(Uri uri);
+        void onIntroInteraction();
     }
 }

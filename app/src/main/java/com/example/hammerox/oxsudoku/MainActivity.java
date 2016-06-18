@@ -1,7 +1,6 @@
 package com.example.hammerox.oxsudoku;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -23,7 +22,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_sudoku);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.activity_sudoku_container, new DificultyFragment())
+                    .add(R.id.activity_sudoku_container, new IntroFragment())
                     .commit();
         }
     }
@@ -61,8 +60,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onIntroInteraction(Uri uri) {
-        
+    public void onIntroInteraction() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        DificultyFragment dificultyFragment = new DificultyFragment();
+        fragmentTransaction.replace(R.id.activity_sudoku_container, dificultyFragment);
+        fragmentTransaction.commit();
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
