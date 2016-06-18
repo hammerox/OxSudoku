@@ -1,6 +1,7 @@
 package com.example.hammerox.oxsudoku;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -8,7 +9,8 @@ import android.os.Bundle;
 import android.view.View;
 
 public class MainActivity extends AppCompatActivity
-        implements LoadingFragment.OnFragmentInteractionListener {
+        implements LoadingFragment.OnFragmentInteractionListener,
+        IntroFragment.OnFragmentInteractionListener {
 
     public final static String BUNDLE_NAME = "emptyCells";
     public final static int DIFICULTY_EASY = 45;
@@ -56,6 +58,11 @@ public class MainActivity extends AppCompatActivity
     public void openPuzzle(SudokuGenerator sudokuGenerator) {
         Intent intent = new Intent(this, SudokuActivity.class);
         startActivityForResult(intent, 0);
+    }
+
+    @Override
+    public void onIntroInteraction(Uri uri) {
+        
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
