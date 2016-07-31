@@ -1,4 +1,4 @@
-package com.example.hammerox.oxsudoku;
+package com.example.hammerox.oxsudoku.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;

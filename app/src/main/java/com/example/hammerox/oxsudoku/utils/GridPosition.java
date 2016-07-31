@@ -1,4 +1,4 @@
-package com.example.hammerox.oxsudoku;
+package com.example.hammerox.oxsudoku.utils;
 
 import android.app.Activity;
 import android.view.View;

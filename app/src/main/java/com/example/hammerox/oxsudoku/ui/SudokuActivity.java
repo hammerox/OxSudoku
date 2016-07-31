@@ -1,8 +1,10 @@
-package com.example.hammerox.oxsudoku;
+package com.example.hammerox.oxsudoku.ui;
 
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import com.example.hammerox.oxsudoku.R;
 
 public class SudokuActivity extends AppCompatActivity
     implements SudokuFragment.OnFragmentInteractionListener {

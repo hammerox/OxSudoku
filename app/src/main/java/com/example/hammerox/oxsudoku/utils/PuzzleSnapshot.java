@@ -1,4 +1,4 @@
-package com.example.hammerox.oxsudoku;
+package com.example.hammerox.oxsudoku.utils;
 
 import java.util.ArrayList;
 import java.util.List;

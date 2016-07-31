@@ -1,8 +1,10 @@
-package com.example.hammerox.oxsudoku;
+package com.example.hammerox.oxsudoku.utils;
 
 
 import android.util.Log;
 import android.util.Pair;
+
+import com.example.hammerox.oxsudoku.utils.GridPosition;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,7 +22,7 @@ import java.util.Random;
 
 public class SudokuGenerator {
 
-    final static int GRID_SIZE = 81;
+    public final static int GRID_SIZE = 81;
 
     List<Integer> board;
     List<Boolean> mask = new ArrayList<>();

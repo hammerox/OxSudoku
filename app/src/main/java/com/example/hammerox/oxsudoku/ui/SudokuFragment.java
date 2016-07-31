@@ -1,7 +1,6 @@
-package com.example.hammerox.oxsudoku;
+package com.example.hammerox.oxsudoku.ui;
 
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -14,6 +13,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Chronometer;
+
+import com.example.hammerox.oxsudoku.utils.FileManager;
+import com.example.hammerox.oxsudoku.R;
+import com.example.hammerox.oxsudoku.utils.SudokuGenerator;
 
 
 public class SudokuFragment extends Fragment {

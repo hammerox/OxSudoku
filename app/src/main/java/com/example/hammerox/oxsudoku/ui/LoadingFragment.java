@@ -1,4 +1,4 @@
-package com.example.hammerox.oxsudoku;
+package com.example.hammerox.oxsudoku.ui;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -9,6 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar;
+import com.example.hammerox.oxsudoku.utils.FileManager;
+import com.example.hammerox.oxsudoku.R;
+import com.example.hammerox.oxsudoku.utils.SudokuGenerator;
 
 import java.util.List;
 
@@ -50,7 +53,7 @@ public class LoadingFragment extends Fragment {
 
         int dificulty = getArguments().getInt(MainActivity.BUNDLE_NAME);
         LoadPuzzleTask puzzleLoader = new LoadPuzzleTask();
-        puzzleLoader.execute(new SudokuGenerator(dificulty));
+        puzzleLoader.execute(dificulty);
         return v;
     }
 
@@ -64,17 +67,17 @@ public class LoadingFragment extends Fragment {
         void openPuzzle(SudokuGenerator sudokuGenerator);
     }
 
-    public class LoadPuzzleTask extends AsyncTask<SudokuGenerator, Float, SudokuGenerator> {
+    public class LoadPuzzleTask extends AsyncTask<Integer, Float, SudokuGenerator> {
         @Override
-        protected SudokuGenerator doInBackground(SudokuGenerator... params) {
-            SudokuGenerator sudokuGenerator = params[0];
+        protected SudokuGenerator doInBackground(Integer... params) {
+            SudokuGenerator sudokuGenerator = new SudokuGenerator(params[0]);
             sudokuGenerator.preparePuzzle();
             int size = SudokuGenerator.GRID_SIZE;
             for (int i = 0; i < size; i++) {
                 sudokuGenerator.tryToRemoveCell(i);
                 float completePercentage = 100 * (float) i / (float) size;
                 publishProgress(completePercentage);
-                if (sudokuGenerator.emptyCellsCounter == sudokuGenerator.maxEmptyCells) {
+                if (sudokuGenerator.getEmptyCellsCounter() == sudokuGenerator.getMaxEmptyCells()) {
                     break;                                  // Stop if the number of empty cells is enough...
                 }
             }
@@ -92,7 +95,7 @@ public class LoadingFragment extends Fragment {
         @Override
         protected void onPostExecute(SudokuGenerator sudokuGenerator) {
             progressBar.setProgress(100);
-            List<Boolean> fillList = sudokuGenerator.emptyCellList;
+            List<Boolean> fillList = sudokuGenerator.getEmptyCellList();
             sudokuGenerator.fillToMask(fillList);
 
             FileManager.savePuzzle(getActivity(), sudokuGenerator, FileManager.EASY);
