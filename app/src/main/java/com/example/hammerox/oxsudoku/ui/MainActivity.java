@@ -8,7 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.example.hammerox.oxsudoku.R;
-import com.example.hammerox.oxsudoku.utils.SudokuGenerator;
+import com.example.hammerox.oxsudoku.services.SudokuGenerator;
 
 public class MainActivity extends AppCompatActivity
         implements LoadingFragment.OnFragmentInteractionListener,

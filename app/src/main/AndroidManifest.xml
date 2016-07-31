@@ -22,6 +22,9 @@
             android:name=".ui.SudokuActivity"
             android:screenOrientation="portrait">
         </activity>
+        <service
+            android:name=".services.PuzzleLoaderService"
+            android:exported="false"/>
     </application>
 
 </manifest>

@@ -1,4 +1,4 @@
-package com.example.hammerox.oxsudoku.ui;
+package com.example.hammerox.oxsudoku.ui.views;
 
 import android.app.Activity;
 import android.content.res.ColorStateList;

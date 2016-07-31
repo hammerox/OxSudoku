@@ -14,9 +14,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Chronometer;
 
+import com.example.hammerox.oxsudoku.ui.views.SudokuGrid;
+import com.example.hammerox.oxsudoku.ui.views.SudokuKeyboard;
 import com.example.hammerox.oxsudoku.utils.FileManager;
 import com.example.hammerox.oxsudoku.R;
-import com.example.hammerox.oxsudoku.utils.SudokuGenerator;
+import com.example.hammerox.oxsudoku.services.SudokuGenerator;
 
 
 public class SudokuFragment extends Fragment {

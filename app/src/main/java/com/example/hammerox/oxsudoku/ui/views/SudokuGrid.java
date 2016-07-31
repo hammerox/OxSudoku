@@ -1,4 +1,4 @@
-package com.example.hammerox.oxsudoku.ui;
+package com.example.hammerox.oxsudoku.ui.views;
 
 import android.app.Activity;
 import android.content.Context;
@@ -21,11 +21,11 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.hammerox.oxsudoku.ui.SudokuFragment;
 import com.example.hammerox.oxsudoku.utils.PuzzleSnapshot;
 import com.example.hammerox.oxsudoku.R;
 import com.example.hammerox.oxsudoku.utils.GridPosition;
-import com.example.hammerox.oxsudoku.utils.SquareLayout;
-import com.example.hammerox.oxsudoku.utils.SudokuGenerator;
+import com.example.hammerox.oxsudoku.services.SudokuGenerator;
 
 import java.util.ArrayList;
 import java.util.Arrays;

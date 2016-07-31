@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar;
 import com.example.hammerox.oxsudoku.utils.FileManager;
 import com.example.hammerox.oxsudoku.R;
-import com.example.hammerox.oxsudoku.utils.SudokuGenerator;
+import com.example.hammerox.oxsudoku.services.SudokuGenerator;
 
 import java.util.List;
 

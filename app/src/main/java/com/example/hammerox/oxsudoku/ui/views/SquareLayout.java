@@ -1,4 +1,4 @@
-package com.example.hammerox.oxsudoku.utils;
+package com.example.hammerox.oxsudoku.ui.views;
 
 import android.content.Context;
 import android.util.AttributeSet;

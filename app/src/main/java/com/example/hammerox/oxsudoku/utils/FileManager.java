@@ -3,6 +3,7 @@ package com.example.hammerox.oxsudoku.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.example.hammerox.oxsudoku.services.SudokuGenerator;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
