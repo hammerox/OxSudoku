@@ -6,6 +6,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.example.hammerox.oxsudoku.ui.MainActivity;
+import com.example.hammerox.oxsudoku.utils.FileManager;
 
 import java.util.List;
 
@@ -15,7 +16,6 @@ public class PuzzleLoaderService extends IntentService {
     public final static String BROADCAST_SERVICE = "broadcast_puzzle_loader";
     public final static String KEY_IS_COMPLETE = "broadcast_status";
     public final static String KEY_UPDATE = "broadcast_update";
-    public final static String KEY_RESULT = "broadcast_result";
 
     public PuzzleLoaderService() {
         super("PuzzleLoaderService");
@@ -41,7 +41,8 @@ public class PuzzleLoaderService extends IntentService {
         List<Boolean> fillList = sudokuGenerator.getEmptyCellList();
         sudokuGenerator.fillToMask(fillList);
 
-//        mListener.openPuzzle(sudokuGenerator);
+        sendUpdate(100);
+        FileManager.savePuzzle(this, sudokuGenerator, FileManager.CURRENT_PUZZLE);
         sendResult();
 
     }
@@ -60,7 +61,6 @@ public class PuzzleLoaderService extends IntentService {
         Log.d("sender", "Broadcasting message");
         Intent resultIntent = new Intent(BROADCAST_SERVICE);
         resultIntent.putExtra(KEY_IS_COMPLETE, true);
-        resultIntent.putExtra(KEY_RESULT, "Loading is complete!");
         LocalBroadcastManager.getInstance(this).sendBroadcast(resultIntent);
     }
 }

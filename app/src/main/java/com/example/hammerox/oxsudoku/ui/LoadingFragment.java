@@ -108,4 +108,12 @@ public class LoadingFragment extends Fragment {
             super.onPostExecute(sudokuGenerator);
         }
     }
+
+    public RoundCornerProgressBar getProgressBar() {
+        return progressBar;
+    }
+
+    public void setProgressBar(RoundCornerProgressBar progressBar) {
+        this.progressBar = progressBar;
+    }
 }

@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar;
 import com.example.hammerox.oxsudoku.R;
 import com.example.hammerox.oxsudoku.services.PuzzleLoaderService;
 import com.example.hammerox.oxsudoku.services.SudokuGenerator;
@@ -24,6 +25,8 @@ public class MainActivity extends AppCompatActivity
 
     public final static String KEY_LEVEL = "emptyCells";
 
+    private LoadingFragment loadingFragment;
+
 
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
@@ -32,11 +35,11 @@ public class MainActivity extends AppCompatActivity
             boolean loadingIsComplete = intent
                     .getBooleanExtra(PuzzleLoaderService.KEY_IS_COMPLETE, false);
             if (loadingIsComplete) {
-                String result = intent.getStringExtra(PuzzleLoaderService.KEY_RESULT);
-                Log.d("Broadcast", result);
+                openPuzzle(null);
             } else {
                 float percentage = intent.getFloatExtra(PuzzleLoaderService.KEY_UPDATE, 15);
-                Log.d("Broadcast", "Loading is on " + percentage + "%");
+                RoundCornerProgressBar progressBar = loadingFragment.getProgressBar();
+                progressBar.setProgress(percentage);
             }
         }
     };
@@ -93,7 +96,7 @@ public class MainActivity extends AppCompatActivity
         } else {
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            LoadingFragment loadingFragment = new LoadingFragment();
+            loadingFragment = new LoadingFragment();
             loadingFragment.setArguments(bundle);
             fragmentTransaction.replace(R.id.activity_sudoku_container, loadingFragment);
             fragmentTransaction.commit();
@@ -102,10 +105,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void openPuzzle(SudokuGenerator sudokuGenerator) {
-        if (sudokuGenerator != null) {
-            FileManager.savePuzzle(this, sudokuGenerator, FileManager.CURRENT_PUZZLE);
-        }
-
         Intent intent = new Intent(this, SudokuActivity.class);
         startActivityForResult(intent, 0);
     }
