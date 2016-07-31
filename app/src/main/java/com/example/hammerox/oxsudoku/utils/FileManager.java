@@ -16,6 +16,13 @@ public class FileManager {
     public static final String FILE_NAME = "OxSudoku";
     public static final String CURRENT_PUZZLE = "current_puzzle";
 
+
+    public static boolean hasSavedPuzzle(Context context, String fileName) {
+        SharedPreferences prefs = getPreferences(context);
+        return prefs.contains(fileName);
+    }
+
+
     public static SudokuGenerator loadPuzzle(Context context, String fileName) {
         SharedPreferences prefs = getPreferences(context);
         String jsonObject = prefs.getString(fileName, "");

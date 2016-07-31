@@ -98,8 +98,6 @@ public class LoadingFragment extends Fragment {
             List<Boolean> fillList = sudokuGenerator.getEmptyCellList();
             sudokuGenerator.fillToMask(fillList);
 
-            FileManager.savePuzzle(getActivity(), sudokuGenerator, FileManager.CURRENT_PUZZLE);
-
             mListener.openPuzzle(sudokuGenerator);
             super.onPostExecute(sudokuGenerator);
         }

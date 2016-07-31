@@ -9,9 +9,9 @@ import android.view.ViewGroup;
 import com.example.hammerox.oxsudoku.R;
 
 
-public class DificultyFragment extends Fragment {
+public class DifficultyFragment extends Fragment {
 
-    public DificultyFragment() {
+    public DifficultyFragment() {
         // Required empty public constructor
     }
 
@@ -24,6 +24,6 @@ public class DificultyFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_dificulty, container, false);
+        return inflater.inflate(R.layout.fragment_difficulty, container, false);
     }
 }

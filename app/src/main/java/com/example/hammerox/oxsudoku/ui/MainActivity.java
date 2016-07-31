@@ -9,6 +9,7 @@ import android.view.View;
 
 import com.example.hammerox.oxsudoku.R;
 import com.example.hammerox.oxsudoku.services.SudokuGenerator;
+import com.example.hammerox.oxsudoku.utils.FileManager;
 import com.example.hammerox.oxsudoku.utils.Levels;
 
 public class MainActivity extends AppCompatActivity
@@ -28,34 +29,49 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void selectDificulty(View v) {
+    public void onLevelButtonClick(View v) {
         Bundle bundle = new Bundle();
         int id = v.getId();
         switch (id) {
-            case R.id.dificulty_easy:
+            case R.id.level_easy:
                 bundle.putInt(BUNDLE_NAME, Levels.LEVEL_EASY);
                 break;
-            case R.id.dificulty_medium:
+            case R.id.level_medium:
                 bundle.putInt(BUNDLE_NAME, Levels.LEVEL_MEDIUM);
                 break;
-            case R.id.dificulty_hard:
+            case R.id.level_hard:
                 bundle.putInt(BUNDLE_NAME, Levels.LEVEL_HARD);
                 break;
         }
-        openLoader(bundle);
+
+        loadPuzzle(bundle);
     }
 
-    public void openLoader(Bundle bundle) {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        LoadingFragment loadingFragment = new LoadingFragment();
-        loadingFragment.setArguments(bundle);
-        fragmentTransaction.replace(R.id.activity_sudoku_container, loadingFragment);
-        fragmentTransaction.commit();
+    public void loadPuzzle(Bundle bundle) {
+        String key = Levels.getTag(bundle.getInt(BUNDLE_NAME));
+
+        /* Search for saved puzzle.
+        *  If exists, put it into current puzzle and launch game screen.
+        *  If not, go to loading screen */
+        if (FileManager.hasSavedPuzzle(this, key)) {
+            SudokuGenerator sudokuGenerator = FileManager.loadPuzzle(this, key);
+            openPuzzle(sudokuGenerator);
+        } else {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            LoadingFragment loadingFragment = new LoadingFragment();
+            loadingFragment.setArguments(bundle);
+            fragmentTransaction.replace(R.id.activity_sudoku_container, loadingFragment);
+            fragmentTransaction.commit();
+        }
     }
 
     @Override
     public void openPuzzle(SudokuGenerator sudokuGenerator) {
+        if (sudokuGenerator != null) {
+            FileManager.savePuzzle(this, sudokuGenerator, FileManager.CURRENT_PUZZLE);
+        }
+
         Intent intent = new Intent(this, SudokuActivity.class);
         startActivityForResult(intent, 0);
     }
@@ -64,8 +80,8 @@ public class MainActivity extends AppCompatActivity
     public void onIntroInteraction() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        DificultyFragment dificultyFragment = new DificultyFragment();
-        fragmentTransaction.replace(R.id.activity_sudoku_container, dificultyFragment);
+        DifficultyFragment difficultyFragment = new DifficultyFragment();
+        fragmentTransaction.replace(R.id.activity_sudoku_container, difficultyFragment);
         fragmentTransaction.commit();
     }
 
@@ -75,8 +91,8 @@ public class MainActivity extends AppCompatActivity
             if(requestCode == 0) {
                 FragmentManager fragmentManager = getSupportFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                DificultyFragment dificultyFragment = new DificultyFragment();
-                fragmentTransaction.replace(R.id.activity_sudoku_container, dificultyFragment);
+                DifficultyFragment difficultyFragment = new DifficultyFragment();
+                fragmentTransaction.replace(R.id.activity_sudoku_container, difficultyFragment);
                 fragmentTransaction.commit();
             }
         }
