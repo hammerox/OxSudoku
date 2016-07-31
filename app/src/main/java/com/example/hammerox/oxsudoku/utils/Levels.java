@@ -14,6 +14,10 @@ public class Levels {
     private final static int DIFFICULTY_MEDIUM = 55;
     private final static int DIFFICULTY_HARD = 80;  // Max value
 
+    private final static String TAG_EASY = "level_easy";
+    private final static String TAG_MEDIUM = "level_medium";
+    private final static String TAG_HARD = "level_hard";
+
 
     public static int getDifficulty(int level) {
         switch (level) {        // Get level's respective difficulty
@@ -27,5 +31,18 @@ public class Levels {
 
         // If level not found, return full grid
         return 0;
+    }
+
+    public static String getTag(int level) {
+        switch (level) {        // Get level's respective tag name
+            case LEVEL_EASY:
+                return TAG_EASY;
+            case LEVEL_MEDIUM:
+                return TAG_MEDIUM;
+            case LEVEL_HARD:
+                return TAG_HARD;
+        }
+
+        return null;
     }
 }
