@@ -5,6 +5,7 @@ import android.util.Log;
 import android.util.Pair;
 
 import com.example.hammerox.oxsudoku.utils.GridPosition;
+import com.example.hammerox.oxsudoku.utils.Levels;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,10 +39,10 @@ public class SudokuGenerator {
         /*setPuzzle(50);*/
     }
 
-    public SudokuGenerator(int maxEmptyCells) {
+    public SudokuGenerator(int level) {
         this.board = createBoard(1);
         this.board = fillBoard(board);
-        this.maxEmptyCells = maxEmptyCells;
+        this.maxEmptyCells = Levels.getDifficulty(level);
         /*setPuzzle(maxEmptyCells);*/
     }
 

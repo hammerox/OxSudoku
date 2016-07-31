@@ -37,7 +37,7 @@ public class SudokuFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        SudokuGenerator puzzle = FileManager.loadPuzzle(getActivity(), FileManager.EASY);
+        SudokuGenerator puzzle = FileManager.loadPuzzle(getActivity(), FileManager.CURRENT_PUZZLE);
         sudokuGrid = new SudokuGrid(puzzle);      // Generates new puzzle
         setHasOptionsMenu(true);
     }

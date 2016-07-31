@@ -9,15 +9,13 @@ import android.view.View;
 
 import com.example.hammerox.oxsudoku.R;
 import com.example.hammerox.oxsudoku.services.SudokuGenerator;
+import com.example.hammerox.oxsudoku.utils.Levels;
 
 public class MainActivity extends AppCompatActivity
         implements LoadingFragment.OnFragmentInteractionListener,
         IntroFragment.OnFragmentInteractionListener {
 
     public final static String BUNDLE_NAME = "emptyCells";
-    public final static int DIFICULTY_EASY = 45;
-    public final static int DIFICULTY_MEDIUM = 55;
-    public final static int DIFICULTY_HARD = 80;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,13 +33,13 @@ public class MainActivity extends AppCompatActivity
         int id = v.getId();
         switch (id) {
             case R.id.dificulty_easy:
-                bundle.putInt(BUNDLE_NAME, DIFICULTY_EASY);
+                bundle.putInt(BUNDLE_NAME, Levels.LEVEL_EASY);
                 break;
             case R.id.dificulty_medium:
-                bundle.putInt(BUNDLE_NAME, DIFICULTY_MEDIUM);
+                bundle.putInt(BUNDLE_NAME, Levels.LEVEL_MEDIUM);
                 break;
             case R.id.dificulty_hard:
-                bundle.putInt(BUNDLE_NAME, DIFICULTY_HARD);
+                bundle.putInt(BUNDLE_NAME, Levels.LEVEL_HARD);
                 break;
         }
         openLoader(bundle);

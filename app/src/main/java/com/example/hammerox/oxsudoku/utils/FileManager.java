@@ -14,9 +14,7 @@ public class FileManager {
 
     private static Gson gson = new Gson();
     public static final String FILE_NAME = "OxSudoku";
-    public static final String EASY = "easy";
-    public static final String MEDIUM = "medium";
-    public static final String HARD = "hard";
+    public static final String CURRENT_PUZZLE = "current_puzzle";
 
     public static SudokuGenerator loadPuzzle(Context context, String fileName) {
         SharedPreferences prefs = getPreferences(context);
