@@ -1,13 +1,19 @@
 package com.example.hammerox.oxsudoku.ui;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import com.example.hammerox.oxsudoku.R;
+import com.example.hammerox.oxsudoku.services.PuzzleLoaderService;
 import com.example.hammerox.oxsudoku.services.SudokuGenerator;
 import com.example.hammerox.oxsudoku.utils.FileManager;
 import com.example.hammerox.oxsudoku.utils.Levels;
@@ -16,7 +22,25 @@ public class MainActivity extends AppCompatActivity
         implements LoadingFragment.OnFragmentInteractionListener,
         IntroFragment.OnFragmentInteractionListener {
 
-    public final static String BUNDLE_NAME = "emptyCells";
+    public final static String KEY_LEVEL = "emptyCells";
+
+
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Get extra data included in the Intent
+            boolean loadingIsComplete = intent
+                    .getBooleanExtra(PuzzleLoaderService.KEY_IS_COMPLETE, false);
+            if (loadingIsComplete) {
+                String result = intent.getStringExtra(PuzzleLoaderService.KEY_RESULT);
+                Log.d("Broadcast", result);
+            } else {
+                float percentage = intent.getFloatExtra(PuzzleLoaderService.KEY_UPDATE, 15);
+                Log.d("Broadcast", "Loading is on " + percentage + "%");
+            }
+        }
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,20 +51,30 @@ public class MainActivity extends AppCompatActivity
                     .add(R.id.activity_sudoku_container, new IntroFragment())
                     .commit();
         }
+        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
+                new IntentFilter(PuzzleLoaderService.BROADCAST_SERVICE));
     }
+
+
+    @Override
+    protected void onDestroy() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+        super.onDestroy();
+    }
+
 
     public void onLevelButtonClick(View v) {
         Bundle bundle = new Bundle();
         int id = v.getId();
         switch (id) {
             case R.id.level_easy:
-                bundle.putInt(BUNDLE_NAME, Levels.LEVEL_EASY);
+                bundle.putInt(KEY_LEVEL, Levels.LEVEL_EASY);
                 break;
             case R.id.level_medium:
-                bundle.putInt(BUNDLE_NAME, Levels.LEVEL_MEDIUM);
+                bundle.putInt(KEY_LEVEL, Levels.LEVEL_MEDIUM);
                 break;
             case R.id.level_hard:
-                bundle.putInt(BUNDLE_NAME, Levels.LEVEL_HARD);
+                bundle.putInt(KEY_LEVEL, Levels.LEVEL_HARD);
                 break;
         }
 
@@ -48,7 +82,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void loadPuzzle(Bundle bundle) {
-        String key = Levels.getTag(bundle.getInt(BUNDLE_NAME));
+        String key = Levels.getTag(bundle.getInt(KEY_LEVEL));
 
         /* Search for saved puzzle.
         *  If exists, put it into current puzzle and launch game screen.
