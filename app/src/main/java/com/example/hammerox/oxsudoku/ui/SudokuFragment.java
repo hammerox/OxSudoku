@@ -1,11 +1,11 @@
 package com.example.hammerox.oxsudoku.ui;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Chronometer;
 
+import com.example.hammerox.oxsudoku.services.PuzzleLoaderService;
 import com.example.hammerox.oxsudoku.ui.views.SudokuGrid;
 import com.example.hammerox.oxsudoku.ui.views.SudokuKeyboard;
 import com.example.hammerox.oxsudoku.utils.FileManager;
@@ -29,18 +30,21 @@ public class SudokuFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
+
     public SudokuFragment() {
         // Required empty public constructor
     }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        SudokuGenerator puzzle = FileManager.loadPuzzle(getActivity(), FileManager.CURRENT_PUZZLE);
+        SudokuGenerator puzzle = FileManager.loadCurrentPuzzle(getActivity());
         sudokuGrid = new SudokuGrid(puzzle);      // Generates new puzzle
         setHasOptionsMenu(true);
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -57,6 +61,7 @@ public class SudokuFragment extends Fragment {
         return rootView;
     }
 
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_sudoku, menu);
@@ -66,6 +71,7 @@ public class SudokuFragment extends Fragment {
         chronometer = (Chronometer) MenuItemCompat.getActionView(timerItem);
         chronometer.start();
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -85,6 +91,7 @@ public class SudokuFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -96,16 +103,31 @@ public class SudokuFragment extends Fragment {
         }
     }
 
+
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
     }
 
+
     public interface OnFragmentInteractionListener {
         void onFragmentUpPressed();
     }
 
+
+    @Override
+    public void onStart() {
+        /* Search if there is a spare puzzle
+        *  If not, create a new one and save it */
+        int level = FileManager.loadCurrentLevel(getActivity());
+        boolean backupPuzzleIsNull = !FileManager.hasSavedPuzzle(getActivity(), level);
+        if (backupPuzzleIsNull) {
+            storeNewPuzzle(level);
+        }
+
+        super.onStart();
+    }
 
     @Override
     public void onResume() {
@@ -118,11 +140,13 @@ public class SudokuFragment extends Fragment {
         super.onResume();
     }
 
+
     @Override
     public void onPause() {
         chronoPause();
         super.onPause();
     }
+
 
     public static void chronoStart()
     {
@@ -144,5 +168,13 @@ public class SudokuFragment extends Fragment {
     {
         chronometer.stop();
         mLastStopTime = SystemClock.elapsedRealtime();
+    }
+
+
+    public void storeNewPuzzle(int level) {
+        Intent intent = new Intent(getActivity(), PuzzleLoaderService.class);
+        intent.putExtra(MainActivity.KEY_LEVEL, level);
+        intent.putExtra(MainActivity.KEY_USER_IS_WAITING, false);
+        getActivity().startService(intent);
     }
 }

@@ -2,7 +2,6 @@ package com.example.hammerox.oxsudoku.ui;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -14,14 +13,13 @@ import com.example.hammerox.oxsudoku.R;
 import com.example.hammerox.oxsudoku.services.PuzzleLoaderService;
 import com.example.hammerox.oxsudoku.services.SudokuGenerator;
 
-import java.util.List;
-
 
 public class LoadingFragment extends Fragment {
 
     private final int minimumProgressValue = 15;
     private RoundCornerProgressBar progressBar;
 
+    /*Todo - Remove LoadingFragment listener*/
     private OnFragmentInteractionListener mListener;
 
     public LoadingFragment() {
@@ -53,11 +51,10 @@ public class LoadingFragment extends Fragment {
         progressBar.setProgress(minimumProgressValue);
 
         int level = getArguments().getInt(MainActivity.KEY_LEVEL);
-//        LoadPuzzleTask puzzleLoader = new LoadPuzzleTask();
-//        puzzleLoader.execute(level);
 
         Intent intent = new Intent(getActivity(), PuzzleLoaderService.class);
         intent.putExtra(MainActivity.KEY_LEVEL, level);
+        intent.putExtra(MainActivity.KEY_USER_IS_WAITING, true);
         getActivity().startService(intent);
 
         return v;
@@ -73,41 +70,6 @@ public class LoadingFragment extends Fragment {
         void openPuzzle(SudokuGenerator sudokuGenerator);
     }
 
-    public class LoadPuzzleTask extends AsyncTask<Integer, Float, SudokuGenerator> {
-        @Override
-        protected SudokuGenerator doInBackground(Integer... params) {
-            SudokuGenerator sudokuGenerator = new SudokuGenerator(params[0]);
-            sudokuGenerator.preparePuzzle();
-            int size = SudokuGenerator.GRID_SIZE;
-            for (int i = 0; i < size; i++) {
-                sudokuGenerator.tryToRemoveCell(i);
-                float completePercentage = 100 * (float) i / (float) size;
-                publishProgress(completePercentage);
-                if (sudokuGenerator.getEmptyCellsCounter() == sudokuGenerator.getMaxEmptyCells()) {
-                    break;                                  // Stop if the number of empty cells is enough...
-                }
-            }
-            return sudokuGenerator;
-        }
-
-        @Override
-        protected void onProgressUpdate(Float... values) {
-            if (values[0] >= (float)minimumProgressValue) {
-                progressBar.setProgress(values[0]);
-            }
-            super.onProgressUpdate(values);
-        }
-
-        @Override
-        protected void onPostExecute(SudokuGenerator sudokuGenerator) {
-            progressBar.setProgress(100);
-            List<Boolean> fillList = sudokuGenerator.getEmptyCellList();
-            sudokuGenerator.fillToMask(fillList);
-
-            mListener.openPuzzle(sudokuGenerator);
-            super.onPostExecute(sudokuGenerator);
-        }
-    }
 
     public RoundCornerProgressBar getProgressBar() {
         return progressBar;

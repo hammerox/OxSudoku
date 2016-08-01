@@ -1,8 +1,6 @@
 package com.example.hammerox.oxsudoku.utils;
 
 
-import com.example.hammerox.oxsudoku.services.SudokuGenerator;
-
 public class Levels {
 
     public final static int LEVEL_EASY = 0;
@@ -14,9 +12,9 @@ public class Levels {
     private final static int DIFFICULTY_MEDIUM = 55;
     private final static int DIFFICULTY_HARD = 80;  // Max value
 
-    private final static String TAG_EASY = "level_easy";
-    private final static String TAG_MEDIUM = "level_medium";
-    private final static String TAG_HARD = "level_hard";
+    private final static String FILENAME_EASY = "level_easy";
+    private final static String FILENAME_MEDIUM = "level_medium";
+    private final static String FILENAME_HARD = "level_hard";
 
 
     public static int getDifficulty(int level) {
@@ -33,14 +31,14 @@ public class Levels {
         return 0;
     }
 
-    public static String getTag(int level) {
+    public static String getFileName(int level) {
         switch (level) {        // Get level's respective tag name
             case LEVEL_EASY:
-                return TAG_EASY;
+                return FILENAME_EASY;
             case LEVEL_MEDIUM:
-                return TAG_MEDIUM;
+                return FILENAME_MEDIUM;
             case LEVEL_HARD:
-                return TAG_HARD;
+                return FILENAME_HARD;
         }
 
         return null;

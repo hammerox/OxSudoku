@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.example.hammerox.oxsudoku.ui.MainActivity;
 import com.example.hammerox.oxsudoku.utils.FileManager;
+import com.example.hammerox.oxsudoku.utils.Levels;
 
 import java.util.List;
 
@@ -25,14 +26,19 @@ public class PuzzleLoaderService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         int level = intent.getIntExtra(MainActivity.KEY_LEVEL, -1);
+        boolean userIsWaiting = intent.getBooleanExtra(MainActivity.KEY_USER_IS_WAITING, true);
 
         SudokuGenerator sudokuGenerator = new SudokuGenerator(level);
         sudokuGenerator.preparePuzzle();
         int size = SudokuGenerator.GRID_SIZE;
         for (int i = 0; i < size; i++) {
             sudokuGenerator.tryToRemoveCell(i);
-            float completePercentage = 100 * (float) i / (float) size;
-            sendUpdate(completePercentage);
+
+            if (userIsWaiting) {        // If on loading screen, send update to progressBar
+                float completePercentage = 100 * (float) i / (float) size;
+                sendUpdate(completePercentage);
+            }
+
             if (sudokuGenerator.getEmptyCellsCounter() == sudokuGenerator.getMaxEmptyCells()) {
                 break;                                  // Stop if the number of empty cells is enough...
             }
@@ -43,8 +49,14 @@ public class PuzzleLoaderService extends IntentService {
         sudokuGenerator.fillToMask(fillList);
 
         sendUpdate(100);
-        FileManager.savePuzzle(this, sudokuGenerator, FileManager.CURRENT_PUZZLE);
-        sendResult();
+
+        if (userIsWaiting) {
+            FileManager.saveCurrentPuzzle(this, sudokuGenerator, level);
+            sendResult();
+        } else {
+            String fileName = Levels.getFileName(level);
+            FileManager.savePuzzle(this, sudokuGenerator, fileName);
+        }
 
     }
 

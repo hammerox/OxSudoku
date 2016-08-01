@@ -19,10 +19,10 @@ import com.example.hammerox.oxsudoku.utils.FileManager;
 import com.example.hammerox.oxsudoku.utils.Levels;
 
 public class MainActivity extends AppCompatActivity
-        implements LoadingFragment.OnFragmentInteractionListener
-         {
+        implements LoadingFragment.OnFragmentInteractionListener {
 
     public final static String KEY_LEVEL = "emptyCells";
+    public final static String KEY_USER_IS_WAITING = "userIsWaiting";
 
     private LoadingFragment loadingFragment;
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
@@ -69,41 +69,39 @@ public class MainActivity extends AppCompatActivity
 
 
     public void onLevelButtonClick(View v) {
-        Bundle bundle = new Bundle();
         int id = v.getId();
         switch (id) {
             case R.id.level_easy:
-                bundle.putInt(KEY_LEVEL, Levels.LEVEL_EASY);
+                loadPuzzle(Levels.LEVEL_EASY);
                 break;
             case R.id.level_medium:
-                bundle.putInt(KEY_LEVEL, Levels.LEVEL_MEDIUM);
+                loadPuzzle(Levels.LEVEL_MEDIUM);
                 break;
             case R.id.level_hard:
-                bundle.putInt(KEY_LEVEL, Levels.LEVEL_HARD);
+                loadPuzzle(Levels.LEVEL_HARD);
                 break;
         }
-
-        loadPuzzle(bundle);
     }
 
-    public void loadPuzzle(Bundle bundle) {
-        String key = Levels.getTag(bundle.getInt(KEY_LEVEL));
+
+    public void loadPuzzle(int level) {
+        String fileName = Levels.getFileName(level);
 
         /* Search for saved puzzle.
         *  If exists, put it into current puzzle and launch game screen.
         *  If not, go to loading screen */
-        if (FileManager.hasSavedPuzzle(this, key)) {
-            SudokuGenerator sudokuGenerator = FileManager.loadPuzzle(this, key);
-            openPuzzle(sudokuGenerator);
+        if (FileManager.hasSavedPuzzle(this, fileName)) {
+            SudokuGenerator sudokuGenerator = FileManager.loadPuzzle(this, fileName);
+            FileManager.saveCurrentPuzzle(this, sudokuGenerator, level);
+            FileManager.clearPuzzle(this, fileName);
+            openPuzzle(null);
         } else {
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            loadingFragment = new LoadingFragment();
-            loadingFragment.setArguments(bundle);
-            fragmentTransaction.replace(R.id.activity_sudoku_container, loadingFragment);
-            fragmentTransaction.commit();
+            Bundle bundle = new Bundle();
+            bundle.putInt(KEY_LEVEL, level);
+            launchLoader(bundle);
         }
     }
+
 
     @Override
     public void openPuzzle(SudokuGenerator sudokuGenerator) {
@@ -114,8 +112,8 @@ public class MainActivity extends AppCompatActivity
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode == RESULT_OK) {
-            if(requestCode == 0) {
+        if (resultCode == RESULT_OK) {
+            if (requestCode == 0) {
                 FragmentManager fragmentManager = getSupportFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                 DifficultyFragment difficultyFragment = new DifficultyFragment();
@@ -123,5 +121,15 @@ public class MainActivity extends AppCompatActivity
                 fragmentTransaction.commit();
             }
         }
+    }
+
+
+    public void launchLoader(Bundle bundle) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        loadingFragment = new LoadingFragment();
+        loadingFragment.setArguments(bundle);
+        fragmentTransaction.replace(R.id.activity_sudoku_container, loadingFragment);
+        fragmentTransaction.commit();
     }
 }
