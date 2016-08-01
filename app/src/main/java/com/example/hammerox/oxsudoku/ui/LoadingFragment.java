@@ -21,7 +21,7 @@ public class LoadingFragment extends Fragment {
     private final int minimumProgressValue = 15;
     private RoundCornerProgressBar progressBar;
     String serviceName = PuzzleLoaderService.class.getName();
-    ActivityManager manager = (ActivityManager) getActivity().getSystemService(Context.ACTIVITY_SERVICE);
+    ActivityManager manager;
 
     public LoadingFragment() {
         // Required empty public constructor
@@ -43,6 +43,7 @@ public class LoadingFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        manager = (ActivityManager) getActivity().getSystemService(Context.ACTIVITY_SERVICE);
 
         // If there is already an intentService running, stop and kill it
         if (findPuzzleLoader()) {
