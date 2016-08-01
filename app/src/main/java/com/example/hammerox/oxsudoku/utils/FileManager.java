@@ -2,6 +2,7 @@ package com.example.hammerox.oxsudoku.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.example.hammerox.oxsudoku.services.SudokuGenerator;
 import com.google.gson.Gson;
@@ -12,9 +13,11 @@ import java.lang.reflect.Type;
 
 public class FileManager {
 
-    private static Gson gson = new Gson();
     public static final String FILE_NAME = "OxSudoku";
     public static final String CURRENT_PUZZLE = "current_puzzle";
+    public static final String LOG_FILE = FileManager.class.getSimpleName();
+
+    private static Gson gson = new Gson();
 
 
     public static boolean hasSavedPuzzle(Context context, String fileName) {
@@ -23,11 +26,17 @@ public class FileManager {
     }
 
 
+    public static boolean hasCurrentPuzzle(Context context) {
+        return hasSavedPuzzle(context, CURRENT_PUZZLE);
+    }
+
+
     public static SudokuGenerator loadPuzzle(Context context, String fileName) {
         SharedPreferences prefs = getPreferences(context);
         String jsonObject = prefs.getString(fileName, "");
         Type type = new TypeToken<SudokuGenerator>() {}.getType();
 
+        Log.v(LOG_FILE, "Puzzle loaded: " + fileName);
         return gson.fromJson(jsonObject, type);
     }
 
@@ -37,6 +46,7 @@ public class FileManager {
         String jsonObject = gson.toJson(sudokuGenerator);
         editor.putString(fileName, jsonObject);
         editor.apply();
+        Log.v(LOG_FILE, "Puzzle saved: " + fileName);
     }
 
 

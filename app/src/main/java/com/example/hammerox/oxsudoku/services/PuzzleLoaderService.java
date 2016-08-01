@@ -13,6 +13,7 @@ import java.util.List;
 
 public class PuzzleLoaderService extends IntentService {
 
+    public final static String LOG_BROADCAST = PuzzleLoaderService.class.getSimpleName();
     public final static String BROADCAST_SERVICE = "broadcast_puzzle_loader";
     public final static String KEY_IS_COMPLETE = "broadcast_status";
     public final static String KEY_UPDATE = "broadcast_update";
@@ -49,7 +50,7 @@ public class PuzzleLoaderService extends IntentService {
 
 
     private void sendUpdate(float percentage) {
-        Log.d("sender", "Broadcasting message");
+        Log.v(LOG_BROADCAST, "Broadcasting message");
         Intent resultIntent = new Intent(BROADCAST_SERVICE);
         resultIntent.putExtra(KEY_IS_COMPLETE, false);
         resultIntent.putExtra(KEY_UPDATE, percentage);
@@ -58,7 +59,7 @@ public class PuzzleLoaderService extends IntentService {
 
 
     private void sendResult() {
-        Log.d("sender", "Broadcasting message");
+        Log.v(LOG_BROADCAST, "Loading finished!");
         Intent resultIntent = new Intent(BROADCAST_SERVICE);
         resultIntent.putExtra(KEY_IS_COMPLETE, true);
         LocalBroadcastManager.getInstance(this).sendBroadcast(resultIntent);

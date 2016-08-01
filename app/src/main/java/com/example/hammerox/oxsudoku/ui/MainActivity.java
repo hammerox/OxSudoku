@@ -9,7 +9,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
 import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar;
@@ -20,14 +19,12 @@ import com.example.hammerox.oxsudoku.utils.FileManager;
 import com.example.hammerox.oxsudoku.utils.Levels;
 
 public class MainActivity extends AppCompatActivity
-        implements LoadingFragment.OnFragmentInteractionListener,
-        IntroFragment.OnFragmentInteractionListener {
+        implements LoadingFragment.OnFragmentInteractionListener
+         {
 
     public final static String KEY_LEVEL = "emptyCells";
 
     private LoadingFragment loadingFragment;
-
-
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -48,14 +45,19 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sudoku);
+
+        setContentView(R.layout.activity_main);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.activity_sudoku_container, new IntroFragment())
+                    .add(R.id.activity_sudoku_container, new DifficultyFragment())
                     .commit();
         }
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
                 new IntentFilter(PuzzleLoaderService.BROADCAST_SERVICE));
+        
+        if (FileManager.hasCurrentPuzzle(this)) {
+            openPuzzle(null);
+        }
     }
 
 
@@ -109,14 +111,6 @@ public class MainActivity extends AppCompatActivity
         startActivityForResult(intent, 0);
     }
 
-    @Override
-    public void onIntroInteraction() {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        DifficultyFragment difficultyFragment = new DifficultyFragment();
-        fragmentTransaction.replace(R.id.activity_sudoku_container, difficultyFragment);
-        fragmentTransaction.commit();
-    }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
