@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar;
@@ -33,9 +34,13 @@ public class MainActivity extends AppCompatActivity {
             if (loadingIsComplete) {
                 openPuzzle();
             } else {
-                float percentage = intent.getFloatExtra(PuzzleLoaderService.KEY_UPDATE, 15);
-                RoundCornerProgressBar progressBar = loadingFragment.getProgressBar();
-                progressBar.setProgress(percentage);
+                try {
+                    float percentage = intent.getFloatExtra(PuzzleLoaderService.KEY_UPDATE, 15);
+                    RoundCornerProgressBar progressBar = loadingFragment.getProgressBar();
+                    progressBar.setProgress(percentage);
+                } catch (NullPointerException e) {
+                    Log.e("onReceive()", e.getMessage());
+                }
             }
         }
     };

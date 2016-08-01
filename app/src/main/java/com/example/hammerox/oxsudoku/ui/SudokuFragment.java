@@ -20,6 +20,9 @@ import com.example.hammerox.oxsudoku.ui.views.SudokuKeyboard;
 import com.example.hammerox.oxsudoku.utils.FileManager;
 import com.example.hammerox.oxsudoku.R;
 import com.example.hammerox.oxsudoku.services.SudokuGenerator;
+import com.example.hammerox.oxsudoku.utils.Levels;
+
+import java.util.List;
 
 
 public class SudokuFragment extends Fragment {
@@ -118,14 +121,8 @@ public class SudokuFragment extends Fragment {
 
     @Override
     public void onStart() {
-        /* Search if there is a spare puzzle
-        *  If not, create a new one and save it */
-        int level = FileManager.loadCurrentLevel(getActivity());
-        boolean backupPuzzleIsNull = !FileManager.hasSavedPuzzle(getActivity(), level);
-        if (backupPuzzleIsNull) {
-            storeNewPuzzle(level);
-        }
-
+        // Create puzzles for backup while user plays a game
+        createBackupPuzzles();
         super.onStart();
     }
 
@@ -145,6 +142,21 @@ public class SudokuFragment extends Fragment {
     public void onPause() {
         chronoPause();
         super.onPause();
+    }
+
+
+    public void createBackupPuzzles() {
+        boolean backupPuzzleIsNull;
+        List<String> levelList = Levels.getFileNameList();
+        int maxLevel = levelList.size() - 1;
+
+        // Put every level on intentService's queue
+        for (int level = 0; level <= maxLevel; level++) {
+            backupPuzzleIsNull = !FileManager.hasSavedPuzzle(getActivity(), level);
+            if (backupPuzzleIsNull) {
+                storeNewPuzzle(level);
+            }
+        }
     }
 
 

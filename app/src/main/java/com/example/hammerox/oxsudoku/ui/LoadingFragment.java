@@ -47,11 +47,8 @@ public class LoadingFragment extends Fragment {
 
         // If there is already an intentService running, stop and kill it
         if (findPuzzleLoader()) {
-            PuzzleLoaderService.shouldStop = true;
-            Log.v(PuzzleLoaderService.LOG_SERVICE, "Trying to kill PuzzleLoader");
-
-            // This ensures that the intentService is killed before continuing
-            while (findPuzzleLoader()) {}
+            getActivity().stopService(new Intent(getActivity(), PuzzleLoaderService.class));
+            Log.v(PuzzleLoaderService.LOG_SERVICE, "PuzzleLoader Killed");
         }
 
         // Start generating a new puzzle
@@ -62,6 +59,7 @@ public class LoadingFragment extends Fragment {
     private boolean findPuzzleLoader() {
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
             if (serviceName.equals(service.service.getClassName())) {
+                Log.v(PuzzleLoaderService.LOG_SERVICE, "Found PuzzleLoader running");
                 return true;
             }
         }

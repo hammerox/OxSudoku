@@ -1,6 +1,9 @@
 package com.example.hammerox.oxsudoku.utils;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Levels {
 
     public final static int LEVEL_EASY = 0;
@@ -15,6 +18,14 @@ public class Levels {
     private final static String FILENAME_EASY = "level_easy";
     private final static String FILENAME_MEDIUM = "level_medium";
     private final static String FILENAME_HARD = "level_hard";
+
+    private final static List<String> fileNameList = new ArrayList<>();
+
+    static {
+        fileNameList.add(FILENAME_EASY);
+        fileNameList.add(FILENAME_MEDIUM);
+        fileNameList.add(FILENAME_HARD);
+    }
 
 
     public static int getDifficulty(int level) {
@@ -31,16 +42,13 @@ public class Levels {
         return 0;
     }
 
-    public static String getFileName(int level) {
-        switch (level) {        // Get level's respective tag name
-            case LEVEL_EASY:
-                return FILENAME_EASY;
-            case LEVEL_MEDIUM:
-                return FILENAME_MEDIUM;
-            case LEVEL_HARD:
-                return FILENAME_HARD;
-        }
 
-        return null;
+    public static String getFileName(int level) {
+        return fileNameList.get(level);
+    }
+
+
+    public static List<String> getFileNameList() {
+        return fileNameList;
     }
 }
