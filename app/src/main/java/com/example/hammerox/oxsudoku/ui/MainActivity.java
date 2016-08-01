@@ -18,8 +18,7 @@ import com.example.hammerox.oxsudoku.services.SudokuGenerator;
 import com.example.hammerox.oxsudoku.utils.FileManager;
 import com.example.hammerox.oxsudoku.utils.Levels;
 
-public class MainActivity extends AppCompatActivity
-        implements LoadingFragment.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity {
 
     public final static String KEY_LEVEL = "emptyCells";
     public final static String KEY_USER_IS_WAITING = "userIsWaiting";
@@ -32,7 +31,7 @@ public class MainActivity extends AppCompatActivity
             boolean loadingIsComplete = intent
                     .getBooleanExtra(PuzzleLoaderService.KEY_IS_COMPLETE, false);
             if (loadingIsComplete) {
-                openPuzzle(null);
+                openPuzzle();
             } else {
                 float percentage = intent.getFloatExtra(PuzzleLoaderService.KEY_UPDATE, 15);
                 RoundCornerProgressBar progressBar = loadingFragment.getProgressBar();
@@ -56,7 +55,7 @@ public class MainActivity extends AppCompatActivity
                 new IntentFilter(PuzzleLoaderService.BROADCAST_SERVICE));
 
         if (FileManager.hasCurrentPuzzle(this)) {
-            openPuzzle(null);
+            openPuzzle();
         }
     }
 
@@ -94,7 +93,7 @@ public class MainActivity extends AppCompatActivity
             SudokuGenerator sudokuGenerator = FileManager.loadPuzzle(this, fileName);
             FileManager.saveCurrentPuzzle(this, sudokuGenerator, level);
             FileManager.clearPuzzle(this, fileName);
-            openPuzzle(null);
+            openPuzzle();
         } else {
             Bundle bundle = new Bundle();
             bundle.putInt(KEY_LEVEL, level);
@@ -103,8 +102,7 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    @Override
-    public void openPuzzle(SudokuGenerator sudokuGenerator) {
+    public void openPuzzle() {
         Intent intent = new Intent(this, SudokuActivity.class);
         startActivityForResult(intent, 0);
     }

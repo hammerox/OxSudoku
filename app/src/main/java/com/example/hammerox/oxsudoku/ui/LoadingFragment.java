@@ -1,6 +1,5 @@
 package com.example.hammerox.oxsudoku.ui;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,7 +10,6 @@ import android.view.ViewGroup;
 import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar;
 import com.example.hammerox.oxsudoku.R;
 import com.example.hammerox.oxsudoku.services.PuzzleLoaderService;
-import com.example.hammerox.oxsudoku.services.SudokuGenerator;
 
 
 public class LoadingFragment extends Fragment {
@@ -19,28 +17,11 @@ public class LoadingFragment extends Fragment {
     private final int minimumProgressValue = 15;
     private RoundCornerProgressBar progressBar;
 
-    /*Todo - Remove LoadingFragment listener*/
-    private OnFragmentInteractionListener mListener;
 
     public LoadingFragment() {
         // Required empty public constructor
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -60,20 +41,11 @@ public class LoadingFragment extends Fragment {
         return v;
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    public interface OnFragmentInteractionListener {
-        void openPuzzle(SudokuGenerator sudokuGenerator);
-    }
-
 
     public RoundCornerProgressBar getProgressBar() {
         return progressBar;
     }
+
 
     public void setProgressBar(RoundCornerProgressBar progressBar) {
         this.progressBar = progressBar;
