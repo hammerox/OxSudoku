@@ -14,14 +14,17 @@ import android.view.ViewGroup;
 import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar;
 import com.example.hammerox.oxsudoku.R;
 import com.example.hammerox.oxsudoku.services.PuzzleLoaderService;
+import com.example.hammerox.oxsudoku.utils.Levels;
 
 
 public class LoadingFragment extends Fragment {
 
     private final int minimumProgressValue = 15;
+
     private RoundCornerProgressBar progressBar;
-    String serviceName = PuzzleLoaderService.class.getName();
-    ActivityManager manager;
+    private int level;
+    private String serviceName = PuzzleLoaderService.class.getName();
+    private ActivityManager manager;
 
     public LoadingFragment() {
         // Required empty public constructor
@@ -44,15 +47,25 @@ public class LoadingFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         manager = (ActivityManager) getActivity().getSystemService(Context.ACTIVITY_SERVICE);
+        level = getArguments().getInt(MainActivity.KEY_LEVEL);
+        String fileName = Levels.getFileName(level);
 
-        // If there is already an intentService running, stop and kill it
+        // If there is already an intentService running, check if the puzzle generating is the
+        // same as the user selected
+        // If not, kill the service and start a new
         if (findPuzzleLoader()) {
-            getActivity().stopService(new Intent(getActivity(), PuzzleLoaderService.class));
-            Log.v(PuzzleLoaderService.LOG_SERVICE, "PuzzleLoader Killed");
+            if (fileName.equals(PuzzleLoaderService.mLevelName)) {
+                PuzzleLoaderService.userIsWaiting = true;
+                Log.v(PuzzleLoaderService.LOG_SERVICE, "PuzzleLoader is now updating progressBar");
+            } else {
+                getActivity().stopService(new Intent(getActivity(), PuzzleLoaderService.class));
+                Log.v(PuzzleLoaderService.LOG_SERVICE, "PuzzleLoader Killed");
+                startPuzzleLoader();
+            }
+        } else {
+            // If no service is running, start a new one anyway
+            startPuzzleLoader();
         }
-
-        // Start generating a new puzzle
-        startPuzzleLoader();
     }
 
 
@@ -68,8 +81,6 @@ public class LoadingFragment extends Fragment {
 
 
     private void startPuzzleLoader() {
-        int level = getArguments().getInt(MainActivity.KEY_LEVEL);
-
         Intent intent = new Intent(getActivity(), PuzzleLoaderService.class);
         intent.putExtra(MainActivity.KEY_LEVEL, level);
         intent.putExtra(MainActivity.KEY_USER_IS_WAITING, true);
