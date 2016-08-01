@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.example.hammerox.oxsudoku.R;
+import com.example.hammerox.oxsudoku.utils.FileManager;
 
 public class SudokuActivity extends AppCompatActivity
     implements SudokuFragment.OnFragmentInteractionListener {
@@ -42,7 +43,7 @@ public class SudokuActivity extends AppCompatActivity
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
                     public void onClick(DialogInterface arg0, int arg1) {
-
+                        FileManager.clearCurrentPuzzle(SudokuActivity.this);
                         SudokuActivity.super.onBackPressed();
                     }
                 }).create().show();

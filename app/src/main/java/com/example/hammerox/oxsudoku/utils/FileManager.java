@@ -50,6 +50,20 @@ public class FileManager {
     }
 
 
+    public static void clearPuzzle(Context context, String fileName) {
+        SharedPreferences.Editor editor = getEditor(context);
+        editor.remove(fileName);
+        editor.apply();
+    }
+
+
+    public static void clearCurrentPuzzle(Context context) {
+        SharedPreferences.Editor editor = getEditor(context);
+        editor.remove(CURRENT_PUZZLE);
+        editor.apply();
+    }
+
+
     public static SharedPreferences getPreferences(Context context) {
         return context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
     }
