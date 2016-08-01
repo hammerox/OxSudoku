@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity
         }
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
                 new IntentFilter(PuzzleLoaderService.BROADCAST_SERVICE));
-        
+
         if (FileManager.hasCurrentPuzzle(this)) {
             openPuzzle(null);
         }
