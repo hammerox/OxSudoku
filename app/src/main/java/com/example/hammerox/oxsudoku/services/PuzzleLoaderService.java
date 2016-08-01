@@ -14,10 +14,12 @@ import java.util.List;
 
 public class PuzzleLoaderService extends IntentService {
 
-    public final static String LOG_BROADCAST = PuzzleLoaderService.class.getSimpleName();
+    public final static String LOG_SERVICE = PuzzleLoaderService.class.getSimpleName();
     public final static String BROADCAST_SERVICE = "broadcast_puzzle_loader";
     public final static String KEY_IS_COMPLETE = "broadcast_status";
     public final static String KEY_UPDATE = "broadcast_update";
+
+    public static volatile boolean shouldStop = false;
 
     public PuzzleLoaderService() {
         super("PuzzleLoaderService");
@@ -25,6 +27,9 @@ public class PuzzleLoaderService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        shouldStop = false;
+        Log.v(LOG_SERVICE, "PuzzleLoader Started");
+
         int level = intent.getIntExtra(MainActivity.KEY_LEVEL, -1);
         boolean userIsWaiting = intent.getBooleanExtra(MainActivity.KEY_USER_IS_WAITING, true);
 
@@ -33,6 +38,11 @@ public class PuzzleLoaderService extends IntentService {
         int size = SudokuGenerator.GRID_SIZE;
         for (int i = 0; i < size; i++) {
             sudokuGenerator.tryToRemoveCell(i);
+
+            if (shouldStop) {
+                Log.v(LOG_SERVICE, "PuzzleLoader KILLED");
+                stopSelf();
+            }
 
             if (userIsWaiting) {        // If on loading screen, send update to progressBar
                 float completePercentage = 100 * (float) i / (float) size;
@@ -62,7 +72,6 @@ public class PuzzleLoaderService extends IntentService {
 
 
     private void sendUpdate(float percentage) {
-        Log.v(LOG_BROADCAST, "Broadcasting message");
         Intent resultIntent = new Intent(BROADCAST_SERVICE);
         resultIntent.putExtra(KEY_IS_COMPLETE, false);
         resultIntent.putExtra(KEY_UPDATE, percentage);
@@ -71,7 +80,7 @@ public class PuzzleLoaderService extends IntentService {
 
 
     private void sendResult() {
-        Log.v(LOG_BROADCAST, "Loading finished!");
+        Log.v(LOG_SERVICE, "Loading finished!");
         Intent resultIntent = new Intent(BROADCAST_SERVICE);
         resultIntent.putExtra(KEY_IS_COMPLETE, true);
         LocalBroadcastManager.getInstance(this).sendBroadcast(resultIntent);
