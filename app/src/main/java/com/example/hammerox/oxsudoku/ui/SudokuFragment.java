@@ -1,11 +1,11 @@
 package com.example.hammerox.oxsudoku.ui;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -71,10 +71,13 @@ public class SudokuFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch (id) {
+            case android.R.id.home:
+                mListener.onFragmentUpPressed();
+                return true;
             case R.id.action_autofill:
                 sudokuGrid.takeSnapshot(true);
                 sudokuGrid.autoFill(getActivity());
-                break;
+                return true;
         }
 
         /*Todo - Add 'new game' option*/
@@ -100,7 +103,7 @@ public class SudokuFragment extends Fragment {
     }
 
     public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(Uri uri);
+        void onFragmentUpPressed();
     }
 
 

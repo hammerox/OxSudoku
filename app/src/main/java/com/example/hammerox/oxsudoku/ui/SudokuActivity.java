@@ -1,6 +1,7 @@
 package com.example.hammerox.oxsudoku.ui;
 
-import android.net.Uri;
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -22,7 +23,28 @@ public class SudokuActivity extends AppCompatActivity
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
+    public void onFragmentUpPressed() {
+        showExitDialog();
+    }
 
+
+    @Override
+    public void onBackPressed() {
+        showExitDialog();
+    }
+
+
+    public void showExitDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Really Exit?")
+                .setMessage("Your game will be counted as a defeat")
+                .setNegativeButton(android.R.string.no, null)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface arg0, int arg1) {
+
+                        SudokuActivity.super.onBackPressed();
+                    }
+                }).create().show();
     }
 }
