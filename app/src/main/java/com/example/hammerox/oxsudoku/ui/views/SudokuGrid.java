@@ -459,7 +459,7 @@ public class SudokuGrid {
         Boolean isOnCol = false;
         List<Integer> conflictIndexes = new ArrayList<>();
         // Check Box
-        List<Integer> checkBox = GridPosition.getBoxIndexes(clickedRow, clickedCol, false);
+        List<Integer> checkBox = GridPosition.getBoxList(clickedRow, clickedCol, false);
         for (Integer i : checkBox) {
             if (puzzleAnswers.get(i) == activeKey) {
                 isOnBox = true;

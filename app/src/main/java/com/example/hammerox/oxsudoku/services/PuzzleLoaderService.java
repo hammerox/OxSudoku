@@ -42,7 +42,6 @@ public class PuzzleLoaderService extends IntentService {
 
             // Prepare generator
             SudokuGenerator sudokuGenerator = new SudokuGenerator(level);
-            sudokuGenerator.preparePuzzle();
             int size = SudokuGenerator.GRID_SIZE;
 
             // Start loop

@@ -1,6 +1,5 @@
 package com.example.hammerox.oxsudoku.utils;
 
-import android.app.Activity;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TableLayout;
@@ -13,10 +12,21 @@ import java.util.List;
 
 public class GridPosition {
 
+    public final static int[] BOX_TOP_LEFT = new int[]{0, 1, 2, 9, 10, 11, 18, 19, 20};
+    public final static int[] BOX_TOP_CENTER = new int[]{3, 4, 5, 12, 13, 14, 21, 22, 23};
+    public final static int[] BOX_TOP_RIGHT = new int[]{6, 7, 8, 15, 16, 17, 24, 25, 26};
+    public final static int[] BOX_CENTER_LEFT = new int[]{27, 28, 29, 36, 37, 38, 45, 46, 47};
+    public final static int[] BOX_CENTER_CENTER = new int[]{30, 31, 32, 39, 40, 41, 48, 49, 50};
+    public final static int[] BOX_CENTER_RIGHT = new int[]{33, 34, 35, 42, 43, 44, 51, 52, 53};
+    public final static int[] BOX_BOTTOM_LEFT = new int[]{54, 55, 56, 63, 64, 65, 72, 73, 74};
+    public final static int[] BOX_BOTTOM_CENTER = new int[]{57, 58, 59, 66, 67, 68, 75, 76, 77};
+    public final static int[] BOX_BOTTOM_RIGHT = new int[]{60, 61, 62, 69, 70, 71, 78, 79, 80};
+
+
     public static List<Integer> getRowColBoxIndexes(int row, int col, Boolean includeClickedPosition) {
         List<Integer> indexes = new ArrayList<>();
         // Box
-        List<Integer> boxList = getBoxIndexes(row, col, includeClickedPosition);
+        List<Integer> boxList = getBoxList(row, col, includeClickedPosition);
         indexes.addAll(boxList);
         // Row
         List<Integer> rowList = getRowIndexes(row, col, includeClickedPosition);
@@ -42,60 +52,87 @@ public class GridPosition {
     }
 
 
-    public static List<Integer> getBoxIndexes(int row, int col, Boolean includeClickedPosition) {
+    public static List<Integer> getBoxList(int row, int col, Boolean includeClickedPosition) {
         int clickedIndex = getIndexFromPosition(row, col);
-        int[] boxIndexes = new int[] {};
+        int[] boxIndexes = getBoxIndexes(row, col);
         List<Integer> indexes = new ArrayList<>();
-        switch (row) {
-            case 1:
-            case 2:
-            case 3:
-                if (col == 1 || col == 2 || col == 3) {
-                    boxIndexes = new int[]{0, 1, 2, 9, 10, 11, 18, 19, 20};
-
-                } else if (col == 4 || col == 5 || col == 6) {
-                    boxIndexes = new int[]{3, 4, 5, 12, 13, 14, 21, 22, 23};
-
-                } else if (col == 7 || col == 8 || col == 9) {
-                    boxIndexes = new int[]{6, 7, 8, 15, 16, 17, 24, 25, 26};
-
-                }
-                break;
-            case 4:
-            case 5:
-            case 6:
-                if (col == 1 || col == 2 || col == 3) {
-                    boxIndexes = new int[]{27,28,29,36,37,38,45,46,47};
-
-                } else if (col == 4 || col == 5 || col == 6) {
-                    boxIndexes = new int[]{30,31,32,39,40,41,48,49,50};
-
-                } else if (col == 7 || col == 8 || col == 9) {
-                    boxIndexes = new int[]{33,34,35,42,43,44,51,52,53};
-
-                }
-                break;
-            case 7:
-            case 8:
-            case 9:
-                if (col == 1 || col == 2 || col == 3) {
-                    boxIndexes = new int[]{54,55,56,63,64,65,72,73,74};
-
-                } else if (col == 4 || col == 5 || col == 6) {
-                    boxIndexes = new int[]{57,58,59,66,67,68,75,76,77};
-
-                } else if (col == 7 || col == 8 || col == 9) {
-                    boxIndexes = new int[]{60,61,62,69,70,71,78,79,80};
-
-                }
-                break;
-        }
 
         for (int i : boxIndexes) {
             Boolean isToAdd = (clickedIndex != i) || includeClickedPosition;
             if (isToAdd) indexes.add(i);
         }
         return indexes;
+    }
+
+
+    public static int[] getBoxIndexes(int row, int col) {
+        int[] boxIndexes = null;
+        switch (row) {
+            case 1:
+            case 2:
+            case 3:
+                switch (col) {
+                    case 1:
+                    case 2:
+                    case 3:
+                        boxIndexes = new int[]{0, 1, 2, 9, 10, 11, 18, 19, 20};
+                        break;
+                    case 4:
+                    case 5:
+                    case 6:
+                        boxIndexes = new int[]{3, 4, 5, 12, 13, 14, 21, 22, 23};
+                        break;
+                    case 7:
+                    case 8:
+                    case 9:
+                        boxIndexes = new int[]{6, 7, 8, 15, 16, 17, 24, 25, 26};
+                        break;
+                }
+                break;
+            case 4:
+            case 5:
+            case 6:
+                switch (col) {
+                    case 1:
+                    case 2:
+                    case 3:
+                        boxIndexes = new int[]{27, 28, 29, 36, 37, 38, 45, 46, 47};
+                        break;
+                    case 4:
+                    case 5:
+                    case 6:
+                        boxIndexes = new int[]{30, 31, 32, 39, 40, 41, 48, 49, 50};
+                        break;
+                    case 7:
+                    case 8:
+                    case 9:
+                        boxIndexes = new int[]{33, 34, 35, 42, 43, 44, 51, 52, 53};
+                        break;
+                }
+                break;
+            case 7:
+            case 8:
+            case 9:
+                switch (col) {
+                    case 1:
+                    case 2:
+                    case 3:
+                        boxIndexes = new int[]{54, 55, 56, 63, 64, 65, 72, 73, 74};
+                        break;
+                    case 4:
+                    case 5:
+                    case 6:
+                        boxIndexes = new int[]{57, 58, 59, 66, 67, 68, 75, 76, 77};
+                        break;
+                    case 7:
+                    case 8:
+                    case 9:
+                        boxIndexes = new int[]{60, 61, 62, 69, 70, 71, 78, 79, 80};
+                        break;
+                }
+                break;
+        }
+        return boxIndexes;
     }
 
 
