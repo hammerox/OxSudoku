@@ -76,20 +76,20 @@ public class MainActivity extends AppCompatActivity {
         int id = v.getId();
         switch (id) {
             case R.id.level_easy:
-                loadPuzzle(Levels.LEVEL_EASY);
+                loadPuzzle(Levels.LEVELS[0]);
                 break;
             case R.id.level_medium:
-                loadPuzzle(Levels.LEVEL_MEDIUM);
+                loadPuzzle(Levels.LEVELS[1]);
                 break;
             case R.id.level_hard:
-                loadPuzzle(Levels.LEVEL_HARD);
+                loadPuzzle(Levels.LEVELS[2]);
                 break;
         }
     }
 
 
     public void loadPuzzle(int level) {
-        String fileName = Levels.getFileName(level);
+        String fileName = Levels.FILENAMES[level];
 
         /* Search for saved puzzle.
         *  If exists, put it into current puzzle and launch game screen.

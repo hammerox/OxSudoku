@@ -28,7 +28,7 @@ public class FileManager {
 
 
     public static boolean hasSavedPuzzle(Context context, int level) {
-        String fileName = Levels.getFileName(level);
+        String fileName = Levels.FILENAMES[level];
         return hasSavedPuzzle(context, fileName);
     }
 

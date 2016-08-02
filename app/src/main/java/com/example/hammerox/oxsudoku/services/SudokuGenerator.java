@@ -42,7 +42,7 @@ public class SudokuGenerator {
     public SudokuGenerator(int level) {
         this.board = createBoard(1);
         this.board = fillBoard(board);
-        this.maxEmptyCells = Levels.getDifficulty(level);
+        this.maxEmptyCells = Levels.DIFFICULTIES[level];
         /*setPuzzle(maxEmptyCells);*/
     }
 

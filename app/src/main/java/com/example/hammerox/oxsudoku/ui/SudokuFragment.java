@@ -147,11 +147,9 @@ public class SudokuFragment extends Fragment {
 
     public void createBackupPuzzles() {
         boolean backupPuzzleIsNull;
-        List<String> levelList = Levels.getFileNameList();
-        int maxLevel = levelList.size() - 1;
 
         // Put every level on intentService's queue
-        for (int level = 0; level <= maxLevel; level++) {
+        for (int level : Levels.LEVELS) {
             backupPuzzleIsNull = !FileManager.hasSavedPuzzle(getActivity(), level);
             if (backupPuzzleIsNull) {
                 storeNewPuzzle(level);

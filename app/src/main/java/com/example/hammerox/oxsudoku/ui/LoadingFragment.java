@@ -48,7 +48,7 @@ public class LoadingFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         manager = (ActivityManager) getActivity().getSystemService(Context.ACTIVITY_SERVICE);
         level = getArguments().getInt(MainActivity.KEY_LEVEL);
-        String fileName = Levels.getFileName(level);
+        String fileName = Levels.FILENAMES[level];
 
         // If there is already an intentService running, check if the puzzle generating is the
         // same as the user selected
@@ -70,12 +70,17 @@ public class LoadingFragment extends Fragment {
 
 
     private boolean findPuzzleLoader() {
+        // Search
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            // Check
             if (serviceName.equals(service.service.getClassName())) {
+                // If found, return true
                 Log.v(PuzzleLoaderService.LOG_SERVICE, "Found PuzzleLoader running");
                 return true;
             }
         }
+
+        // If not found, return false
         return false;
     }
 

@@ -30,7 +30,7 @@ public class PuzzleLoaderService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         int level = intent.getIntExtra(MainActivity.KEY_LEVEL, -1);
-        mLevelName = Levels.getFileName(level);
+        mLevelName = Levels.FILENAMES[level];
         userIsWaiting = intent.getBooleanExtra(MainActivity.KEY_USER_IS_WAITING, true);
 
         // Runtime check if level already has a backup puzzle
@@ -40,33 +40,37 @@ public class PuzzleLoaderService extends IntentService {
 
             Log.v(LOG_SERVICE, "PuzzleLoader " + mLevelName + " Started");
 
+            // Prepare generator
             SudokuGenerator sudokuGenerator = new SudokuGenerator(level);
             sudokuGenerator.preparePuzzle();
             int size = SudokuGenerator.GRID_SIZE;
-            for (int i = 0; i < size; i++) {
-                sudokuGenerator.tryToRemoveCell(i);
 
-                if (userIsWaiting) {        // If on loading screen, send update to progressBar
+            // Start loop
+            for (int i = 0; i < size; i++) {
+                sudokuGenerator.tryToRemoveCell(i);     // Main method for puzzle generation
+
+                if (userIsWaiting) {        // If loading screen is on, send update to progressBar
                     float completePercentage = 100 * (float) i / (float) size;
                     sendUpdate(completePercentage);
                 }
 
                 if (sudokuGenerator.getEmptyCellsCounter() == sudokuGenerator.getMaxEmptyCells()) {
-                    break;                                  // Stop if the number of empty cells is enough...
+                    break;      // Stop if the number of empty cells is enough...
                 }
             }
 
-            // When finished generating the puzzle
+            // When finished, set last variables
             List<Boolean> fillList = sudokuGenerator.getEmptyCellList();
             sudokuGenerator.fillToMask(fillList);
 
-            sendUpdate(100);
-
+            // Save generated puzzle
+            // Check if puzzle is to use now or to save as backup
             if (userIsWaiting) {
+                sendUpdate(100);
                 FileManager.saveCurrentPuzzle(this, sudokuGenerator, level);
                 sendResult();
             } else {
-                String fileName = Levels.getFileName(level);
+                String fileName = Levels.FILENAMES[level];
                 FileManager.savePuzzle(this, sudokuGenerator, fileName);
             }
         }
