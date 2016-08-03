@@ -7,6 +7,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -32,6 +33,9 @@ public class SudokuKeyboard {
 
     public void drawKeyboard(final Activity activity, final View rootView, final SudokuGrid sudokuGrid) {
 
+        float defaultSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                20, activity.getResources().getDisplayMetrics());
+
         for (int key = 1; key <= 9; key++) {
             // Getting each button from keyboard's view.
             String idString = "key_" + key;
@@ -44,7 +48,7 @@ public class SudokuKeyboard {
             keyButton.setText("" + key);
             keyButton.setGravity(Gravity.CENTER);
             keyButton.setTypeface(Typeface.DEFAULT_BOLD);
-            keyButton.setTextSize(30);
+            keyButton.setTextSize(defaultSize);
                 // Interaction
             keyButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -107,6 +111,11 @@ public class SudokuKeyboard {
     }
 
     public void setClickListeners(final Activity activity, final View rootView, final SudokuGrid sudokuGrid) {
+        final float defaultSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                20, activity.getResources().getDisplayMetrics());
+        final float smallSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                10, activity.getResources().getDisplayMetrics());
+
         ImageButton leftButton1 = (ImageButton) rootView.findViewById(R.id.left_button_1);
         leftButton1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -121,13 +130,13 @@ public class SudokuKeyboard {
                         if (!eraseMode) {
                             keyButton.setTextColor(Color.BLUE);
                         }
-                        keyButton.setTextSize(15);
+                        keyButton.setTextSize(smallSize);
 
                     } else {
                         if (!eraseMode) {
                             keyButton.setTextColor(Color.BLACK);
                         }
-                        keyButton.setTextSize(30);
+                        keyButton.setTextSize(defaultSize);
                     }
                 }
             }

@@ -11,6 +11,7 @@ import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.util.Pair;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -87,6 +88,10 @@ public class SudokuGrid {
 
 
     public void drawPuzzle(final Activity activity, final View rootView) {
+        float defaultSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                20, activity.getResources().getDisplayMetrics());
+        float pencilSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                6.66f, activity.getResources().getDisplayMetrics());
 
         SquareLayout gridLayout = (SquareLayout) rootView.findViewById(R.id.sudoku_gridlayout);
         for (int row = 1; row <= 9; row++) {
@@ -113,8 +118,8 @@ public class SudokuGrid {
                 cellView.setBackground(mDrawable);
 
                 // Creating views for answers and sketch for each square on the grid.
-                TextView answerView = createAnswerSlot(activity, row, col);
-                TableLayout pencilView = createPencilSlot(activity, row, col);
+                TextView answerView = createAnswerSlot(activity, row, col, defaultSize);
+                TableLayout pencilView = createPencilSlot(activity, row, col, pencilSize);
 
                 int index = GridPosition.getIndexFromPosition(row, col);
                 // If hasSolution is true, show number. Otherwise, demand user input;
@@ -951,7 +956,7 @@ public class SudokuGrid {
 
     //////////  CREATERS AND EDITTERS //////////
 
-    public TextView createAnswerSlot(Activity activity, int row, int col) {
+    public TextView createAnswerSlot(Activity activity, int row, int col, float numSize) {
         TextView answerView = new TextView(activity);
         // IDs
         int answerId = GridPosition.getCellId(row, col, answerView);
@@ -963,13 +968,13 @@ public class SudokuGrid {
         // Appearance
         answerView.setGravity(Gravity.CENTER);
         answerView.setTypeface(Typeface.DEFAULT_BOLD);
-        answerView.setTextSize(30);
+        answerView.setTextSize(numSize);
 
         return answerView;
     }
 
 
-    public TableLayout createPencilSlot(Activity activity, int row, int col) {
+    public TableLayout createPencilSlot(Activity activity, int row, int col, float numSize) {
         TableLayout pencilView = new TableLayout(activity);
         // ID
         int pencilId = GridPosition.getCellId(row, col, pencilView);
@@ -998,7 +1003,7 @@ public class SudokuGrid {
                     1.0f));
             // Appearance
             textView.setGravity(Gravity.CENTER);
-            textView.setTextSize(10);
+            textView.setTextSize(numSize);
             textView.setText(String.valueOf(n));
             ColorStateList mTransparent = ColorStateList.valueOf(Color.TRANSPARENT);
             textView.setTextColor(mTransparent);
