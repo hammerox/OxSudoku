@@ -1,9 +1,11 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_centerInParent="true"
-    tools:context=".ui.DifficultyFragment">
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:layout_centerInParent="true"
+                android:background="#5A5754"
+                tools:context=".ui.DifficultyFragment">
 
     <LinearLayout
         android:orientation="vertical"
@@ -13,33 +15,39 @@
 
         <Button
             android:id="@+id/level_easy"
-            android:layout_width="match_parent"
+            android:layout_width="@dimen/button_level_width"
             android:layout_height="wrap_content"
             android:padding="40dp"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:onClick="onLevelButtonClick"
-            android:text="@string/button_level_easy"/>
+            android:text="@string/button_level_easy"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:theme="@style/DefaultButton"/>
 
         <Button
             android:id="@+id/level_medium"
-            android:layout_width="match_parent"
+            android:layout_width="@dimen/button_level_width"
             android:layout_height="wrap_content"
             android:padding="40dp"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:onClick="onLevelButtonClick"
-            android:text="@string/button_level_medium"/>
+            android:text="@string/button_level_medium"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:theme="@style/DefaultButton"/>
 
         <Button
             android:id="@+id/level_hard"
-            android:layout_width="match_parent"
+            android:layout_width="@dimen/button_level_width"
             android:layout_height="wrap_content"
             android:padding="40dp"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:onClick="onLevelButtonClick"
-            android:text="@string/button_level_hard"/>
+            android:text="@string/button_level_hard"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:theme="@style/DefaultButton"/>
 
     </LinearLayout>
 
