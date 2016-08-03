@@ -49,7 +49,9 @@ public class PuzzleLoaderService extends IntentService {
                 sudokuGenerator.tryToRemoveCell(i);     // Main method for puzzle generation
 
                 if (userIsWaiting) {        // If loading screen is on, send update to progressBar
-                    float completePercentage = 100 * (float) i / (float) size;
+                    float count = (float) sudokuGenerator.getEmptyCellsCounter();
+                    float max = (float) sudokuGenerator.getMaxEmptyCells();
+                    float completePercentage = 100 * count / max;
                     sendUpdate(completePercentage);
                 }
 
