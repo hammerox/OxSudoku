@@ -6,4 +6,9 @@
     <string name="button_level_easy">Easy</string>
     <string name="button_level_medium">Medium</string>
     <string name="button_level_hard">Hard</string>
+    <string name="level_textview">Select a\nDifficulty</string>
+    <string name="level_easy">EASY</string>
+    <string name="level_medium">MEDIUM</string>
+    <string name="level_hard">HARD</string>
+    <string name="level_insane">INSANE</string>
 </resources>
