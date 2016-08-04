@@ -22,8 +22,6 @@ import com.example.hammerox.oxsudoku.R;
 import com.example.hammerox.oxsudoku.services.SudokuGenerator;
 import com.example.hammerox.oxsudoku.utils.Levels;
 
-import java.util.List;
-
 
 public class SudokuFragment extends Fragment {
 
@@ -44,7 +42,7 @@ public class SudokuFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         SudokuGenerator puzzle = FileManager.loadCurrentPuzzle(getActivity());
-        sudokuGrid = new SudokuGrid(puzzle);      // Generates new puzzle
+        sudokuGrid = new SudokuGrid(getActivity(), puzzle);      // Generates new puzzle
         setHasOptionsMenu(true);
     }
 
@@ -57,9 +55,9 @@ public class SudokuFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_sudoku, container, false);
         sudokuGrid.drawPuzzle(getActivity(), rootView);
 
-        SudokuKeyboard keyboard = new SudokuKeyboard();
-        keyboard.drawKeyboard(getActivity(), rootView, sudokuGrid);
-        keyboard.setClickListeners(getActivity(), rootView, sudokuGrid);
+        SudokuKeyboard keyboard = new SudokuKeyboard(getActivity(), rootView, sudokuGrid);
+        keyboard.drawKeyboard();
+        keyboard.setToolsListeners();
 
         return rootView;
     }

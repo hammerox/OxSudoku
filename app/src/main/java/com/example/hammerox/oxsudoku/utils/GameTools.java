@@ -133,7 +133,7 @@ public class GameTools {
 
 
     public View.OnClickListener getUndo() {
-            return new View.OnClickListener() {
+        return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 sudokuGrid.undoLastInput(activity);

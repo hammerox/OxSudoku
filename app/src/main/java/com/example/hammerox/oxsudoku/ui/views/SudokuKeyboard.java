@@ -22,35 +22,51 @@ public class SudokuKeyboard {
     private static Boolean pencilMode = false;
     private static Boolean eraseMode = false;
 
-    public SudokuKeyboard() {
-    }
+    private Activity activity;
+    private View rootView;
+    private SudokuGrid sudokuGrid;
+    private float defaultSize;
+    private ColorStateList mColorPrimaryLight;
+    private ColorStateList mColorAccent;
 
-/*Todo - Show counters with remaining numbers*/
-
-    public void drawKeyboard(Activity activity, View rootView, SudokuGrid sudokuGrid) {
-
-        float defaultSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+    public SudokuKeyboard(Activity activity, View rootView, SudokuGrid sudokuGrid) {
+        this.activity = activity;
+        this.rootView = rootView;
+        this.sudokuGrid = sudokuGrid;
+        defaultSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
                 20, activity.getResources().getDisplayMetrics());
 
+        mColorAccent = ContextCompat.getColorStateList(activity, R.color.accent);
+        mColorPrimaryLight = ContextCompat.getColorStateList(activity, R.color.primary_light);
+    }
+
+
+    public void drawKeyboard() {
+        // Getting each button from keyboard's view.
         for (int key = 1; key <= 9; key++) {
-            // Getting each button from keyboard's view.
             String idString = "key_" + key;
             int id = activity.getResources()
                     .getIdentifier(idString, "id", activity.getPackageName());
             Button keyButton = (Button) rootView.findViewById(id);
-                // Appearance
-            ColorStateList mColor = ContextCompat.getColorStateList(activity, R.color.primary_light);
-            ViewCompat.setBackgroundTintList(keyButton, mColor);
-            keyButton.setText("" + key);
-            keyButton.setGravity(Gravity.CENTER);
-            keyButton.setTypeface(Typeface.DEFAULT_BOLD);
-            keyButton.setTextSize(defaultSize);
-                // Interaction
-            keyButton.setOnClickListener(keyboardListener(activity, rootView, sudokuGrid));
+
+            // Changing appearance and behavior
+            keyButton.setOnClickListener(keyboardListener());
+            setKeyAppearance(keyButton, key);
         }
     }
 
-    public void setClickListeners(final Activity activity, final View rootView, final SudokuGrid sudokuGrid) {
+
+    public void setKeyAppearance(Button keyButton, int key) {
+        ColorStateList mColor = ContextCompat.getColorStateList(activity, R.color.primary_light);
+        ViewCompat.setBackgroundTintList(keyButton, mColor);
+        keyButton.setText(String.valueOf(key));
+        keyButton.setGravity(Gravity.CENTER);
+        keyButton.setTypeface(Typeface.DEFAULT_BOLD);
+        keyButton.setTextSize(defaultSize);
+    }
+
+
+    public void setToolsListeners() {
 
         GameTools tools = new GameTools(activity, rootView, sudokuGrid);
 
@@ -68,9 +84,7 @@ public class SudokuKeyboard {
     }
 
 
-    public View.OnClickListener keyboardListener(final Activity activity,
-                                                 final View rootView,
-                                                 final SudokuGrid sudokuGrid) {
+    public View.OnClickListener keyboardListener() {
         return new View.OnClickListener() {
 
             @Override
@@ -92,16 +106,12 @@ public class SudokuKeyboard {
                         } else {
                             showButton(lastKey);
                         }
-                        ColorStateList mReleaseColor = ContextCompat
-                                .getColorStateList(activity, R.color.primary_light);
-                        ViewCompat.setBackgroundTintList(lastKey, mReleaseColor);
+                        ViewCompat.setBackgroundTintList(lastKey, mColorPrimaryLight);
                     }
 
                     // And changes active key's color.
                     showButton(pressedKey);
-                    ColorStateList mPressedColor = ContextCompat
-                            .getColorStateList(activity, R.color.accent);
-                    ViewCompat.setBackgroundTintList(pressedKey, mPressedColor);
+                    ViewCompat.setBackgroundTintList(pressedKey, mColorAccent);
 
                     // Highlight grid's keys
                     sudokuGrid.showPencilHighligh(activity, activeKey, pressedKeyNumber);
@@ -111,9 +121,7 @@ public class SudokuKeyboard {
 
                 } else {        // If clicked key is the same as the active key...
                     // change button's color to default, ...
-                    ColorStateList mReleaseColor = ContextCompat
-                            .getColorStateList(activity, R.color.primary_light);
-                    ViewCompat.setBackgroundTintList(pressedKey, mReleaseColor);
+                    ViewCompat.setBackgroundTintList(pressedKey, mColorPrimaryLight);
 
                     // hide it if it's complete, ...
                     int listIndex = activeKey - 1;
