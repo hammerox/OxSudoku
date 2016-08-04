@@ -127,7 +127,7 @@ public class SudokuGrid {
                     answerView.setText(String.valueOf(puzzleSolution.get(index)));
                 } else {
                     // User's TextView should be clickable and have a different color.
-                    int mColor = ContextCompat.getColor(activity, R.color.colorAccent);
+                    int mColor = ContextCompat.getColor(activity, R.color.text_primary);
                     answerView.setTextColor(mColor);
                     answerView.isClickable();
                         // Interaction
@@ -441,9 +441,9 @@ public class SudokuGrid {
             TextView lastInputCell = (TextView) activity.findViewById(lastInputId);
             int mColorOld;
             if (lastInputIsPencil) {
-                mColorOld = ContextCompat.getColor(activity, R.color.colorPrimaryLight);
+                mColorOld = ContextCompat.getColor(activity, R.color.text_secondary);
             } else {
-                mColorOld = ContextCompat.getColor(activity, R.color.colorAccent);
+                mColorOld = ContextCompat.getColor(activity, R.color.warn_primary);
             }
             lastInputCell.setTextColor(mColorOld);
         }
@@ -646,7 +646,7 @@ public class SudokuGrid {
                     } else {
                         answerView.setText("");
                     }
-                    int answerColor = ContextCompat.getColor(activity, R.color.colorAccent);
+                    int answerColor = ContextCompat.getColor(activity, R.color.text_primary);
                     answerView.setTextColor(answerColor);
 
                     // And compare if pencil has changed on the same cell.
@@ -748,7 +748,7 @@ public class SudokuGrid {
     //////////  TOOLS //////////
 
     public void addPencilNumber(Activity activity, TextView pencilView, int index, int number) {
-        int pencilColor = ContextCompat.getColor(activity, R.color.colorPrimaryLight);
+        int pencilColor = ContextCompat.getColor(activity, R.color.text_secondary);
         pencilView.setTextColor(pencilColor);
         getPuzzlePencil().get(index).add(number);
         hasPencil.get(index).set(number - 1, true);
@@ -941,13 +941,13 @@ public class SudokuGrid {
         if (highlightLevel == 0) {
             mColor = Color.WHITE;
         } else if (highlightLevel == 1) {
-            mColor = ContextCompat.getColor(activity, R.color.colorHighlightArea);
+            mColor = ContextCompat.getColor(activity, R.color.accent_light);
         } else if (highlightLevel == 2) {
-            mColor = ContextCompat.getColor(activity, R.color.colorHighlight);
+            mColor = ContextCompat.getColor(activity, R.color.accent);
         } else if (highlightLevel == 3) {
-            mColor = ContextCompat.getColor(activity, R.color.colorWarnArea);
+            mColor = ContextCompat.getColor(activity, R.color.warn_secondary);
         } else {
-            mColor = ContextCompat.getColor(activity, R.color.colorWarn);
+            mColor = ContextCompat.getColor(activity, R.color.warn_primary);
         }
         mDrawable.setColorFilter(
                 new PorterDuffColorFilter(mColor, PorterDuff.Mode.MULTIPLY));
@@ -1048,7 +1048,7 @@ public class SudokuGrid {
                     int lastKeyId = GridPosition.getPencilId(i, lastKey);
                     TextView lastView = (TextView) cell.findViewById(lastKeyId);
 
-                    int pencilColor = ContextCompat.getColor(activity, R.color.colorPrimaryLight);
+                    int pencilColor = ContextCompat.getColor(activity, R.color.text_secondary);
                     lastView.setTextColor(pencilColor);
                 }
             }

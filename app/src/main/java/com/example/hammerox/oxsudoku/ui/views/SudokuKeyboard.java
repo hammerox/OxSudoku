@@ -43,7 +43,7 @@ public class SudokuKeyboard {
                     .getIdentifier(idString, "id", activity.getPackageName());
             Button keyButton = (Button) rootView.findViewById(id);
                 // Appearance
-            ColorStateList mColor = ContextCompat.getColorStateList(activity, R.color.colorMediumGray);
+            ColorStateList mColor = ContextCompat.getColorStateList(activity, R.color.primary_light);
             ViewCompat.setBackgroundTintList(keyButton, mColor);
             keyButton.setText("" + key);
             keyButton.setGravity(Gravity.CENTER);
@@ -71,14 +71,14 @@ public class SudokuKeyboard {
                                 showButton(lastKey);
                             }
                             ColorStateList mReleaseColor = ContextCompat
-                                    .getColorStateList(activity, R.color.colorMediumGray);
+                                    .getColorStateList(activity, R.color.primary_light);
                             ViewCompat.setBackgroundTintList(lastKey, mReleaseColor);
                         }
 
                         // And changes active key's color.
                         showButton(pressedKey);
                         ColorStateList mPressedColor = ContextCompat
-                                .getColorStateList(activity, R.color.colorAccent);
+                                .getColorStateList(activity, R.color.accent);
                         ViewCompat.setBackgroundTintList(pressedKey, mPressedColor);
 
                         // Highlight grid's keys
@@ -90,7 +90,7 @@ public class SudokuKeyboard {
                     } else {        // If clicked key is the same as the active key...
                         // change button's color to default, ...
                         ColorStateList mReleaseColor = ContextCompat
-                                .getColorStateList(activity, R.color.colorMediumGray);
+                                .getColorStateList(activity, R.color.primary_light);
                         ViewCompat.setBackgroundTintList(pressedKey, mReleaseColor);
 
                         // hide it if it's complete, ...

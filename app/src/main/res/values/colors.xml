@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorPrimaryLight">#888FB5</color>
-    <color name="colorAccent">#FF4081</color>
-    <color name="colorLightGray">#E5E5E5</color>
-    <color name="colorMediumGray">#D7D7D7</color>
-    <color name="colorHighlight">#FF7FAC</color> <!--Same color from colorAccent, with 50% saturation-->
-    <color name="colorHighlightArea">#FFBFD6</color> <!--Same color from colorAccent, with 25% saturation-->
-    <color name="colorWarn">#FF8800</color>
-    <color name="colorWarnArea">#FFBB33</color>
+
+
+    <color name="primary">#607D8B</color>
+    <color name="primary_dark">#455A64</color>
+    <color name="primary_light">#CFD8DC</color>
+    <color name="accent">#FF9800</color>
+    <color name="accent_light">#FFE0B2</color>
+    <color name="warn_primary">#E64A19</color>
+    <color name="warn_secondary">#FFCCBC</color>
+    <color name="text_primary">#212121</color>
+    <color name="text_secondary">#757575</color>
+    <color name="divider">#BDBDBD</color>
+
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
 </resources>

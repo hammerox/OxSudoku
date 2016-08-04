@@ -15,7 +15,7 @@
         app:rcMax="100"
         app:rcRadius="25dp"
         app:rcBackgroundPadding="5dp"
-        app:rcProgressColor="@color/colorAccent"
-        app:rcBackgroundColor="@color/colorLightGray" />
+        app:rcProgressColor="@color/accent"
+        app:rcBackgroundColor="@color/primary" />
 
 </RelativeLayout>
