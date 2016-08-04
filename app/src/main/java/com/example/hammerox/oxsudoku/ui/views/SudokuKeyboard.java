@@ -2,7 +2,6 @@ package com.example.hammerox.oxsudoku.ui.views;
 
 import android.app.Activity;
 import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
@@ -12,12 +11,9 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import com.example.hammerox.oxsudoku.R;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.example.hammerox.oxsudoku.utils.GameTools;
 
 
 public class SudokuKeyboard {
@@ -31,7 +27,7 @@ public class SudokuKeyboard {
 
 /*Todo - Show counters with remaining numbers*/
 
-    public void drawKeyboard(final Activity activity, final View rootView, final SudokuGrid sudokuGrid) {
+    public void drawKeyboard(Activity activity, View rootView, SudokuGrid sudokuGrid) {
 
         float defaultSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
                 20, activity.getResources().getDisplayMetrics());
@@ -50,177 +46,89 @@ public class SudokuKeyboard {
             keyButton.setTypeface(Typeface.DEFAULT_BOLD);
             keyButton.setTextSize(defaultSize);
                 // Interaction
-            keyButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Button pressedKey = (Button)v;
-                    int pressedKeyNumber = Integer.valueOf(pressedKey.getText().toString());
-
-                    if (pressedKeyNumber != activeKey) {    // If clicked key is different from active key...
-                        // Make last active key back to default's appearance....
-                        if (activeKey != 0) {
-                            String idString = "key_" + activeKey;
-                            int id = activity.getResources()
-                                    .getIdentifier(idString, "id", activity.getPackageName());
-                            Button lastKey = (Button) rootView.findViewById(id);
-                            int listIndex = activeKey - 1;
-                            Boolean isComplete = sudokuGrid.getIsNumberComplete().get(listIndex);
-                            if (isComplete) {
-                                hideButton(lastKey);
-                            } else {
-                                showButton(lastKey);
-                            }
-                            ColorStateList mReleaseColor = ContextCompat
-                                    .getColorStateList(activity, R.color.primary_light);
-                            ViewCompat.setBackgroundTintList(lastKey, mReleaseColor);
-                        }
-
-                        // And changes active key's color.
-                        showButton(pressedKey);
-                        ColorStateList mPressedColor = ContextCompat
-                                .getColorStateList(activity, R.color.accent);
-                        ViewCompat.setBackgroundTintList(pressedKey, mPressedColor);
-
-                        // Highlight grid's keys
-                        sudokuGrid.showPencilHighligh(activity, activeKey, pressedKeyNumber);
-                        sudokuGrid.showHighlight(activity, pressedKeyNumber);
-
-                        activeKey = pressedKeyNumber;
-
-                    } else {        // If clicked key is the same as the active key...
-                        // change button's color to default, ...
-                        ColorStateList mReleaseColor = ContextCompat
-                                .getColorStateList(activity, R.color.primary_light);
-                        ViewCompat.setBackgroundTintList(pressedKey, mReleaseColor);
-
-                        // hide it if it's complete, ...
-                        int listIndex = activeKey - 1;
-                        Boolean isComplete = sudokuGrid.getIsNumberComplete().get(listIndex);
-                        if (isComplete) hideButton(activity, activeKey);
-
-                        // undo the highlights...
-                        sudokuGrid.clearPencilHighlight(activity, activeKey);
-                        sudokuGrid.clearPuzzleHighlight(activity);
-
-                        // and set no active key.
-                        activeKey = 0;
-                    }
-                }
-            });
+            keyButton.setOnClickListener(keyboardListener(activity, rootView, sudokuGrid));
         }
     }
 
     public void setClickListeners(final Activity activity, final View rootView, final SudokuGrid sudokuGrid) {
-        final float defaultSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                20, activity.getResources().getDisplayMetrics());
-        final float smallSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                10, activity.getResources().getDisplayMetrics());
+
+        GameTools tools = new GameTools(activity, rootView, sudokuGrid);
 
         ImageButton leftButton1 = (ImageButton) rootView.findViewById(R.id.left_button_1);
-        leftButton1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                pencilMode = !pencilMode;
-                for (int i = 1; i <= 9; i++) {
-                    String idString = "key_" + i;
-                    int id = activity.getResources()
-                            .getIdentifier(idString, "id", activity.getPackageName());
-                    Button keyButton = (Button) rootView.findViewById(id);
-                    if (pencilMode) {
-                        if (!eraseMode) {
-                            keyButton.setTextColor(Color.BLUE);
-                        }
-                        keyButton.setTextSize(smallSize);
-
-                    } else {
-                        if (!eraseMode) {
-                            keyButton.setTextColor(Color.BLACK);
-                        }
-                        keyButton.setTextSize(defaultSize);
-                    }
-                }
-            }
-        });
+        leftButton1.setOnClickListener(tools.getPencil());
 
         ImageButton leftButton2 = (ImageButton) rootView.findViewById(R.id.left_button_2);
-        leftButton2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                eraseMode = !eraseMode;
-                for (int i = 1; i <= 9; i++) {
-                    String idString = "key_" + i;
-                    int id = activity.getResources()
-                            .getIdentifier(idString, "id", activity.getPackageName());
-                    Button keyButton = (Button) rootView.findViewById(id);
-                    if (eraseMode) {
-                        keyButton.setTextColor(Color.WHITE);
-
-                    } else {
-                        if (pencilMode) {
-                            keyButton.setTextColor(Color.BLUE);
-                        } else {
-                            keyButton.setTextColor(Color.BLACK);
-                        }
-                    }
-                }
-            }
-        });
+        leftButton2.setOnClickListener(tools.getEraser());
 
         ImageButton rightButton1 = (ImageButton) rootView.findViewById(R.id.right_button_1);
-        rightButton1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int wrongCount = 0; int correctCount = 0; int totalCount = 0;
-                List<List> wrongArray = new ArrayList<>();
-                List<Boolean> puzzleMask = sudokuGrid.getHasSolution();
-                List<Boolean> puzzleCorrectAnswers = sudokuGrid.getIsAnswerCorrect();
-                List<Boolean> puzzleUserInput = sudokuGrid.getHasUserInput();
-                // Compares all user inputs with correct answers. If wrong, it stores the position
-                // of the wrong answer into wrongArray. Counters are used to calculate puzzle's
-                // progression.
-                for (int row = 1; row <= 9; row++) {
-                    for (int col = 1; col <= 9; col++) {
-                        int index = 9 * (row - 1) + col - 1;
-                        if (!puzzleCorrectAnswers.get(index) && puzzleUserInput.get(index)) {
-                            List<Integer> toAdd = new ArrayList<>();
-                            toAdd.add(row);
-                            toAdd.add(col);
-                            wrongArray.add(toAdd);
-                            wrongCount++;
-                        } else if (puzzleCorrectAnswers.get(index) && puzzleUserInput.get(index)) {
-                            correctCount++;
-                        }
-                        if (!puzzleMask.get(index)) totalCount++;
-                    }
-                }
-                // Printing on screen if there are mistakes or not.
-                getProgress(activity, wrongCount, correctCount, totalCount);
-            }
-        });
+        rightButton1.setOnClickListener(tools.getCheckAnswer());
 
         ImageButton rightButton2 = (ImageButton) rootView.findViewById(R.id.right_button_2);
-        rightButton2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sudokuGrid.undoLastInput(activity);
-            }
-        });
+        rightButton2.setOnClickListener(tools.getUndo());
     }
 
 
-    public void getProgress(Activity activity, int wrongCount, int correctCount, int totalCount){
-        if (wrongCount != 0) {
-            if (wrongCount == 1) {
-                Toast.makeText(activity, "There is 1 mistake",
-                        Toast.LENGTH_LONG).show();
-            } else {
-                Toast.makeText(activity, "There are " + wrongCount + " mistakes",
-                        Toast.LENGTH_LONG).show();
+    public View.OnClickListener keyboardListener(final Activity activity,
+                                                 final View rootView,
+                                                 final SudokuGrid sudokuGrid) {
+        return new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Button pressedKey = (Button)v;
+                int pressedKeyNumber = Integer.valueOf(pressedKey.getText().toString());
+
+                if (pressedKeyNumber != activeKey) {    // If clicked key is different from active key...
+                    // Make last active key back to default's appearance....
+                    if (activeKey != 0) {
+                        String idString = "key_" + activeKey;
+                        int id = activity.getResources()
+                                .getIdentifier(idString, "id", activity.getPackageName());
+                        Button lastKey = (Button) rootView.findViewById(id);
+                        int listIndex = activeKey - 1;
+                        Boolean isComplete = sudokuGrid.getIsNumberComplete().get(listIndex);
+                        if (isComplete) {
+                            hideButton(lastKey);
+                        } else {
+                            showButton(lastKey);
+                        }
+                        ColorStateList mReleaseColor = ContextCompat
+                                .getColorStateList(activity, R.color.primary_light);
+                        ViewCompat.setBackgroundTintList(lastKey, mReleaseColor);
+                    }
+
+                    // And changes active key's color.
+                    showButton(pressedKey);
+                    ColorStateList mPressedColor = ContextCompat
+                            .getColorStateList(activity, R.color.accent);
+                    ViewCompat.setBackgroundTintList(pressedKey, mPressedColor);
+
+                    // Highlight grid's keys
+                    sudokuGrid.showPencilHighligh(activity, activeKey, pressedKeyNumber);
+                    sudokuGrid.showHighlight(activity, pressedKeyNumber);
+
+                    activeKey = pressedKeyNumber;
+
+                } else {        // If clicked key is the same as the active key...
+                    // change button's color to default, ...
+                    ColorStateList mReleaseColor = ContextCompat
+                            .getColorStateList(activity, R.color.primary_light);
+                    ViewCompat.setBackgroundTintList(pressedKey, mReleaseColor);
+
+                    // hide it if it's complete, ...
+                    int listIndex = activeKey - 1;
+                    Boolean isComplete = sudokuGrid.getIsNumberComplete().get(listIndex);
+                    if (isComplete) hideButton(activity, activeKey);
+
+                    // undo the highlights...
+                    sudokuGrid.clearPencilHighlight(activity, activeKey);
+                    sudokuGrid.clearPuzzleHighlight(activity);
+
+                    // and set no active key.
+                    activeKey = 0;
+                }
             }
-        } else {
-            Toast.makeText(activity, "Everything is alright! \n Progress: "
-                    + correctCount + "/" + totalCount, Toast.LENGTH_LONG).show();
-        }
+        };
     }
 
 
@@ -229,10 +137,12 @@ public class SudokuKeyboard {
         mDrawable.setAlpha(255);
     }
 
+
     public static void hideButton(Button key) {
         Drawable mDrawable = key.getBackground();
         mDrawable.setAlpha(0);
     }
+
 
     public static void showButton(Activity activity, int number) {
         String idString = "key_" + number;
@@ -243,6 +153,7 @@ public class SudokuKeyboard {
         mDrawable.setAlpha(255);
     }
 
+
     public static void hideButton(Activity activity, int number) {
         String idString = "key_" + number;
         int id = activity.getResources()
@@ -251,6 +162,7 @@ public class SudokuKeyboard {
         Drawable mDrawable = key.getBackground();
         mDrawable.setAlpha(0);
     }
+
 
     public static int getActiveKey() {
         return activeKey;

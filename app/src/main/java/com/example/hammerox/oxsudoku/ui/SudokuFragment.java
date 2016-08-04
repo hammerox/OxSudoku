@@ -158,14 +158,12 @@ public class SudokuFragment extends Fragment {
     }
 
 
-    public static void chronoStart()
-    {
+    public static void chronoStart() {
         // on first start
         if ( mLastStopTime == 0 )
             chronometer.setBase( SystemClock.elapsedRealtime() );
             // on resume after pause
-        else
-        {
+        else {
             long intervalOnPause = (SystemClock.elapsedRealtime() - mLastStopTime);
             chronometer.setBase( chronometer.getBase() + intervalOnPause );
         }
@@ -174,10 +172,11 @@ public class SudokuFragment extends Fragment {
     }
 
 
-    public static void chronoPause()
-    {
-        chronometer.stop();
-        mLastStopTime = SystemClock.elapsedRealtime();
+    public static void chronoPause() {
+        if (chronometer != null) {
+            chronometer.stop();
+            mLastStopTime = SystemClock.elapsedRealtime();
+        }
     }
 
 
