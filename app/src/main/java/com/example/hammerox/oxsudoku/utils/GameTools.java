@@ -1,12 +1,20 @@
 package com.example.hammerox.oxsudoku.utils;
 
 import android.app.Activity;
+import android.content.res.ColorStateList;
+import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewCompat;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.example.hammerox.oxsudoku.R;
 import com.example.hammerox.oxsudoku.ui.views.SudokuGrid;
 import com.example.hammerox.oxsudoku.ui.views.SudokuKeyboard;
 
@@ -46,21 +54,23 @@ public class GameTools {
 
                 pencilMode = !pencilMode;
                 SudokuKeyboard.setPencilMode(pencilMode);
+
+                Button button = (Button) v.findViewById(R.id.left_button_1);
+                if (pencilMode) {
+                    ViewCompat.setBackgroundTintList(button, SudokuKeyboard.mColorAccent);
+                } else {
+                    ViewCompat.setBackgroundTintList(button, SudokuKeyboard.mColorBackground);
+                }
+
+
                 for (int i = 1; i <= 9; i++) {
                     String idString = "key_" + i;
                     int id = activity.getResources()
                             .getIdentifier(idString, "id", activity.getPackageName());
                     Button keyButton = (Button) rootView.findViewById(id);
                     if (pencilMode) {
-                        if (!eraseMode) {
-                            keyButton.setTextColor(Color.BLUE);
-                        }
                         keyButton.setTextSize(smallSize);
-
                     } else {
-                        if (!eraseMode) {
-                            keyButton.setTextColor(Color.BLACK);
-                        }
                         keyButton.setTextSize(defaultSize);
                     }
                 }
@@ -78,6 +88,14 @@ public class GameTools {
 
                 eraseMode = !eraseMode;
                 SudokuKeyboard.setEraseMode(eraseMode);
+
+                Button button = (Button) v.findViewById(R.id.left_button_2);
+                if (eraseMode) {
+                    ViewCompat.setBackgroundTintList(button, SudokuKeyboard.mColorAccent);
+                } else {
+                    ViewCompat.setBackgroundTintList(button, SudokuKeyboard.mColorBackground);
+                }
+
                 for (int i = 1; i <= 9; i++) {
                     String idString = "key_" + i;
                     int id = activity.getResources()
@@ -86,11 +104,7 @@ public class GameTools {
                     if (eraseMode) {
                         keyButton.setTextColor(Color.WHITE);
                     } else {
-                        if (pencilMode) {
-                            keyButton.setTextColor(Color.BLUE);
-                        } else {
-                            keyButton.setTextColor(Color.BLACK);
-                        }
+                        keyButton.setTextColor(Color.BLACK);
                     }
                 }
             }

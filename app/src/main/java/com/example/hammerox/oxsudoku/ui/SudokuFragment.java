@@ -57,7 +57,7 @@ public class SudokuFragment extends Fragment {
 
         SudokuKeyboard keyboard = new SudokuKeyboard(getActivity(), rootView, sudokuGrid);
         keyboard.drawKeyboard();
-        keyboard.setToolsListeners();
+        keyboard.setSideTools();
 
         return rootView;
     }

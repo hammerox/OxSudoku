@@ -26,8 +26,10 @@ public class SudokuKeyboard {
     private View rootView;
     private SudokuGrid sudokuGrid;
     private float defaultSize;
-    private ColorStateList mColorPrimaryLight;
-    private ColorStateList mColorAccent;
+
+    public static ColorStateList mColorPrimaryLight;
+    public static ColorStateList mColorAccent;
+    public static ColorStateList mColorBackground;
 
     public SudokuKeyboard(Activity activity, View rootView, SudokuGrid sudokuGrid) {
         this.activity = activity;
@@ -38,6 +40,7 @@ public class SudokuKeyboard {
 
         mColorAccent = ContextCompat.getColorStateList(activity, R.color.accent);
         mColorPrimaryLight = ContextCompat.getColorStateList(activity, R.color.primary_light);
+        mColorBackground = ContextCompat.getColorStateList(activity, R.color.background);
     }
 
 
@@ -66,20 +69,24 @@ public class SudokuKeyboard {
     }
 
 
-    public void setToolsListeners() {
+    public void setSideTools() {
 
         GameTools tools = new GameTools(activity, rootView, sudokuGrid);
 
-        ImageButton leftButton1 = (ImageButton) rootView.findViewById(R.id.left_button_1);
+        Button leftButton1 = (Button) rootView.findViewById(R.id.left_button_1);
+        ViewCompat.setBackgroundTintList(leftButton1, SudokuKeyboard.mColorBackground);
         leftButton1.setOnClickListener(tools.getPencil());
 
-        ImageButton leftButton2 = (ImageButton) rootView.findViewById(R.id.left_button_2);
+        Button leftButton2 = (Button) rootView.findViewById(R.id.left_button_2);
+        ViewCompat.setBackgroundTintList(leftButton2, SudokuKeyboard.mColorBackground);
         leftButton2.setOnClickListener(tools.getEraser());
 
-        ImageButton rightButton1 = (ImageButton) rootView.findViewById(R.id.right_button_1);
+        Button rightButton1 = (Button) rootView.findViewById(R.id.right_button_1);
+        ViewCompat.setBackgroundTintList(rightButton1, SudokuKeyboard.mColorBackground);
         rightButton1.setOnClickListener(tools.getCheckAnswer());
 
-        ImageButton rightButton2 = (ImageButton) rootView.findViewById(R.id.right_button_2);
+        Button rightButton2 = (Button) rootView.findViewById(R.id.right_button_2);
+        ViewCompat.setBackgroundTintList(rightButton2, SudokuKeyboard.mColorBackground);
         rightButton2.setOnClickListener(tools.getUndo());
     }
 
