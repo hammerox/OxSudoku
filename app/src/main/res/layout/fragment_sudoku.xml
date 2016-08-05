@@ -119,16 +119,15 @@
             <ImageButton
                 android:id="@+id/left_button_1"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="0dp"
                 android:src="@drawable/pencil"
                 android:background="?android:selectableItemBackground"
                 android:layout_margin="5dp"
                 android:layout_weight="1"/>
-
             <ImageButton
                 android:id="@+id/left_button_2"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="0dp"
                 android:src="@drawable/eraser"
                 android:background="?android:selectableItemBackground"
                 android:layout_margin="5dp"
@@ -148,7 +147,7 @@
             <ImageButton
                 android:id="@+id/right_button_1"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="0dp"
                 android:src="@drawable/check"
                 android:background="?android:selectableItemBackground"
                 android:layout_margin="5dp"
@@ -157,7 +156,7 @@
             <ImageButton
                 android:id="@+id/right_button_2"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="0dp"
                 android:src="@drawable/undo"
                 android:background="?android:selectableItemBackground"
                 android:layout_margin="5dp"

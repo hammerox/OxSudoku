@@ -55,11 +55,12 @@ public class SudokuGrid {
 
     private List<PuzzleSnapshot> puzzleHistory;
 
-    private int mColorBlue;
     private int mColorAccent;
+    private int mColorAccentDark;
     private int mColorAccentLight;
     private int mColorWarnPrimary;
     private int mColorWarnSecondary;
+    private int mColorHighlight;
     private int mColorTextPrimary;
     private int mColorTextSecondary;
 
@@ -86,11 +87,12 @@ public class SudokuGrid {
 
         puzzleHistory = new ArrayList<>();
 
-        mColorBlue = Color.BLUE;
         mColorAccent = ContextCompat.getColor(activity, R.color.accent);
+        mColorAccentDark = ContextCompat.getColor(activity, R.color.accent_dark);
         mColorAccentLight = ContextCompat.getColor(activity, R.color.accent_light);
         mColorWarnPrimary = ContextCompat.getColor(activity, R.color.warn_primary);
-        mColorWarnSecondary = ContextCompat.getColor(activity, R.color.warn_secondary);;
+        mColorWarnSecondary = ContextCompat.getColor(activity, R.color.warn_secondary);
+        mColorHighlight = ContextCompat.getColor(activity, R.color.highlight);
         mColorTextPrimary = ContextCompat.getColor(activity, R.color.text_primary);
         mColorTextSecondary = ContextCompat.getColor(activity, R.color.text_secondary);
     }
@@ -162,7 +164,7 @@ public class SudokuGrid {
                 FrameLayout parent = (FrameLayout) v.getParent();
                 Drawable background = parent.getBackground();
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    setColorFilter(background, 4);
+                    setColorFilter(background, 5);
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
                     int i = GridPosition.getIndexFromView(cell);
                     int intensity = puzzleHighlight.get(i);
@@ -282,7 +284,7 @@ public class SudokuGrid {
                 swapViews(clickedView, pencilView);
             }
             addPencilNumber(sketchView, indexOfClick, activeKey);
-            sketchView.setTextColor(mColorBlue);
+            sketchView.setTextColor(mColorHighlight);
 
         } else {
             removePencilNumber(activity, indexOfClick, activeKey);
@@ -346,7 +348,7 @@ public class SudokuGrid {
 
         // Setting new value.
         view.setText(String.valueOf(activeKey));
-        view.setTextColor(mColorBlue);
+        view.setTextColor(mColorHighlight);
 
         // Updating puzzleAnswers.
         puzzleAnswers.set(indexOfClick, activeKey);
@@ -703,7 +705,7 @@ public class SudokuGrid {
             int oldLastInputId = lastSnapshot.getLastInputId();
             if (oldLastInputId > 0) {
                 TextView lastInputView = (TextView) activity.findViewById(oldLastInputId);
-                lastInputView.setTextColor(mColorBlue);
+                lastInputView.setTextColor(mColorHighlight);
             }
 
             lastInputId = lastSnapshot.getLastInputId();
@@ -941,18 +943,28 @@ public class SudokuGrid {
         *  Highlight level 2 = Active number.
         *  Highlight level 3 = Conflict area.
         *  Highlight level 4 = Conflicting cell.
+        *  Highlight level 5 = Cell touch.
         *  */
         int mColor;
-        if (highlightLevel == 0) {
-            mColor = Color.WHITE;
-        } else if (highlightLevel == 1) {
-            mColor = mColorAccentLight;
-        } else if (highlightLevel == 2) {
-            mColor = mColorAccent;
-        } else if (highlightLevel == 3) {
-            mColor = mColorWarnSecondary;
-        } else {
-            mColor = mColorWarnPrimary;
+        switch (highlightLevel) {
+            case 0:
+                mColor = Color.WHITE;
+                break;
+            case 1:
+                mColor = mColorAccentLight;
+                break;
+            case 2:
+                mColor = mColorAccent;
+                break;
+            case 3:
+                mColor = mColorWarnSecondary;
+                break;
+            case 4:
+                mColor = mColorWarnPrimary;
+                break;
+            default:
+                mColor = mColorAccentDark;
+                break;
         }
         mDrawable.setColorFilter(
                 new PorterDuffColorFilter(mColor, PorterDuff.Mode.MULTIPLY));
