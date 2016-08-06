@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.activity_sudoku_container, new DifficultyFragment())
+                    .add(R.id.activity_main_container, new DifficultyFragment())
                     .commit();
         }
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
                 FragmentManager fragmentManager = getSupportFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                 DifficultyFragment difficultyFragment = new DifficultyFragment();
-                fragmentTransaction.replace(R.id.activity_sudoku_container, difficultyFragment);
+                fragmentTransaction.replace(R.id.activity_main_container, difficultyFragment);
                 fragmentTransaction.commit();
             }
         }
@@ -134,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         loadingFragment = new LoadingFragment();
         loadingFragment.setArguments(bundle);
-        fragmentTransaction.replace(R.id.activity_sudoku_container, loadingFragment);
+        fragmentTransaction.replace(R.id.activity_main_container, loadingFragment);
         fragmentTransaction.commit();
     }
 }
