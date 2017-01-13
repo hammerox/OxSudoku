@@ -6,16 +6,14 @@ package com.example.hammerox.oxsudoku.utils;
 
 public enum Level {
 
-    EASY(0, 45, "level_easy"),
-    MEDIUM(1, 55, "level_medium"),
-    HARD(2, 80, "level_hard");
+    EASY    (45, "level_easy"),
+    MEDIUM  (55, "level_medium"),
+    HARD    (80, "level_hard");
 
-    public final int id;
     public final int emptyCells;
     public final String fileName;
 
-    Level(int id, int emptyCells, String fileName) {
-        this.id = id;
+    Level(int emptyCells, String fileName) {
         this.emptyCells = emptyCells;
         this.fileName = fileName;
     }
