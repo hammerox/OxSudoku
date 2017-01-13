@@ -184,8 +184,8 @@ public class SudokuKeyboard {
         /* For some reason, setBackgroundTintList() does not work correctly on API 21.
          * Some calls to it works OK, but on a few it does not apply tint until something is triggered.
          * I found out two triggers to get it to work:
-         * It works when onPause() is called or when the button toggle setEnabled().
-         * The only call that does not work on this program is commented beside setButtonTint().
+         * It works when onPause() is called or when the button toggle between setEnabled().
+         * The only call that does not work on this program is commented next to a setButtonTint().
          */
         ViewCompat.setBackgroundTintList(button, tint);
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP) {
