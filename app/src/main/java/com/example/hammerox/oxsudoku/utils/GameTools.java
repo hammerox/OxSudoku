@@ -59,7 +59,7 @@ public class GameTools {
                 if (pencilMode) {
                     ViewCompat.setBackgroundTintList(button, SudokuKeyboard.mColorAccent);
                 } else {
-                    ViewCompat.setBackgroundTintList(button, SudokuKeyboard.mColorBackground);
+                    ViewCompat.setBackgroundTintList(button, SudokuKeyboard.mColorPrimaryLight);
                 }
 
 
@@ -93,7 +93,7 @@ public class GameTools {
                 if (eraseMode) {
                     ViewCompat.setBackgroundTintList(button, SudokuKeyboard.mColorAccent);
                 } else {
-                    ViewCompat.setBackgroundTintList(button, SudokuKeyboard.mColorBackground);
+                    ViewCompat.setBackgroundTintList(button, SudokuKeyboard.mColorPrimaryLight);
                 }
 
                 for (int i = 1; i <= 9; i++) {
