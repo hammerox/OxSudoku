@@ -185,6 +185,8 @@ public class SudokuKeyboard {
          * I found out two triggers to get it to work:
          * It works when onPause() is called or when the button toggle between setEnabled().
          * The only call that does not work on this program is commented next to a setButtonTint().
+         * http://stackoverflow.com/questions/27735890/lollipops-backgroundtint-has-no-effect-on-a-button
+         * http://stackoverflow.com/questions/36114388/setbackgroundtintlist-does-not-apply-directly
          */
         ViewCompat.setBackgroundTintList(button, tint);
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP) {
