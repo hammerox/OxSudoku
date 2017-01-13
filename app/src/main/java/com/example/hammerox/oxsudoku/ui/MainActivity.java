@@ -85,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
                 loadPuzzle(Level.HARD);
                 break;
             case R.id.level_insane:
+                loadPuzzle(Level.HARD);
                 break;
         }
     }

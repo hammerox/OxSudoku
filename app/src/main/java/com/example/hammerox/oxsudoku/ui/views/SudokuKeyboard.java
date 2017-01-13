@@ -4,13 +4,13 @@ import android.app.Activity;
 import android.content.res.ColorStateList;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
 
 import com.example.hammerox.oxsudoku.R;
 import com.example.hammerox.oxsudoku.utils.GameTools;
@@ -74,19 +74,19 @@ public class SudokuKeyboard {
         GameTools tools = new GameTools(activity, rootView, sudokuGrid);
 
         Button leftButton1 = (Button) rootView.findViewById(R.id.left_button_1);
-        ViewCompat.setBackgroundTintList(leftButton1, SudokuKeyboard.mColorBackground);
+        ViewCompat.setBackgroundTintList(leftButton1, SudokuKeyboard.mColorPrimaryLight);
         leftButton1.setOnClickListener(tools.getPencil());
 
         Button leftButton2 = (Button) rootView.findViewById(R.id.left_button_2);
-        ViewCompat.setBackgroundTintList(leftButton2, SudokuKeyboard.mColorBackground);
+        ViewCompat.setBackgroundTintList(leftButton2, SudokuKeyboard.mColorPrimaryLight);
         leftButton2.setOnClickListener(tools.getEraser());
 
         Button rightButton1 = (Button) rootView.findViewById(R.id.right_button_1);
-        ViewCompat.setBackgroundTintList(rightButton1, SudokuKeyboard.mColorBackground);
+        ViewCompat.setBackgroundTintList(rightButton1, SudokuKeyboard.mColorPrimaryLight);
         rightButton1.setOnClickListener(tools.getCheckAnswer());
 
         Button rightButton2 = (Button) rootView.findViewById(R.id.right_button_2);
-        ViewCompat.setBackgroundTintList(rightButton2, SudokuKeyboard.mColorBackground);
+        ViewCompat.setBackgroundTintList(rightButton2, SudokuKeyboard.mColorPrimaryLight);
         rightButton2.setOnClickListener(tools.getUndo());
     }
 
@@ -113,12 +113,14 @@ public class SudokuKeyboard {
                         } else {
                             showButton(lastKey);
                         }
-                        ViewCompat.setBackgroundTintList(lastKey, mColorPrimaryLight);
+                        // BUG - Below is the only call that doesn't work correctly on API 21.
+                        // See comment inside setButtonTint() for more info.
+                        setButtonTint(lastKey, mColorPrimaryLight);
                     }
 
                     // And changes active key's color.
                     showButton(pressedKey);
-                    ViewCompat.setBackgroundTintList(pressedKey, mColorAccent);
+                    setButtonTint(pressedKey, mColorAccent);
 
                     // Highlight grid's keys
                     sudokuGrid.showPencilHighligh(activity, activeKey, pressedKeyNumber);
@@ -128,7 +130,7 @@ public class SudokuKeyboard {
 
                 } else {        // If clicked key is the same as the active key...
                     // change button's color to default, ...
-                    ViewCompat.setBackgroundTintList(pressedKey, mColorPrimaryLight);
+                    setButtonTint(pressedKey, mColorPrimaryLight);
 
                     // hide it if it's complete, ...
                     int listIndex = activeKey - 1;
@@ -176,6 +178,20 @@ public class SudokuKeyboard {
         Button key = (Button) activity.findViewById(id);
         Drawable mDrawable = key.getBackground();
         mDrawable.setAlpha(0);
+    }
+
+    public static void setButtonTint(Button button, ColorStateList tint) {
+        /* For some reason, setBackgroundTintList() does not work correctly on API 21.
+         * Some calls to it works OK, but on a few it does not apply tint until something is triggered.
+         * I found out two triggers to get it to work:
+         * It works when onPause() is called or when the button toggle between setEnabled().
+         * The only call that does not work on this program is commented next to a setButtonTint().
+         */
+        ViewCompat.setBackgroundTintList(button, tint);
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP) {
+            button.setEnabled(false);
+            button.setEnabled(true);
+        }
     }
 
 
