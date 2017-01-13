@@ -127,7 +127,7 @@
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:layout_gravity="center"
-                    android:elevation="2dp"
+                    android:elevation="6dp"
                     android:background="@drawable/pencil"/>
             </FrameLayout>
 
@@ -143,7 +143,7 @@
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:layout_gravity="center"
-                    android:elevation="2dp"
+                    android:elevation="6dp"
                     android:background="@drawable/eraser"/>
             </FrameLayout>
         </LinearLayout>
@@ -169,7 +169,7 @@
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:layout_gravity="center"
-                    android:elevation="2dp"
+                    android:elevation="6dp"
                     android:background="@drawable/check"/>
             </FrameLayout>
 
@@ -185,7 +185,7 @@
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:layout_gravity="center"
-                    android:elevation="2dp"
+                    android:elevation="6dp"
                     android:background="@drawable/undo"/>
             </FrameLayout>
         </LinearLayout>

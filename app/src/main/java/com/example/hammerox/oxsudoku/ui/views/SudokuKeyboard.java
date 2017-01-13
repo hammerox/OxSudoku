@@ -60,8 +60,7 @@ public class SudokuKeyboard {
 
 
     public void setKeyAppearance(Button keyButton, int key) {
-        ColorStateList mColor = ContextCompat.getColorStateList(activity, R.color.primary_light);
-        ViewCompat.setBackgroundTintList(keyButton, mColor);
+        ViewCompat.setBackgroundTintList(keyButton, mColorPrimaryLight);
         keyButton.setText(String.valueOf(key));
         keyButton.setGravity(Gravity.CENTER);
         keyButton.setTypeface(Typeface.DEFAULT_BOLD);
@@ -74,19 +73,19 @@ public class SudokuKeyboard {
         GameTools tools = new GameTools(activity, rootView, sudokuGrid);
 
         Button leftButton1 = (Button) rootView.findViewById(R.id.left_button_1);
-        ViewCompat.setBackgroundTintList(leftButton1, SudokuKeyboard.mColorPrimaryLight);
+        ViewCompat.setBackgroundTintList(leftButton1, SudokuKeyboard.mColorBackground);
         leftButton1.setOnClickListener(tools.getPencil());
 
         Button leftButton2 = (Button) rootView.findViewById(R.id.left_button_2);
-        ViewCompat.setBackgroundTintList(leftButton2, SudokuKeyboard.mColorPrimaryLight);
+        ViewCompat.setBackgroundTintList(leftButton2, SudokuKeyboard.mColorBackground);
         leftButton2.setOnClickListener(tools.getEraser());
 
         Button rightButton1 = (Button) rootView.findViewById(R.id.right_button_1);
-        ViewCompat.setBackgroundTintList(rightButton1, SudokuKeyboard.mColorPrimaryLight);
+        ViewCompat.setBackgroundTintList(rightButton1, SudokuKeyboard.mColorBackground);
         rightButton1.setOnClickListener(tools.getCheckAnswer());
 
         Button rightButton2 = (Button) rootView.findViewById(R.id.right_button_2);
-        ViewCompat.setBackgroundTintList(rightButton2, SudokuKeyboard.mColorPrimaryLight);
+        ViewCompat.setBackgroundTintList(rightButton2, SudokuKeyboard.mColorBackground);
         rightButton2.setOnClickListener(tools.getUndo());
     }
 
