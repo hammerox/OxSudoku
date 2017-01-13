@@ -85,17 +85,17 @@ public class MainActivity extends AppCompatActivity {
                 loadPuzzle(Levels.LEVELS[2]);
                 break;
             case R.id.level_insane:
+                loadPuzzle(Levels.LEVELS[2]);
                 break;
         }
     }
 
 
     public void loadPuzzle(int level) {
-        String fileName = Levels.FILENAMES[level];
-
         /* Search for saved puzzle.
         *  If exists, put it into current puzzle and launch game screen.
         *  If not, go to loading screen */
+        String fileName = Levels.FILENAMES[level];
         if (FileManager.hasSavedPuzzle(this, fileName)) {
             SudokuGenerator sudokuGenerator = FileManager.loadPuzzle(this, fileName);
             FileManager.saveCurrentPuzzle(this, sudokuGenerator, level);
