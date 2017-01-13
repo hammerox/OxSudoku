@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar;
 import com.example.hammerox.oxsudoku.R;
 import com.example.hammerox.oxsudoku.services.PuzzleLoaderService;
-import com.example.hammerox.oxsudoku.utils.Levels;
+import com.example.hammerox.oxsudoku.utils.Level;
 
 
 public class LoadingFragment extends Fragment {
@@ -22,7 +22,7 @@ public class LoadingFragment extends Fragment {
     private final int minimumProgressValue = 15;
 
     private RoundCornerProgressBar progressBar;
-    private int level;
+    private Level level;
     private String serviceName = PuzzleLoaderService.class.getName();
     private ActivityManager manager;
 
@@ -47,14 +47,13 @@ public class LoadingFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         manager = (ActivityManager) getActivity().getSystemService(Context.ACTIVITY_SERVICE);
-        level = getArguments().getInt(MainActivity.KEY_LEVEL);
-        String fileName = Levels.FILENAMES[level];
+        level = Level.valueOf(getArguments().getString(MainActivity.KEY_LEVEL));
 
         // If there is already an intentService running, check if the puzzle generating is the
         // same as the user selected
         // If not, kill the service and start a new
         if (findPuzzleLoader()) {
-            if (fileName.equals(PuzzleLoaderService.mLevelName)) {
+            if (level.fileName.equals(PuzzleLoaderService.mLevelName)) {
                 PuzzleLoaderService.userIsWaiting = true;
                 Log.v(PuzzleLoaderService.LOG_SERVICE, "PuzzleLoader is now updating progressBar");
             } else {
@@ -87,7 +86,7 @@ public class LoadingFragment extends Fragment {
 
     private void startPuzzleLoader() {
         Intent intent = new Intent(getActivity(), PuzzleLoaderService.class);
-        intent.putExtra(MainActivity.KEY_LEVEL, level);
+        intent.putExtra(MainActivity.KEY_LEVEL, level.name());
         intent.putExtra(MainActivity.KEY_USER_IS_WAITING, true);
         getActivity().startService(intent);
     }

@@ -20,7 +20,7 @@ import com.example.hammerox.oxsudoku.ui.views.SudokuKeyboard;
 import com.example.hammerox.oxsudoku.utils.FileManager;
 import com.example.hammerox.oxsudoku.R;
 import com.example.hammerox.oxsudoku.services.SudokuGenerator;
-import com.example.hammerox.oxsudoku.utils.Levels;
+import com.example.hammerox.oxsudoku.utils.Level;
 
 
 public class SudokuFragment extends Fragment {
@@ -147,7 +147,7 @@ public class SudokuFragment extends Fragment {
         boolean backupPuzzleIsNull;
 
         // Put every level on intentService's queue
-        for (int level : Levels.LEVELS) {
+        for (Level level : Level.values()) {
             backupPuzzleIsNull = !FileManager.hasSavedPuzzle(getActivity(), level);
             if (backupPuzzleIsNull) {
                 storeNewPuzzle(level);
@@ -178,9 +178,9 @@ public class SudokuFragment extends Fragment {
     }
 
 
-    public void storeNewPuzzle(int level) {
+    public void storeNewPuzzle(Level level) {
         Intent intent = new Intent(getActivity(), PuzzleLoaderService.class);
-        intent.putExtra(MainActivity.KEY_LEVEL, level);
+        intent.putExtra(MainActivity.KEY_LEVEL, level.name());
         intent.putExtra(MainActivity.KEY_USER_IS_WAITING, false);
         getActivity().startService(intent);
     }

@@ -7,7 +7,7 @@ import android.util.Log;
 
 import com.example.hammerox.oxsudoku.ui.MainActivity;
 import com.example.hammerox.oxsudoku.utils.FileManager;
-import com.example.hammerox.oxsudoku.utils.Levels;
+import com.example.hammerox.oxsudoku.utils.Level;
 
 import java.util.List;
 
@@ -29,8 +29,8 @@ public class PuzzleLoaderService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        int level = intent.getIntExtra(MainActivity.KEY_LEVEL, -1);
-        mLevelName = Levels.FILENAMES[level];
+        Level level = Level.valueOf(intent.getStringExtra(MainActivity.KEY_LEVEL));
+        mLevelName = level.fileName;
         userIsWaiting = intent.getBooleanExtra(MainActivity.KEY_USER_IS_WAITING, true);
 
         // Runtime check if level already has a backup puzzle
@@ -71,8 +71,7 @@ public class PuzzleLoaderService extends IntentService {
                 FileManager.saveCurrentPuzzle(this, sudokuGenerator, level);
                 sendResult();
             } else {
-                String fileName = Levels.FILENAMES[level];
-                FileManager.savePuzzle(this, sudokuGenerator, fileName);
+                FileManager.savePuzzle(this, sudokuGenerator, level.fileName);
             }
         }
 

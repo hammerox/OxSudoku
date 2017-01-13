@@ -27,8 +27,8 @@ public class FileManager {
     }
 
 
-    public static boolean hasSavedPuzzle(Context context, int level) {
-        String fileName = Levels.FILENAMES[level];
+    public static boolean hasSavedPuzzle(Context context, Level level) {
+        String fileName = level.fileName;
         return hasSavedPuzzle(context, fileName);
     }
 
@@ -38,7 +38,8 @@ public class FileManager {
     }
 
 
-    public static SudokuGenerator loadPuzzle(Context context, String fileName) {
+    public static SudokuGenerator loadPuzzle(Context context, Level level) {
+        String fileName = level.fileName;
         SharedPreferences prefs = getPreferences(context);
         String jsonObject = prefs.getString(fileName, "");
         Type type = new TypeToken<SudokuGenerator>() {}.getType();
@@ -73,19 +74,19 @@ public class FileManager {
     }
 
 
-    public static void saveCurrentPuzzle(Context context, SudokuGenerator sudokuGenerator, int level) {
+    public static void saveCurrentPuzzle(Context context, SudokuGenerator sudokuGenerator, Level level) {
         SharedPreferences.Editor editor = getEditor(context);
         String jsonObject = gson.toJson(sudokuGenerator);
         editor.putString(CURRENT_PUZZLE, jsonObject);
-        editor.putInt(CURRENT_LEVEL, level);
+        editor.putInt(CURRENT_LEVEL, level.id);
         editor.apply();
         Log.v(LOG_FILE, "Puzzle saved: " + CURRENT_PUZZLE);
     }
 
 
-    public static void clearPuzzle(Context context, String fileName) {
+    public static void clearPuzzle(Context context, Level level) {
         SharedPreferences.Editor editor = getEditor(context);
-        editor.remove(fileName);
+        editor.remove(level.fileName);
         editor.apply();
     }
 

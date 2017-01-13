@@ -17,7 +17,7 @@ import com.example.hammerox.oxsudoku.R;
 import com.example.hammerox.oxsudoku.services.PuzzleLoaderService;
 import com.example.hammerox.oxsudoku.services.SudokuGenerator;
 import com.example.hammerox.oxsudoku.utils.FileManager;
-import com.example.hammerox.oxsudoku.utils.Levels;
+import com.example.hammerox.oxsudoku.utils.Level;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -76,13 +76,13 @@ public class MainActivity extends AppCompatActivity {
         int id = v.getId();
         switch (id) {
             case R.id.level_easy:
-                loadPuzzle(Levels.LEVELS[0]);
+                loadPuzzle(Level.EASY);
                 break;
             case R.id.level_medium:
-                loadPuzzle(Levels.LEVELS[1]);
+                loadPuzzle(Level.MEDIUM);
                 break;
             case R.id.level_hard:
-                loadPuzzle(Levels.LEVELS[2]);
+                loadPuzzle(Level.HARD);
                 break;
             case R.id.level_insane:
                 break;
@@ -90,20 +90,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void loadPuzzle(int level) {
-        String fileName = Levels.FILENAMES[level];
-
+    public void loadPuzzle(Level level) {
         /* Search for saved puzzle.
         *  If exists, put it into current puzzle and launch game screen.
         *  If not, go to loading screen */
-        if (FileManager.hasSavedPuzzle(this, fileName)) {
-            SudokuGenerator sudokuGenerator = FileManager.loadPuzzle(this, fileName);
+        if (FileManager.hasSavedPuzzle(this, level)) {
+            SudokuGenerator sudokuGenerator = FileManager.loadPuzzle(this, level);
             FileManager.saveCurrentPuzzle(this, sudokuGenerator, level);
-            FileManager.clearPuzzle(this, fileName);
+            FileManager.clearPuzzle(this, level);
             openPuzzle();
         } else {
             Bundle bundle = new Bundle();
-            bundle.putInt(KEY_LEVEL, level);
+            bundle.putString(KEY_LEVEL, level.name());
             launchLoader(bundle);
         }
     }
