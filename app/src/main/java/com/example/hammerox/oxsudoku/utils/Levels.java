@@ -3,6 +3,8 @@ package com.example.hammerox.oxsudoku.utils;
 
 public class Levels {
 
+//    TODO - Switch Levels to enum
+
     public final static int[] LEVELS = new int[]
             {0,
             1,

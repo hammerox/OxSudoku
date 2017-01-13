@@ -27,7 +27,7 @@ public class Grid {
         }
 
     }
-    
+
 
     //
     // Getters and array inicialization
