@@ -57,9 +57,9 @@ public class GameTools {
 
                 Button button = (Button) v.findViewById(R.id.left_button_1);
                 if (pencilMode) {
-                    ViewCompat.setBackgroundTintList(button, SudokuKeyboard.mColorAccent);
+                    SudokuKeyboard.setButtonTint(button, SudokuKeyboard.mColorAccent);
                 } else {
-                    ViewCompat.setBackgroundTintList(button, SudokuKeyboard.mColorBackground);
+                    SudokuKeyboard.setButtonTint(button, SudokuKeyboard.mColorBackground);
                 }
 
 
@@ -91,9 +91,9 @@ public class GameTools {
 
                 Button button = (Button) v.findViewById(R.id.left_button_2);
                 if (eraseMode) {
-                    ViewCompat.setBackgroundTintList(button, SudokuKeyboard.mColorAccent);
+                    SudokuKeyboard.setButtonTint(button, SudokuKeyboard.mColorAccent);
                 } else {
-                    ViewCompat.setBackgroundTintList(button, SudokuKeyboard.mColorBackground);
+                    SudokuKeyboard.setButtonTint(button, SudokuKeyboard.mColorBackground);
                 }
 
                 for (int i = 1; i <= 9; i++) {
