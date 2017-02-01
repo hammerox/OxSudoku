@@ -405,15 +405,10 @@ public class SudokuGrid {
         }
 
         // Checking if puzzle is complete.
-        List<Integer> wrongArray = new ArrayList<>();
         int correctCount = 0;
-        int wrongCount = 0;
         int totalCount = 0;
         for (int index = 0; index < GRID_SIZE; index++) {
-            if (!isAnswerCorrect.get(index) && hasUserInput.get(index)) {
-                wrongArray.add(index);
-                wrongCount++;
-            } else if (isAnswerCorrect.get(index) && hasUserInput.get(index)) {
+            if (isAnswerCorrect.get(index) && hasUserInput.get(index)) {
                 correctCount++;
             }
             if (!hasSolution.get(index)) totalCount++;
@@ -570,12 +565,13 @@ public class SudokuGrid {
     }
 
 
-    public void showPencilHighligh(Activity activity, int lastKey, int activeKey) {
-        clearPencilHighlight(activity, lastKey);
+    public void showPencilHighligh(Context context, int lastKey, int activeKey) {
+        clearPencilHighlight(context, lastKey);
 
         for (int i = 0; i < GRID_SIZE; i++) {
             if (hasPencil.get(i).get(activeKey - 1)) {
                 int cellId = GridPosition.getCellId(i);
+                Activity activity = (Activity) context;
                 FrameLayout cell = (FrameLayout) activity.findViewById(cellId);
 
                 int activeKeyId = GridPosition.getPencilId(i, activeKey);
@@ -1060,11 +1056,12 @@ public class SudokuGrid {
     }
 
 
-    public void clearPencilHighlight(Activity activity, int lastKey) {
+    public void clearPencilHighlight(Context context, int lastKey) {
         if (lastKey > 0) {
             for (int i = 0; i < GRID_SIZE; i++) {
                 if (hasPencil.get(i).get(lastKey - 1)) {
                     int cellId = GridPosition.getCellId(i);
+                    Activity activity = (Activity) context;
                     FrameLayout cell = (FrameLayout) activity.findViewById(cellId);
 
                     int lastKeyId = GridPosition.getPencilId(i, lastKey);
