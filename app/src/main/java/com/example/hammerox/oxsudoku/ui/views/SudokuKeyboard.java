@@ -95,56 +95,77 @@ public class SudokuKeyboard {
 
             @Override
             public void onClick(View v) {
-                Button pressedKey = (Button)v;
-                int pressedKeyNumber = Integer.valueOf(pressedKey.getText().toString());
-
-                if (pressedKeyNumber != activeKey) {    // If clicked key is different from active key...
-                    // Make last active key back to default's appearance....
-                    if (activeKey != 0) {
-                        String idString = "key_" + activeKey;
-                        int id = activity.getResources()
-                                .getIdentifier(idString, "id", activity.getPackageName());
-                        Button lastKey = (Button) rootView.findViewById(id);
-                        int listIndex = activeKey - 1;
-                        Boolean isComplete = sudokuGrid.getIsNumberComplete().get(listIndex);
-                        if (isComplete) {
-                            hideButton(lastKey);
-                        } else {
-                            showButton(lastKey);
-                        }
-                        // BUG - Below is the only call that doesn't work correctly on API 21.
-                        // See comment inside setButtonTint() for more info.
-                        setButtonTint(lastKey, mColorPrimaryLight);
-                    }
-
-                    // And changes active key's color.
-                    showButton(pressedKey);
-                    setButtonTint(pressedKey, mColorAccent);
-
-                    // Highlight grid's keys
-                    sudokuGrid.showPencilHighligh(activity, activeKey, pressedKeyNumber);
-                    sudokuGrid.showHighlight(activity, pressedKeyNumber);
-
-                    activeKey = pressedKeyNumber;
-
-                } else {        // If clicked key is the same as the active key...
-                    // change button's color to default, ...
-                    setButtonTint(pressedKey, mColorPrimaryLight);
-
-                    // hide it if it's complete, ...
-                    int listIndex = activeKey - 1;
-                    Boolean isComplete = sudokuGrid.getIsNumberComplete().get(listIndex);
-                    if (isComplete) hideButton(activity, activeKey);
-
-                    // undo the highlights...
-                    sudokuGrid.clearPencilHighlight(activity, activeKey);
-                    sudokuGrid.clearPuzzleHighlight(activity);
-
-                    // and set no active key.
-                    activeKey = 0;
-                }
+                clickKey((Button) v);
             }
         };
+    }
+
+    private void clickKey(Button button) {
+        int pressedKeyNumber = Integer.valueOf(button.getText().toString());
+        if (pressedKeyNumber != activeKey) {
+            activateKey(button, pressedKeyNumber);
+        } else {
+            clearActiveKey(button);
+        }
+    }
+
+    private void activateKey(Button pressedKey, int pressedKeyNumber) {
+        if (activeKey != 0) {
+            resetAppearanceOfLastKey();
+        }
+        highlightKeyAppearance(pressedKey);
+        highlightGrid(pressedKeyNumber);
+        activeKey = pressedKeyNumber;
+    }
+
+    private void clearActiveKey(Button pressedKey) {
+        setButtonColor(pressedKey, mColorPrimaryLight);
+        if (isGameComplete()) {
+            hideButton(activity, activeKey);
+        }
+        clearHighlight();
+        activeKey = 0;
+    }
+
+
+
+    private void clearHighlight() {
+        sudokuGrid.clearPencilHighlight(activity, activeKey);
+        sudokuGrid.clearPuzzleHighlight(activity);
+    }
+
+    private void highlightGrid(int pressedKeyNumber) {
+        sudokuGrid.showPencilHighligh(activity, activeKey, pressedKeyNumber);
+        sudokuGrid.showHighlight(activity, pressedKeyNumber);
+    }
+
+    private void highlightKeyAppearance(Button pressedKey) {
+        showButton(pressedKey);
+        setButtonColor(pressedKey, mColorAccent);
+    }
+
+    private void resetAppearanceOfLastKey() {
+        Button lastKey = getLastKey();
+        if (isGameComplete()) {
+            hideButton(lastKey);
+        } else {
+            showButton(lastKey);
+        }
+        // BUG - Below is the only call that doesn't work correctly on API 21.
+        // See comment inside setButtonColor() for more info.
+        setButtonColor(lastKey, mColorPrimaryLight);
+    }
+
+    private Boolean isGameComplete() {
+        int listIndex = activeKey - 1;
+        return sudokuGrid.getIsNumberComplete().get(listIndex);
+    }
+
+    private Button getLastKey() {
+        String idString = "key_" + activeKey;
+        int id = activity.getResources()
+                .getIdentifier(idString, "id", activity.getPackageName());
+        return (Button) rootView.findViewById(id);
     }
 
 
@@ -179,12 +200,12 @@ public class SudokuKeyboard {
         mDrawable.setAlpha(0);
     }
 
-    public static void setButtonTint(Button button, ColorStateList tint) {
+    public static void setButtonColor(Button button, ColorStateList tint) {
         /* For some reason, setBackgroundTintList() does not work correctly on API 21.
          * Some calls to it works OK, but on a few it does not apply tint until something is triggered.
          * I found out two triggers to get it to work:
          * It works when onPause() is called or when the button toggle between setEnabled().
-         * The only call that does not work on this program is commented next to a setButtonTint().
+         * The only call that does not work on this program is commented next to a setButtonColor().
          * http://stackoverflow.com/questions/27735890/lollipops-backgroundtint-has-no-effect-on-a-button
          * http://stackoverflow.com/questions/36114388/setbackgroundtintlist-does-not-apply-directly
          */

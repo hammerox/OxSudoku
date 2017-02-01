@@ -1,14 +1,7 @@
 package com.example.hammerox.oxsudoku.utils;
 
 import android.app.Activity;
-import android.content.res.ColorStateList;
-import android.content.res.TypedArray;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
-import android.graphics.drawable.Drawable;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewCompat;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
@@ -57,9 +50,9 @@ public class GameTools {
 
                 Button button = (Button) v.findViewById(R.id.left_button_1);
                 if (pencilMode) {
-                    SudokuKeyboard.setButtonTint(button, SudokuKeyboard.mColorAccent);
+                    SudokuKeyboard.setButtonColor(button, SudokuKeyboard.mColorAccent);
                 } else {
-                    SudokuKeyboard.setButtonTint(button, SudokuKeyboard.mColorBackground);
+                    SudokuKeyboard.setButtonColor(button, SudokuKeyboard.mColorBackground);
                 }
 
 
@@ -91,9 +84,9 @@ public class GameTools {
 
                 Button button = (Button) v.findViewById(R.id.left_button_2);
                 if (eraseMode) {
-                    SudokuKeyboard.setButtonTint(button, SudokuKeyboard.mColorAccent);
+                    SudokuKeyboard.setButtonColor(button, SudokuKeyboard.mColorAccent);
                 } else {
-                    SudokuKeyboard.setButtonTint(button, SudokuKeyboard.mColorBackground);
+                    SudokuKeyboard.setButtonColor(button, SudokuKeyboard.mColorBackground);
                 }
 
                 for (int i = 1; i <= 9; i++) {
