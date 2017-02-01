@@ -14,7 +14,10 @@ import android.view.View;
 import android.widget.Button;
 
 import com.example.hammerox.oxsudoku.R;
-import com.example.hammerox.oxsudoku.utils.GameTools;
+import com.example.hammerox.oxsudoku.utils.gametools.CheckAnswer;
+import com.example.hammerox.oxsudoku.utils.gametools.Eraser;
+import com.example.hammerox.oxsudoku.utils.gametools.Pencil;
+import com.example.hammerox.oxsudoku.utils.gametools.Undo;
 
 
 public class SudokuKeyboard {
@@ -31,15 +34,15 @@ public class SudokuKeyboard {
     public static ColorStateList mColorAccent;
     public static ColorStateList mColorBackground;
 
-    public SudokuKeyboard(Activity activity, View rootView, SudokuGrid sudokuGrid) {
+    public SudokuKeyboard(Context context, View rootView, SudokuGrid sudokuGrid) {
         this.rootView = rootView;
         this.sudokuGrid = sudokuGrid;
         defaultSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                20, activity.getResources().getDisplayMetrics());
+                20, context.getResources().getDisplayMetrics());
 
-        mColorAccent = ContextCompat.getColorStateList(activity, R.color.accent);
-        mColorPrimaryLight = ContextCompat.getColorStateList(activity, R.color.primary_light);
-        mColorBackground = ContextCompat.getColorStateList(activity, R.color.background);
+        mColorAccent = ContextCompat.getColorStateList(context, R.color.accent);
+        mColorPrimaryLight = ContextCompat.getColorStateList(context, R.color.primary_light);
+        mColorBackground = ContextCompat.getColorStateList(context, R.color.background);
     }
 
 
@@ -69,23 +72,23 @@ public class SudokuKeyboard {
 
     public void setSideTools() {
 
-        GameTools tools = new GameTools(rootView, sudokuGrid);
+        Context context = rootView.getContext();
 
         Button leftButton1 = (Button) rootView.findViewById(R.id.left_button_1);
         ViewCompat.setBackgroundTintList(leftButton1, SudokuKeyboard.mColorBackground);
-        leftButton1.setOnClickListener(tools.getPencil());
+        leftButton1.setOnClickListener(new Pencil(context));
 
         Button leftButton2 = (Button) rootView.findViewById(R.id.left_button_2);
         ViewCompat.setBackgroundTintList(leftButton2, SudokuKeyboard.mColorBackground);
-        leftButton2.setOnClickListener(tools.getEraser());
+        leftButton2.setOnClickListener(new Eraser(context));
 
         Button rightButton1 = (Button) rootView.findViewById(R.id.right_button_1);
         ViewCompat.setBackgroundTintList(rightButton1, SudokuKeyboard.mColorBackground);
-        rightButton1.setOnClickListener(tools.getCheckAnswer());
+        rightButton1.setOnClickListener(new CheckAnswer(context, sudokuGrid));
 
         Button rightButton2 = (Button) rootView.findViewById(R.id.right_button_2);
         ViewCompat.setBackgroundTintList(rightButton2, SudokuKeyboard.mColorBackground);
-        rightButton2.setOnClickListener(tools.getUndo());
+        rightButton2.setOnClickListener(new Undo(context, sudokuGrid));
     }
 
 
