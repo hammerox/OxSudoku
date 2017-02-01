@@ -70,7 +70,7 @@ public class SudokuKeyboard {
 
     public void setSideTools() {
 
-        GameTools tools = new GameTools(activity, rootView, sudokuGrid);
+        GameTools tools = new GameTools(rootView, sudokuGrid);
 
         Button leftButton1 = (Button) rootView.findViewById(R.id.left_button_1);
         ViewCompat.setBackgroundTintList(leftButton1, SudokuKeyboard.mColorBackground);

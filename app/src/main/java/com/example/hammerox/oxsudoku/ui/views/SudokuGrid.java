@@ -538,8 +538,8 @@ public class SudokuGrid {
     }
 
 
-    public void showHighlight(Activity activity, int activeKey) {
-        clearPuzzleHighlight(activity);
+    public void showHighlight(Context context, int activeKey) {
+        clearPuzzleHighlight(context);
 
         // Setting highlight level 2 to activeKey's numbers .
         List<Integer> highlightList = new ArrayList<>();
@@ -564,7 +564,7 @@ public class SudokuGrid {
         for (int i = 0; i < 81; i++) {
             int intensity = puzzleHighlight.get(i);
             if (intensity != 0) {
-                setIntensityColor(activity, i, intensity);
+                setIntensityColor(context, i, intensity);
             }
         }
     }
@@ -607,7 +607,9 @@ public class SudokuGrid {
 
     //////////  FEATURES  //////////
 
-    public void undoLastInput(Activity activity) {
+    public void undoLastInput(Context context) {
+        Activity activity = (Activity) context;
+
         if (!puzzleHistory.isEmpty()) {
             int listIndex = puzzleHistory.size() - 1;
             PuzzleSnapshot lastSnapshot = puzzleHistory.get(listIndex);
@@ -621,7 +623,7 @@ public class SudokuGrid {
                     List<Integer> oldPencilList = lastSnapshot.getPuzzlePencil().get(i);
                     Boolean pencilHasChanged = !oldPencilList.equals(actualPencilList);
                     if (pencilHasChanged) {     // and and replace its pencil list.
-                        replacePencilList(activity, lastSnapshot, i);
+                        replacePencilList(context, lastSnapshot, i);
                     }
                 }
 
@@ -669,7 +671,7 @@ public class SudokuGrid {
                         List<Integer> numberToAdd = comparePencilLists(oldPencilList, actualPencilList);
                         if (!numberToAdd.isEmpty()) {
                             for (Integer number : numberToAdd) {
-                                addPencilNumber(activity, changedIndex, number);
+                                addPencilNumber(context, changedIndex, number);
                             }
                         }
                     }
@@ -681,7 +683,7 @@ public class SudokuGrid {
                             oldPencilList = lastSnapshot.getPuzzlePencil().get(i);
                             pencilHasChanged = !oldPencilList.equals(actualPencilList);
                             if (pencilHasChanged) {
-                                addPencilNumber(activity, changedIndex, actualAnswer);
+                                addPencilNumber(context, changedIndex, actualAnswer);
                             }
                         }
                     }
@@ -697,7 +699,7 @@ public class SudokuGrid {
                             break;
                         }
                     }
-                    replacePencilList(activity, lastSnapshot, changedIndex);
+                    replacePencilList(context, lastSnapshot, changedIndex);
                 }
             }
 
@@ -719,7 +721,7 @@ public class SudokuGrid {
             // Update highlight.
             int activeKey = SudokuKeyboard.getActiveKey();
             if (activeKey > 0) {
-                showHighlight(activity, activeKey);
+                showHighlight(context, activeKey);
             }
 
             // Update history.
@@ -762,16 +764,18 @@ public class SudokuGrid {
     }
 
 
-    public void addPencilNumber(Activity activity, int index, int number) {
+    public void addPencilNumber(Context context, int index, int number) {
         int pencilId = GridPosition.getPencilId(index, number);
+        Activity activity = (Activity) context;
         TextView pencilView = (TextView) activity.findViewById(pencilId);
 
         addPencilNumber(pencilView, index, number);
     }
 
 
-    public void removePencilNumber(Activity activity, int index, int number) {
+    public void removePencilNumber(Context context, int index, int number) {
         int pencilId = GridPosition.getPencilId(index, number);
+        Activity activity = (Activity) context;
         TextView pencilView = (TextView) activity.findViewById(pencilId);
         pencilView.setTextColor(Color.TRANSPARENT);
         List<Integer> pencilList = puzzlePencil.get(index);
@@ -786,21 +790,21 @@ public class SudokuGrid {
     }
 
 
-    public void replacePencilList(Activity activity, PuzzleSnapshot lastSnapshot, int index) {
+    public void replacePencilList(Context context, PuzzleSnapshot lastSnapshot, int index) {
         List<Integer> actualPencilList = getPuzzlePencil().get(index);
         List<Integer> oldPencilList = lastSnapshot.getPuzzlePencil().get(index);
         // Show all missing numbers...
         List<Integer> numberToAdd = comparePencilLists(oldPencilList, actualPencilList);
         if (!numberToAdd.isEmpty()) {
             for (Integer number : numberToAdd) {
-                addPencilNumber(activity, index, number);
+                addPencilNumber(context, index, number);
             }
         }
         // And hide all left over numbers.
         List<Integer> numberToRemove = comparePencilLists(actualPencilList, oldPencilList);
         if (!numberToRemove.isEmpty()) {
             for (Integer number : numberToRemove) {
-                removePencilNumber(activity, index, number);
+                removePencilNumber(context, index, number);
             }
         }
     }
@@ -871,7 +875,8 @@ public class SudokuGrid {
     }
 
 
-    public void setIntensityColor(Activity activity, int index, int highlightLevel) {
+    public void setIntensityColor(Context context, int index, int highlightLevel) {
+        Activity activity = (Activity) context;
         int id = GridPosition.getIdFromIndex(index);
         Drawable mDrawable = activity.findViewById(id).getBackground();
         setColorFilter(mDrawable, highlightLevel);
@@ -1046,10 +1051,10 @@ public class SudokuGrid {
     }
 
 
-    public void clearPuzzleHighlight(Activity activity) {
+    public void clearPuzzleHighlight(Context context) {
         // This makes puzzleHighlight as default.
         for (int i = 0; i < GRID_SIZE; i++) {
-            setIntensityColor(activity, i, 0);
+            setIntensityColor(context, i, 0);
             puzzleHighlight.set(i, 0);
         }
     }

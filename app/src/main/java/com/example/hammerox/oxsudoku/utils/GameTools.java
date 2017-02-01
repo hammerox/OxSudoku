@@ -1,6 +1,7 @@
 package com.example.hammerox.oxsudoku.utils;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Color;
 import android.util.TypedValue;
 import android.view.View;
@@ -22,19 +23,17 @@ public class GameTools {
     private float defaultSize;
     private float smallSize;
 
-    private Activity activity;
     private View rootView;
     private SudokuGrid sudokuGrid;
 
-    public GameTools(Activity activity, View rootView, SudokuGrid sudokuGrid) {
-        this.activity = activity;
+    public GameTools(View rootView, SudokuGrid sudokuGrid) {
         this.rootView = rootView;
         this.sudokuGrid = sudokuGrid;
 
         defaultSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                20, activity.getResources().getDisplayMetrics());
+                20, rootView.getContext().getResources().getDisplayMetrics());
         smallSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                10, activity.getResources().getDisplayMetrics());
+                10, rootView.getContext().getResources().getDisplayMetrics());
     }
 
 
@@ -58,8 +57,8 @@ public class GameTools {
 
                 for (int i = 1; i <= 9; i++) {
                     String idString = "key_" + i;
-                    int id = activity.getResources()
-                            .getIdentifier(idString, "id", activity.getPackageName());
+                    int id = v.getContext().getResources()
+                            .getIdentifier(idString, "id", v.getContext().getPackageName());
                     Button keyButton = (Button) rootView.findViewById(id);
                     if (pencilMode) {
                         keyButton.setTextSize(smallSize);
@@ -91,8 +90,8 @@ public class GameTools {
 
                 for (int i = 1; i <= 9; i++) {
                     String idString = "key_" + i;
-                    int id = activity.getResources()
-                            .getIdentifier(idString, "id", activity.getPackageName());
+                    int id = v.getContext().getResources()
+                            .getIdentifier(idString, "id", v.getContext().getPackageName());
                     Button keyButton = (Button) rootView.findViewById(id);
                     if (eraseMode) {
                         keyButton.setTextColor(Color.WHITE);
@@ -133,7 +132,7 @@ public class GameTools {
                     }
                 }
                 // Printing on screen if there are mistakes or not.
-                getProgress(activity, wrongCount, correctCount, totalCount);
+                getProgress(v.getContext(), wrongCount, correctCount, totalCount);
             }
         };
     }
@@ -143,23 +142,23 @@ public class GameTools {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sudokuGrid.undoLastInput(activity);
+                sudokuGrid.undoLastInput(v.getContext());
             }
         };
     }
 
 
-    public void getProgress(Activity activity, int wrongCount, int correctCount, int totalCount){
+    public void getProgress(Context context, int wrongCount, int correctCount, int totalCount){
         if (wrongCount != 0) {
             if (wrongCount == 1) {
-                Toast.makeText(activity, "There is 1 mistake",
+                Toast.makeText(context, "There is 1 mistake",
                         Toast.LENGTH_LONG).show();
             } else {
-                Toast.makeText(activity, "There are " + wrongCount + " mistakes",
+                Toast.makeText(context, "There are " + wrongCount + " mistakes",
                         Toast.LENGTH_LONG).show();
             }
         } else {
-            Toast.makeText(activity, "Everything is alright! \n Progress: "
+            Toast.makeText(context, "Everything is alright! \n Progress: "
                     + correctCount + "/" + totalCount, Toast.LENGTH_LONG).show();
         }
     }
