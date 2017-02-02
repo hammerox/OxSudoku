@@ -48,6 +48,14 @@ public class SudokuKeyboard {
         }
     }
 
+    public void setSideTools(View layout) {
+        for (Tool tool : Tool.values()) {
+            Button button = (Button) layout.findViewById(tool.getId());
+            ViewCompat.setBackgroundTintList(button, SudokuKeyboard.mColorBackground);
+            button.setOnClickListener(tool.getClick(layout.getContext(), sudokuGrid));
+        }
+    }
+
     private void createKeyButton(View layout, Context context, int key) {
         String idString = "key_" + key;
         int id = context.getResources()
@@ -57,25 +65,7 @@ public class SudokuKeyboard {
         setKeyAppearance(keyButton, key);
     }
 
-    public void setKeyAppearance(Button keyButton, int key) {
-        ViewCompat.setBackgroundTintList(keyButton, mColorPrimaryLight);
-        keyButton.setText(String.valueOf(key));
-        keyButton.setGravity(Gravity.CENTER);
-        keyButton.setTypeface(Typeface.DEFAULT_BOLD);
-        keyButton.setTextSize(defaultSize);
-    }
-
-
-    public void setSideTools(View layout) {
-        for (Tool tool : Tool.values()) {
-            Button button = (Button) layout.findViewById(tool.getId());
-            ViewCompat.setBackgroundTintList(button, SudokuKeyboard.mColorBackground);
-            button.setOnClickListener(tool.getClick(layout.getContext(), sudokuGrid));
-        }
-    }
-
-
-    public View.OnClickListener keyboardListener() {
+    private View.OnClickListener keyboardListener() {
         return new View.OnClickListener() {
 
             @Override
@@ -83,6 +73,14 @@ public class SudokuKeyboard {
                 clickKey((Button) v);
             }
         };
+    }
+
+    private void setKeyAppearance(Button keyButton, int key) {
+        ViewCompat.setBackgroundTintList(keyButton, mColorPrimaryLight);
+        keyButton.setText(String.valueOf(key));
+        keyButton.setGravity(Gravity.CENTER);
+        keyButton.setTypeface(Typeface.DEFAULT_BOLD);
+        keyButton.setTextSize(defaultSize);
     }
 
     private void clickKey(Button button) {
@@ -124,21 +122,6 @@ public class SudokuKeyboard {
         return view;
     }
 
-    private void clearHighlight(Context context) {
-        sudokuGrid.clearPencilHighlight(context, activeKey);
-        sudokuGrid.clearPuzzleHighlight(context);
-    }
-
-    private void highlightGrid(Context context, int pressedKeyNumber) {
-        sudokuGrid.showPencilHighligh(context, activeKey, pressedKeyNumber);
-        sudokuGrid.showHighlight(context, pressedKeyNumber);
-    }
-
-    private void highlightKeyAppearance(Button pressedKey) {
-        showButton(pressedKey);
-        setButtonColor(pressedKey, mColorAccent);
-    }
-
     private void resetAppearanceOfLastKey(View keyboard) {
         Button lastKey = getLastKey(keyboard);
         if (isGameComplete()) {
@@ -149,6 +132,21 @@ public class SudokuKeyboard {
         // BUG - Below is the only call that doesn't work correctly on API 21.
         // See comment inside setButtonColor() for more info.
         setButtonColor(lastKey, mColorPrimaryLight);
+    }
+
+    private void highlightKeyAppearance(Button pressedKey) {
+        showButton(pressedKey);
+        setButtonColor(pressedKey, mColorAccent);
+    }
+
+    private void highlightGrid(Context context, int pressedKeyNumber) {
+        sudokuGrid.showPencilHighligh(context, activeKey, pressedKeyNumber);
+        sudokuGrid.showHighlight(context, pressedKeyNumber);
+    }
+
+    private void clearHighlight(Context context) {
+        sudokuGrid.clearPencilHighlight(context, activeKey);
+        sudokuGrid.clearPuzzleHighlight(context);
     }
 
     private Boolean isGameComplete() {
@@ -165,13 +163,13 @@ public class SudokuKeyboard {
     }
 
 
-    public static void showButton(Button key) {
+    private static void showButton(Button key) {
         Drawable mDrawable = key.getBackground();
         mDrawable.setAlpha(255);
     }
 
 
-    public static void hideButton(Button key) {
+    private static void hideButton(Button key) {
         Drawable mDrawable = key.getBackground();
         mDrawable.setAlpha(0);
     }
@@ -212,7 +210,6 @@ public class SudokuKeyboard {
             button.setEnabled(true);
         }
     }
-
 
     public static int getActiveKey() {
         return activeKey;
