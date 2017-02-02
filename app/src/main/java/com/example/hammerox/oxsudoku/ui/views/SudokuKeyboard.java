@@ -15,10 +15,6 @@ import android.widget.Button;
 
 import com.example.hammerox.oxsudoku.R;
 import com.example.hammerox.oxsudoku.utils.Tool;
-import com.example.hammerox.oxsudoku.utils.gametools.CheckAnswer;
-import com.example.hammerox.oxsudoku.utils.gametools.Eraser;
-import com.example.hammerox.oxsudoku.utils.gametools.Pencil;
-import com.example.hammerox.oxsudoku.utils.gametools.Undo;
 
 
 public class SudokuKeyboard {

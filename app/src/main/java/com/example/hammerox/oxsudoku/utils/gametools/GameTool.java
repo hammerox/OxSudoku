@@ -31,12 +31,11 @@ abstract class GameTool implements View.OnClickListener {
 
     View getLayout(View view) {
         int id = 0;
-        View parent = null;
-        while(id != R.layout.fragment_sudoku) {
-            parent = (View) view.getParent();
-            id = parent.getId();
+        while(id != R.id.sudoku_button_container) {
+            view = (View) view.getParent();
+            id = view.getId();
         }
-        return parent;
+        return view;
     }
 
     SudokuGrid getSudokuGrid() {

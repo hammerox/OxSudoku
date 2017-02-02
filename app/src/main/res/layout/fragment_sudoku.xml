@@ -19,6 +19,7 @@
     </com.example.hammerox.oxsudoku.ui.views.SquareLayout>
 
     <RelativeLayout
+        android:id="@+id/sudoku_button_container"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

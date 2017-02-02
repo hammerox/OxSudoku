@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.view.LayoutInflater;
@@ -52,16 +53,18 @@ public class SudokuFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         /*Todo - Adjust fragment for horizontal orientation*/
-        View rootView = inflater.inflate(R.layout.fragment_sudoku, container, false);
-        sudokuGrid.drawPuzzle(getActivity(), rootView);
-
-        SudokuKeyboard keyboard = new SudokuKeyboard(getActivity(), rootView, sudokuGrid);
-        keyboard.drawKeyboard(getActivity());
-        keyboard.setSideTools();
-
-        return rootView;
+        return inflater.inflate(R.layout.fragment_sudoku, container, false);
     }
 
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        sudokuGrid.drawPuzzle(getActivity(), getView());
+        SudokuKeyboard keyboard = new SudokuKeyboard(getActivity(), getView(), sudokuGrid);
+        keyboard.drawKeyboard(getActivity());
+        keyboard.setSideTools();
+    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
