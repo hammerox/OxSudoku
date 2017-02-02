@@ -11,7 +11,7 @@ public class GridPositionTest {
     public final ExpectedException exception = ExpectedException.none();
 
     @Test
-    public void positionIndexRelation() {
+    public void shouldReturnIndexAfterGivenPosition() {
         int index = 10;
         int[] position = GridPosition.getPosition(index);
         int row = position[0];
@@ -50,7 +50,7 @@ public class GridPositionTest {
     }
 
     @Test
-    public void positionBoxRelation() {
+    public void shouldReturnBoxAfterGivenPosition() {
         GridPosition.Box box = GridPosition.getBox(2, 3);
         Assert.assertEquals(box, GridPosition.Box.TOP_LEFT);
         int[] indexBox = box.index;
@@ -58,7 +58,7 @@ public class GridPositionTest {
 
         box = GridPosition.getBox(9, 9);
         Assert.assertEquals(box, GridPosition.Box.BOTTOM_RIGHT);
-         indexBox = box.index;
+        indexBox = box.index;
         Assert.assertArrayEquals(indexBox, GridPosition.Box.BOTTOM_RIGHT.index);
 
         box = GridPosition.getBox(5, 9);
@@ -70,9 +70,12 @@ public class GridPositionTest {
         Assert.assertEquals(box, GridPosition.Box.CENTER_RIGHT);
         indexBox = box.index;
         Assert.assertArrayEquals(indexBox, GridPosition.Box.CENTER_RIGHT.index);
+    }
 
+    @Test
+    public void shouldThrowExceptionWhenRangeIsOut() {
         exception.expect(IndexOutOfBoundsException.class);
-        box = GridPosition.getBox(0, 5);
+        GridPosition.Box box = GridPosition.getBox(0, 5);
         box = GridPosition.getBox(5, 0);
         box = GridPosition.getBox(5, 10);
         box = GridPosition.getBox(20, 5);

@@ -68,15 +68,8 @@ public class GridPosition {
         return lower <= x && x <= upper;
     }
 
+
     // Not yet tested
-
-
-
-
-
-
-
-
 
     public static List<Integer> getRowColBoxIndexes(int row, int col, Boolean includeClickedPosition) {
         List<Integer> indexes = new ArrayList<>();
