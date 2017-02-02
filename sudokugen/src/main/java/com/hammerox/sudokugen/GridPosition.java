@@ -9,15 +9,19 @@ import java.util.List;
 public class GridPosition {
 
 
-    public static int[] getPosition(int index) {
+    public static Position getPosition(int index) {
         int row = index / 9 + 1;
         int col = index % 9 + 1;
-        return new int[] {row, col};
+        return new Position(row, col);
     }
 
 
     public static int getIndex(int row, int col) {
         return 9 * (row - 1) + col - 1;
+    }
+
+    public static int getIndex(Position position) {
+        return getIndex(position.row, position.col);
     }
 
     public static Box getBox(int row, int col) {
@@ -29,6 +33,10 @@ public class GridPosition {
             return getBottomBox(col);
         }
         throw new IndexOutOfBoundsException();
+    }
+
+    public static Box getBox(Position position) {
+        return getBox(position.row, position.col);
     }
 
     private static Box getTopBox(int col) {
@@ -71,16 +79,16 @@ public class GridPosition {
 
     // Not yet tested
 
-    public static List<Integer> getRowColBoxIndexes(int row, int col, Boolean includeClickedPosition) {
+    public static List<Integer> getRowColBoxIndexes(Position position, Boolean includeClickedPosition) {
         List<Integer> indexes = new ArrayList<>();
         // Box
-        List<Integer> boxList = getBoxList(row, col, includeClickedPosition);
+        List<Integer> boxList = getBoxList(position, includeClickedPosition);
         indexes.addAll(boxList);
         // Row
-        List<Integer> rowList = getRowIndexes(row, col, includeClickedPosition);
+        List<Integer> rowList = getRowIndexes(position, includeClickedPosition);
         indexes.addAll(rowList);
         // Column
-        List<Integer> colList = getColIndexes(row, col, includeClickedPosition);
+        List<Integer> colList = getColIndexes(position, includeClickedPosition);
         indexes.addAll(colList);
         // Removing duplicates
         HashSet hashSet = new HashSet();
@@ -93,16 +101,14 @@ public class GridPosition {
 
 
     public static List<Integer> getRowColBoxIndexes(int index, Boolean includeClickedPosition) {
-        int[] position = getPosition(index);
-        int row = position[0];
-        int col = position[1];
-        return getRowColBoxIndexes(row, col, includeClickedPosition);
+        Position position = getPosition(index);
+        return getRowColBoxIndexes(position, includeClickedPosition);
     }
 
 
-    public static List<Integer> getBoxList(int row, int col, Boolean includeClickedPosition) {
-        int clickedIndex = getIndex(row, col);
-        int[] boxIndexes = getBox(row, col).index;
+    public static List<Integer> getBoxList(Position position, Boolean includeClickedPosition) {
+        int clickedIndex = getIndex(position);
+        int[] boxIndexes = getBox(position).index;
         List<Integer> indexes = new ArrayList<>();
 
         for (int i : boxIndexes) {
@@ -113,12 +119,12 @@ public class GridPosition {
     }
 
 
-    public static List<Integer> getRowIndexes(int row, int col, Boolean includeClickedPosition) {
+    public static List<Integer> getRowIndexes(Position position, Boolean includeClickedPosition) {
         List<Integer> rowIndexes = new ArrayList<>();
         for (int r = 1; r <= 9; r++) {
-            Boolean isToAdd = (r != row) || includeClickedPosition;
+            Boolean isToAdd = (r != position.row) || includeClickedPosition;
             if (isToAdd) {
-                int i = getIndex(r, col);
+                int i = getIndex(r, position.col);
                 rowIndexes.add(i);
             }
         }
@@ -126,12 +132,12 @@ public class GridPosition {
     }
 
 
-    public static List<Integer> getColIndexes(int row, int col, Boolean includeClickedPosition) {
+    public static List<Integer> getColIndexes(Position position, Boolean includeClickedPosition) {
         List<Integer> colIndexes = new ArrayList<>();
         for (int c = 1; c <= 9; c++) {
-            Boolean isToAdd = (c != col) || includeClickedPosition;
+            Boolean isToAdd = (c != position.col) || includeClickedPosition;
             if (isToAdd) {
-                int i = getIndex(row, c);
+                int i = getIndex(position.row, c);
                 colIndexes.add(i);
             }
         }
@@ -139,41 +145,41 @@ public class GridPosition {
     }
 
 
-    public static int getCellId(int row, int col) {
-        String idString = "" + row + col;
-        return Integer.valueOf(idString);
-    }
-
-
-    public static int getCellId(int index) {
-        int[] position = getPosition(index);
-        int row = position[0];
-        int col = position[1];
-        String idString = "" + row + col;
-        return Integer.valueOf(idString);
-    }
-
-
-    public static int getPencilId(int row, int col, int number) {
-        String idString = "1" + number + row + col;
-        return Integer.valueOf(idString);
-    }
-
-
-    public static int getPencilId(int index, int number) {
-        int[] position = getPosition(index);
-        int row = position[0];
-        int col = position[1];
-        return getPencilId(row, col, number);
-    }
-
-
-    public static int getIdFromIndex(int index) {
-        int[] position = getPosition(index);
-        int row = position[0];
-        int col = position[1];
-        return getCellId(row, col);
-    }
+//    public static int getCellId(int row, int col) {
+//        String idString = "" + row + col;
+//        return Integer.valueOf(idString);
+//    }
+//
+//
+//    public static int getCellId(int index) {
+//        int[] position = getPosition(index);
+//        int row = position[0];
+//        int col = position[1];
+//        String idString = "" + row + col;
+//        return Integer.valueOf(idString);
+//    }
+//
+//
+//    public static int getPencilId(int row, int col, int number) {
+//        String idString = "1" + number + row + col;
+//        return Integer.valueOf(idString);
+//    }
+//
+//
+//    public static int getPencilId(int index, int number) {
+//        int[] position = getPosition(index);
+//        int row = position[0];
+//        int col = position[1];
+//        return getPencilId(row, col, number);
+//    }
+//
+//
+//    public static int getIdFromIndex(int index) {
+//        int[] position = getPosition(index);
+//        int row = position[0];
+//        int col = position[1];
+//        return getCellId(row, col);
+//    }
 
 
     public enum Box {

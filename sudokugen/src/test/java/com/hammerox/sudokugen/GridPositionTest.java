@@ -13,9 +13,9 @@ public class GridPositionTest {
     @Test
     public void shouldReturnIndexAfterGivenPosition() {
         int index = 10;
-        int[] position = GridPosition.getPosition(index);
-        int row = position[0];
-        int col = position[1];
+        Position position = GridPosition.getPosition(index);
+        int row = position.row;
+        int col = position.col;
         Assert.assertEquals(row, 2);
         Assert.assertEquals(col, 2);
         int newIndex = GridPosition.getIndex(row, col);
@@ -23,8 +23,8 @@ public class GridPositionTest {
 
         index = 21;
         position = GridPosition.getPosition(index);
-        row = position[0];
-        col = position[1];
+        row = position.row;
+        col = position.col;
         Assert.assertEquals(row, 3);
         Assert.assertEquals(col, 4);
         newIndex = GridPosition.getIndex(row, col);
@@ -32,8 +32,8 @@ public class GridPositionTest {
 
         index = 62;
         position = GridPosition.getPosition(index);
-        row = position[0];
-        col = position[1];
+        row = position.row;
+        col = position.col;
         Assert.assertEquals(row, 7);
         Assert.assertEquals(col, 9);
         newIndex = GridPosition.getIndex(row, col);
@@ -41,8 +41,8 @@ public class GridPositionTest {
 
         index = 76;
         position = GridPosition.getPosition(index);
-        row = position[0];
-        col = position[1];
+        row = position.row;
+        col = position.col;
         Assert.assertEquals(row, 9);
         Assert.assertEquals(col, 5);
         newIndex = GridPosition.getIndex(row, col);
