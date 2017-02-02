@@ -61,9 +61,9 @@ public class SudokuFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         sudokuGrid.drawPuzzle(getActivity(), getView());
-        SudokuKeyboard keyboard = new SudokuKeyboard(getActivity(), getView(), sudokuGrid);
-        keyboard.drawKeyboard(getActivity());
-        keyboard.setSideTools();
+        SudokuKeyboard keyboard = new SudokuKeyboard(getActivity(), sudokuGrid);
+        keyboard.drawKeyboard(getView());
+        keyboard.setSideTools(getView());
     }
 
     @Override

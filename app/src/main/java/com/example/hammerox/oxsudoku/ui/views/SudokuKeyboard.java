@@ -23,7 +23,6 @@ public class SudokuKeyboard {
     private static Boolean pencilMode = false;
     private static Boolean eraseMode = false;
 
-    private View rootView;
     private SudokuGrid sudokuGrid;
     private float defaultSize;
 
@@ -31,8 +30,7 @@ public class SudokuKeyboard {
     public static ColorStateList mColorAccent;
     public static ColorStateList mColorBackground;
 
-    public SudokuKeyboard(Context context, View rootView, SudokuGrid sudokuGrid) {
-        this.rootView = rootView;
+    public SudokuKeyboard(Context context, SudokuGrid sudokuGrid) {
         this.sudokuGrid = sudokuGrid;
         defaultSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
                 20, context.getResources().getDisplayMetrics());
@@ -43,20 +41,21 @@ public class SudokuKeyboard {
     }
 
 
-    public void drawKeyboard(Context context) {
-        // Getting each button from keyboard's view.
+    public void drawKeyboard(View layout) {
+        Context context = layout.getContext();
         for (int key = 1; key <= 9; key++) {
-            String idString = "key_" + key;
-            int id = context.getResources()
-                    .getIdentifier(idString, "id", context.getPackageName());
-            Button keyButton = (Button) rootView.findViewById(id);
-
-            // Changing appearance and behavior
-            keyButton.setOnClickListener(keyboardListener());
-            setKeyAppearance(keyButton, key);
+            createKeyButton(layout, context, key);
         }
     }
 
+    private void createKeyButton(View layout, Context context, int key) {
+        String idString = "key_" + key;
+        int id = context.getResources()
+                .getIdentifier(idString, "id", context.getPackageName());
+        Button keyButton = (Button) layout.findViewById(id);
+        keyButton.setOnClickListener(keyboardListener());
+        setKeyAppearance(keyButton, key);
+    }
 
     public void setKeyAppearance(Button keyButton, int key) {
         ViewCompat.setBackgroundTintList(keyButton, mColorPrimaryLight);
@@ -67,12 +66,11 @@ public class SudokuKeyboard {
     }
 
 
-    public void setSideTools() {
-        Activity activity = (Activity) rootView.getContext();
+    public void setSideTools(View layout) {
         for (Tool tool : Tool.values()) {
-            Button button = (Button) activity.findViewById(tool.getId());
+            Button button = (Button) layout.findViewById(tool.getId());
             ViewCompat.setBackgroundTintList(button, SudokuKeyboard.mColorBackground);
-            button.setOnClickListener(tool.getClick(activity, sudokuGrid));
+            button.setOnClickListener(tool.getClick(layout.getContext(), sudokuGrid));
         }
     }
 
@@ -99,7 +97,8 @@ public class SudokuKeyboard {
     private void activateKey(Button pressedKey, int pressedKeyNumber) {
         Context context = pressedKey.getContext();
         if (activeKey != 0) {
-            resetAppearanceOfLastKey(context);
+            View keyboard = getKeyboardView(pressedKey);
+            resetAppearanceOfLastKey(keyboard);
         }
         highlightKeyAppearance(pressedKey);
         highlightGrid(context, pressedKeyNumber);
@@ -116,7 +115,14 @@ public class SudokuKeyboard {
         activeKey = 0;
     }
 
-
+    private View getKeyboardView(View view) {
+        int id = 0;
+        while(id != R.id.sudoku_keyboard) {
+            view = (View) view.getParent();
+            id = view.getId();
+        }
+        return view;
+    }
 
     private void clearHighlight(Context context) {
         sudokuGrid.clearPencilHighlight(context, activeKey);
@@ -133,8 +139,8 @@ public class SudokuKeyboard {
         setButtonColor(pressedKey, mColorAccent);
     }
 
-    private void resetAppearanceOfLastKey(Context context) {
-        Button lastKey = getLastKey(context);
+    private void resetAppearanceOfLastKey(View keyboard) {
+        Button lastKey = getLastKey(keyboard);
         if (isGameComplete()) {
             hideButton(lastKey);
         } else {
@@ -150,11 +156,12 @@ public class SudokuKeyboard {
         return sudokuGrid.getIsNumberComplete().get(listIndex);
     }
 
-    private Button getLastKey(Context context) {
+    private Button getLastKey(View keyboard) {
         String idString = "key_" + activeKey;
+        Context context = keyboard.getContext();
         int id = context.getResources()
                 .getIdentifier(idString, "id", context.getPackageName());
-        return (Button) rootView.findViewById(id);
+        return (Button) keyboard.findViewById(id);
     }
 
 
