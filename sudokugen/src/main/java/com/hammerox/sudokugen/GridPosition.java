@@ -10,19 +10,14 @@ public class GridPosition {
 
 
     public static int[] getPositionFromIndex(int index) {
-
         int row = index / 9 + 1;
         int col = index % 9 + 1;
-
         return new int[] {row, col};
-
     }
 
 
     public static int getIndexFromPosition(int row, int col) {
-
         return 9 * (row - 1) + col - 1;
-
     }
 
 
