@@ -30,7 +30,7 @@ abstract class GameTool implements View.OnClickListener {
     }
 
     View getLayout(View view) {
-        int id = -1;
+        int id = 0;
         View parent = null;
         while(id != R.layout.fragment_sudoku) {
             parent = (View) view.getParent();
