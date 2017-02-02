@@ -14,7 +14,7 @@ public class GridTest {
 
     @Before
     public void setUp() {
-        grid = Grid.getInstance();
+        grid = new Grid();
     }
 
     @Test

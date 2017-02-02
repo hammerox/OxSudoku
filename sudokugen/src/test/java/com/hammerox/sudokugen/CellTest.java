@@ -1,16 +1,23 @@
 package com.hammerox.sudokugen;
 
-import org.junit.Before;
+import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import static org.mockito.Mockito.*;
-import org.mockito.runners.MockitoJUnitRunner;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CellTest {
+/**
+ * Created by Mauricio on 02-Feb-17.
+ */
+
+public class CellTest  {
 
     @Test
-    public void testCellFunctions() {
-
+    public void createCell() {
+        int row = 1;
+        int col = 1;
+        Cell cell = new Cell(row, col);
+        Assert.assertEquals(0, cell.index);
+        Assert.assertEquals(1, cell.row);
+        Assert.assertEquals(1, cell.col);
+        Assert.assertEquals(GridPosition.Box.TOP_LEFT, cell.box);
     }
+
 }
