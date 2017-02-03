@@ -2,8 +2,11 @@ package com.hammerox.sudokugen;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 public class GridPosition {
@@ -76,70 +79,42 @@ public class GridPosition {
         return lower <= x && x <= upper;
     }
 
-
-    // Not yet tested
-
-    public static List<Integer> getRowColBoxIndexes(Position position, Boolean includeClickedPosition) {
-        List<Integer> indexes = new ArrayList<>();
-        // Box
-        List<Integer> boxList = getBoxList(position, includeClickedPosition);
-        indexes.addAll(boxList);
-        // Row
-        List<Integer> rowList = getRowIndexes(position, includeClickedPosition);
-        indexes.addAll(rowList);
-        // Column
-        List<Integer> colList = getColIndexes(position, includeClickedPosition);
-        indexes.addAll(colList);
-        // Removing duplicates
-        HashSet hashSet = new HashSet();
-        hashSet.addAll(indexes);
-        indexes.clear();
-        indexes.addAll(hashSet);
-
+    public static Set<Integer> getReachedIndexes(Position position, Boolean includeClickedPosition) {
+        Set<Integer> indexes = new HashSet<>();
+        indexes.addAll(getBoxIndexes(position));
+        indexes.addAll(getRowIndexes(position));
+        indexes.addAll(getColIndexes(position));
+        if (!includeClickedPosition) {
+            indexes.remove(getIndex(position));
+        }
         return indexes;
     }
 
-
-    public static List<Integer> getRowColBoxIndexes(int index, Boolean includeClickedPosition) {
-        Position position = getPosition(index);
-        return getRowColBoxIndexes(position, includeClickedPosition);
-    }
-
-
-    public static List<Integer> getBoxList(Position position, Boolean includeClickedPosition) {
-        int clickedIndex = getIndex(position);
+    public static Set<Integer> getBoxIndexes(Position position) {
         int[] boxIndexes = getBox(position).index;
-        List<Integer> indexes = new ArrayList<>();
-
+        Set<Integer> indexes = new HashSet<>();
         for (int i : boxIndexes) {
-            Boolean isToAdd = (clickedIndex != i) || includeClickedPosition;
-            if (isToAdd) indexes.add(i);
+            indexes.add(i);
         }
         return indexes;
     }
 
 
-    public static List<Integer> getRowIndexes(Position position, Boolean includeClickedPosition) {
-        List<Integer> rowIndexes = new ArrayList<>();
-        for (int r = 1; r <= 9; r++) {
-            Boolean isToAdd = (r != position.row) || includeClickedPosition;
-            if (isToAdd) {
-                int i = getIndex(r, position.col);
-                rowIndexes.add(i);
-            }
+    public static Set<Integer> getRowIndexes(Position position) {
+        Set<Integer> rowIndexes = new HashSet<>();
+        for (int row = 1; row <= 9; row++) {
+            int i = getIndex(row, position.col);
+            rowIndexes.add(i);
         }
         return rowIndexes;
     }
 
 
-    public static List<Integer> getColIndexes(Position position, Boolean includeClickedPosition) {
-        List<Integer> colIndexes = new ArrayList<>();
-        for (int c = 1; c <= 9; c++) {
-            Boolean isToAdd = (c != position.col) || includeClickedPosition;
-            if (isToAdd) {
-                int i = getIndex(position.row, c);
-                colIndexes.add(i);
-            }
+    public static Set<Integer> getColIndexes(Position position) {
+        Set<Integer> colIndexes = new HashSet<>();
+        for (int col = 1; col <= 9; col++) {
+            int i = getIndex(position.row, col);
+            colIndexes.add(i);
         }
         return colIndexes;
     }

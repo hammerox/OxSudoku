@@ -5,6 +5,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import java.util.Set;
+
 public class GridPositionTest {
 
     @Rule
@@ -79,6 +81,25 @@ public class GridPositionTest {
         box = GridPosition.getBox(5, 0);
         box = GridPosition.getBox(5, 10);
         box = GridPosition.getBox(20, 5);
+    }
+
+    @Test
+    public void shouldGiveReachedIndexesFromPosition() {
+        Set<Integer> indexes = GridPosition.getReachedIndexes(new Position(1, 1), true);
+        boolean containItself = indexes.contains(0);
+        Assert.assertTrue(containItself);
+        boolean containRow = indexes.contains(1);
+        Assert.assertTrue(containRow);
+        boolean containCol = indexes.contains(9);
+        Assert.assertTrue(containCol);
+        boolean containBox = indexes.contains(20);
+        Assert.assertTrue(containBox);
+
+        indexes = GridPosition.getReachedIndexes(new Position(9, 9), false);
+        Assert.assertFalse(indexes.contains(80));
+        Assert.assertTrue(indexes.contains(79));
+        Assert.assertTrue(indexes.contains(71));
+        Assert.assertTrue(indexes.contains(60));
     }
 
 }
