@@ -1,23 +1,17 @@
 package com.hammerox.sudokugen;
 
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 
 public class GridPosition {
-
 
     public static Position getPosition(int index) {
         int row = index / 9 + 1;
         int col = index % 9 + 1;
         return new Position(row, col);
     }
-
 
     public static int getIndex(int row, int col) {
         return 9 * (row - 1) + col - 1;
@@ -40,43 +34,6 @@ public class GridPosition {
 
     public static Box getBox(Position position) {
         return getBox(position.row, position.col);
-    }
-
-    private static Box getTopBox(int col) {
-        if (isBetween(col, 1, 3)) {
-            return Box.TOP_LEFT;
-        } else if (isBetween(col, 4, 6)) {
-            return Box.TOP_CENTER;
-        } else if (isBetween(col, 7, 9)) {
-            return Box.TOP_RIGHT;
-        }
-        throw new IndexOutOfBoundsException();
-    }
-
-    private static Box getCenterBox(int col) {
-        if (isBetween(col, 1, 3)) {
-            return Box.CENTER_LEFT;
-        } else if (isBetween(col, 4, 6)) {
-            return Box.CENTER_CENTER;
-        } else if (isBetween(col, 7, 9)) {
-            return Box.CENTER_RIGHT;
-        }
-        throw new IndexOutOfBoundsException();
-    }
-
-    private static Box getBottomBox(int col) {
-        if (isBetween(col, 1, 3)) {
-            return Box.BOTTOM_LEFT;
-        } else if (isBetween(col, 4, 6)) {
-            return Box.BOTTOM_CENTER;
-        } else if (isBetween(col, 7, 9)) {
-            return Box.BOTTOM_RIGHT;
-        }
-        throw new IndexOutOfBoundsException();
-    }
-
-    private static boolean isBetween(int x, int lower, int upper) {
-        return lower <= x && x <= upper;
     }
 
     public static Set<Integer> getReachedIndexes(Position position, Boolean includeClickedPosition) {
@@ -117,6 +74,43 @@ public class GridPosition {
             colIndexes.add(i);
         }
         return colIndexes;
+    }
+
+    private static boolean isBetween(int x, int lower, int upper) {
+        return lower <= x && x <= upper;
+    }
+
+    private static Box getTopBox(int col) {
+        if (isBetween(col, 1, 3)) {
+            return Box.TOP_LEFT;
+        } else if (isBetween(col, 4, 6)) {
+            return Box.TOP_CENTER;
+        } else if (isBetween(col, 7, 9)) {
+            return Box.TOP_RIGHT;
+        }
+        throw new IndexOutOfBoundsException();
+    }
+
+    private static Box getCenterBox(int col) {
+        if (isBetween(col, 1, 3)) {
+            return Box.CENTER_LEFT;
+        } else if (isBetween(col, 4, 6)) {
+            return Box.CENTER_CENTER;
+        } else if (isBetween(col, 7, 9)) {
+            return Box.CENTER_RIGHT;
+        }
+        throw new IndexOutOfBoundsException();
+    }
+
+    private static Box getBottomBox(int col) {
+        if (isBetween(col, 1, 3)) {
+            return Box.BOTTOM_LEFT;
+        } else if (isBetween(col, 4, 6)) {
+            return Box.BOTTOM_CENTER;
+        } else if (isBetween(col, 7, 9)) {
+            return Box.BOTTOM_RIGHT;
+        }
+        throw new IndexOutOfBoundsException();
     }
 
 

@@ -1,5 +1,6 @@
 package com.hammerox.sudokugen;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -13,7 +14,7 @@ public class Cell {
     public final int row;
     public final int col;
     public final GridPosition.Box box;
-    public final Set<Integer> reach;
+    private final Set<Integer> reach;
 
 
     public Cell(int row, int col) {
@@ -29,4 +30,8 @@ public class Cell {
         this(position.row, position.col);
     }
 
+
+    public Set<Integer> getReach() {
+        return new HashSet<>(reach);
+    }
 }
