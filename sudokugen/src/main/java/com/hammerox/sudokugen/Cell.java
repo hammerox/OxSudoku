@@ -13,7 +13,7 @@ public class Cell {
     public final Position position;
     public final int row;
     public final int col;
-    public final GridPosition.Box box;
+    public final BoardPosition.Box box;
     private final Set<Integer> reach;
 
 
@@ -21,9 +21,9 @@ public class Cell {
         this.row = row;
         this.col = col;
         this.position = new Position(row, col);
-        this.index = GridPosition.getIndex(row, col);
-        this.box = GridPosition.getBox(row, col);
-        this.reach = GridPosition.getReachedIndexes(position, false);
+        this.index = BoardPosition.getIndex(row, col);
+        this.box = BoardPosition.getBox(row, col);
+        this.reach = BoardPosition.getReachedIndexes(position, false);
     }
 
     public Cell(Position position) {

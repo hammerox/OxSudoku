@@ -6,13 +6,13 @@ import java.util.List;
 /**
  * Created by Mauricio on 20-Oct-16.
  */
-public class Grid {
+public class Board {
 
     private List<Cell> cells;
 
 
-    public Grid() {
-        initializeGrid();
+    public Board() {
+        initializeBoard();
     }
 
 
@@ -21,19 +21,19 @@ public class Grid {
     }
 
     private Cell getCell(Position position) {
-        int index = GridPosition.getIndex(position);
+        int index = BoardPosition.getIndex(position);
         return getCell(index);
     }
 
     private Cell getCell(int row, int col) {
-        int index = GridPosition.getIndex(row, col);
+        int index = BoardPosition.getIndex(row, col);
         return getCell(index);
     }
 
-    private void initializeGrid() {
+    private void initializeBoard() {
         cells = new ArrayList<>();
         for (int i = 0; i < 81; i++) {
-            Position position = GridPosition.getPosition(i);
+            Position position = BoardPosition.getPosition(i);
             cells.add(new Cell(position));
         }
     }

@@ -16,7 +16,7 @@ public class JavaTest {
 
 
     public static void printRowGrid() {
-        byte[][] grid = new Grid().getRowGrid();
+        byte[][] grid = new Board().getRowGrid();
 
         for (int row = 0; row < 9; row++) {
             for (int col = 0; col < 9; col++) {
@@ -29,7 +29,7 @@ public class JavaTest {
 
 
     public static void printColGrid() {
-        byte[][] grid = new Grid().getColGrid();
+        byte[][] grid = new Board().getColGrid();
 
         for (int row = 0; row < 9; row++) {
             for (int col = 0; col < 9; col++) {
@@ -42,7 +42,7 @@ public class JavaTest {
 
 
     public static void printBoxGrid() {
-        byte[][] grid = new Grid().getBoxGrid();
+        byte[][] grid = new Board().getBoxGrid();
 
         for (int box = 0; box < 9; box++) {
             for (int item = 0; item < 9; item++) {

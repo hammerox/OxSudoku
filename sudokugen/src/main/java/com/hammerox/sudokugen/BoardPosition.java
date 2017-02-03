@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 
-public class GridPosition {
+public class BoardPosition {
 
     public static Position getPosition(int index) {
         int row = index / 9 + 1;
