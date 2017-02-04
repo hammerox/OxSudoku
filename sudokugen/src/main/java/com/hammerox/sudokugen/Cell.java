@@ -14,7 +14,10 @@ public class Cell {
     public final int row;
     public final int col;
     public final BoardPosition.Box box;
+
     private final Set<Integer> reach;
+    private int value;
+    private boolean hasValue;
 
 
     public Cell(int row, int col) {
@@ -30,8 +33,38 @@ public class Cell {
         this(position.row, position.col);
     }
 
+    public Cell(int index) {
+        this(BoardPosition.getPosition(index));
+    }
 
     public Set<Integer> getReach() {
         return new HashSet<>(reach);
     }
+
+    public int getValue() {
+        return value;
+    }
+
+    public void setValue(int value) {
+        if (isBetween(value, 1, 9)) {
+            this.value = value;
+            hasValue = true;
+        } else {
+            throw new IndexOutOfBoundsException();
+        }
+    }
+
+    public void clearValue() {
+        value = 0;
+        hasValue = false;
+    }
+
+    public boolean hasValue() {
+        return hasValue;
+    }
+
+    private static boolean isBetween(int x, int lower, int upper) {
+        return lower <= x && x <= upper;
+    }
+
 }
