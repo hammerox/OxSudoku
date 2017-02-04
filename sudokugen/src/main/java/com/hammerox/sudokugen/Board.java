@@ -1,14 +1,11 @@
 package com.hammerox.sudokugen;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Mauricio on 20-Oct-16.
  */
-public class Board {
-
-    private List<Cell> cells;
+public class Board extends ArrayList<Cell> {
 
 
     public Board() {
@@ -16,26 +13,24 @@ public class Board {
     }
 
 
-    private Cell getCell(int index) {
-        return cells.get(index);
-    }
-
-    private Cell getCell(Position position) {
-        int index = BoardPosition.getIndex(position);
-        return getCell(index);
-    }
-
-    private Cell getCell(int row, int col) {
-        int index = BoardPosition.getIndex(row, col);
-        return getCell(index);
-    }
-
     private void initializeBoard() {
-        cells = new ArrayList<>();
+        if (!this.isEmpty()) {
+            this.clear();
+        }
         for (int i = 0; i < 81; i++) {
             Position position = BoardPosition.getPosition(i);
-            cells.add(new Cell(position));
+            this.add(new Cell(position));
         }
+    }
+
+    public Cell get(Position position) {
+        int index = BoardPosition.getIndex(position);
+        return super.get(index);
+    }
+
+    public Cell get(int row, int col) {
+        int index = BoardPosition.getIndex(row, col);
+        return super.get(index);
     }
 
 }
