@@ -2,7 +2,6 @@ package com.hammerox.sudokugen;
 
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 
@@ -12,15 +11,9 @@ import org.junit.Test;
 
 public class BoardTest {
 
-    private Board board;
-
-    @Before
-    public void initialize() {
-        board = new Board();
-    }
-
     @Test
     public void shouldCreateBoardWithAllCells() {
+        Board board = new Board();
         Assert.assertEquals(81, board.size());
     }
 
