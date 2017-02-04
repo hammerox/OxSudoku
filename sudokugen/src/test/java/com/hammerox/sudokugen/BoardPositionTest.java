@@ -1,16 +1,11 @@
 package com.hammerox.sudokugen;
 
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import java.util.Set;
 
 public class BoardPositionTest {
-
-    @Rule
-    public final ExpectedException exception = ExpectedException.none();
 
     @Test
     public void shouldReturnIndexAfterGivenPosition() {
@@ -75,12 +70,31 @@ public class BoardPositionTest {
     }
 
     @Test
-    public void shouldThrowExceptionWhenRangeIsOut() {
-        exception.expect(IndexOutOfBoundsException.class);
-        BoardPosition.Box box = BoardPosition.getBox(0, 5);
-        box = BoardPosition.getBox(5, 0);
-        box = BoardPosition.getBox(5, 10);
-        box = BoardPosition.getBox(20, 5);
+    public void shouldThrowExceptionWhenRangeIsOut() throws Exception {
+        Testable.assertThrows(IndexOutOfBoundsException.class, new Testable() {
+            @Override
+            void run() throws Exception {
+                BoardPosition.Box box = BoardPosition.getBox(0, 5);
+            }
+        });
+        Testable.assertThrows(IndexOutOfBoundsException.class, new Testable() {
+            @Override
+            void run() throws Exception {
+                BoardPosition.Box box = BoardPosition.getBox(5, 0);
+            }
+        });
+        Testable.assertThrows(IndexOutOfBoundsException.class, new Testable() {
+            @Override
+            void run() throws Exception {
+                BoardPosition.Box box = BoardPosition.getBox(5, 10);
+            }
+        });
+        Testable.assertThrows(IndexOutOfBoundsException.class, new Testable() {
+            @Override
+            void run() throws Exception {
+                BoardPosition.Box box = BoardPosition.getBox(20, 5);
+            }
+        });
     }
 
     @Test

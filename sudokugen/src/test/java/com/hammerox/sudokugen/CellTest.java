@@ -50,11 +50,22 @@ public class CellTest  {
         Assert.assertEquals(0, cell.getValue());
     }
 
-    @Test(expected = IndexOutOfBoundsException.class)
-    public void shouldThrowExceptionWhenSetInvalidValues() {
-        Cell cell = new Cell(0);
-        cell.setValue(-1);
-        cell.setValue(10);
+    @Test
+    public void shouldThrowExceptionWhenSetInvalidValues() throws Exception {
+        final Cell cell = new Cell(0);
+        Testable.assertThrows(IndexOutOfBoundsException.class, new Testable() {
+            @Override
+            public void run() throws Exception {
+                cell.setValue(-1);
+            }
+        });
+
+        Testable.assertThrows(IndexOutOfBoundsException.class, new Testable() {
+            @Override
+            public void run() throws Exception {
+                cell.setValue(10);
+            }
+        });
     }
 
     @Test
