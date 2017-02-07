@@ -21,6 +21,33 @@ public class BoardTest {
     }
 
     @Test
+    public void shouldGetAllPossibleValuesOfACell() {
+        Board board = new Board();
+        // Cells in range
+        board.get(2).setValue(1);
+        board.get(5).setValue(2);
+        board.get(9).setValue(3);
+        board.get(27).setValue(4);
+        board.get(10).setValue(5);
+        // Cells out of range
+        board.get(50).setValue(6);
+        board.get(60).setValue(7);
+        board.get(70).setValue(8);
+        board.get(80).setValue(9);
+
+        Set<Integer> possibleValues = board.getPossibleValues(0);
+        Assert.assertTrue(possibleValues.contains(9));
+        Assert.assertTrue(possibleValues.contains(8));
+        Assert.assertTrue(possibleValues.contains(7));
+        Assert.assertTrue(possibleValues.contains(6));
+        Assert.assertFalse(possibleValues.contains(5));
+        Assert.assertFalse(possibleValues.contains(4));
+        Assert.assertFalse(possibleValues.contains(3));
+        Assert.assertFalse(possibleValues.contains(2));
+        Assert.assertFalse(possibleValues.contains(1));
+    }
+
+    @Test
     public void shouldReturnIndexAfterGivenPosition() {
         int index = 10;
         Position position = Board.getPosition(index);

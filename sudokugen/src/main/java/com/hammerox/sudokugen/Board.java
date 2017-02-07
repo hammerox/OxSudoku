@@ -15,16 +15,6 @@ public class Board extends ArrayList<Cell> {
     }
 
 
-    public Cell get(Position position) {
-        int index = getIndex(position);
-        return super.get(index);
-    }
-
-    public Cell get(int row, int col) {
-        int index = getIndex(row, col);
-        return super.get(index);
-    }
-
     public static Position getPosition(int index) {
         int row = index / 9 + 1;
         int col = index % 9 + 1;
@@ -94,16 +84,6 @@ public class Board extends ArrayList<Cell> {
         return colIndexes;
     }
 
-    private void initializeBoard() {
-        if (!this.isEmpty()) {
-            this.clear();
-        }
-        for (int i = 0; i < 81; i++) {
-            Position position = getPosition(i);
-            this.add(new Cell(position));
-        }
-    }
-
     private static boolean isBetween(int x, int lower, int upper) {
         return lower <= x && x <= upper;
     }
@@ -140,6 +120,47 @@ public class Board extends ArrayList<Cell> {
         }
         throw new IndexOutOfBoundsException();
     }
+
+    public Cell get(Position position) {
+        int index = getIndex(position);
+        return super.get(index);
+    }
+
+    public Cell get(int row, int col) {
+        int index = getIndex(row, col);
+        return super.get(index);
+    }
+
+    public Set<Integer> getPossibleValues(int index) {
+        Set<Integer> possibleValues = new HashSet<>();
+        for (int i = 1; i <= 9; i++) {
+            possibleValues.add(i);
+        }
+
+        Set<Integer> invalidValues = new HashSet<>();
+        Set<Integer> reachedIndexes = getReachedIndexes(getPosition(index), false);
+        for (Integer i : reachedIndexes) {
+            Cell cell = this.get(i);
+            if (cell.hasValue()) {
+                invalidValues.add(cell.getValue());
+            }
+        }
+
+        possibleValues.removeAll(invalidValues);
+
+        return possibleValues;
+    }
+
+    private void initializeBoard() {
+        if (!this.isEmpty()) {
+            this.clear();
+        }
+        for (int i = 0; i < 81; i++) {
+            Position position = getPosition(i);
+            this.add(new Cell(position));
+        }
+    }
+
 
     public enum Box {
 
