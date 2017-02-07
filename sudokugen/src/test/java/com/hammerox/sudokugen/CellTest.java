@@ -17,7 +17,7 @@ public class CellTest  {
         Assert.assertEquals(0, cell.index);
         Assert.assertEquals(1, cell.row);
         Assert.assertEquals(1, cell.col);
-        Assert.assertEquals(BoardPosition.Box.TOP_LEFT, cell.box);
+        Assert.assertEquals(Board.Box.TOP_LEFT, cell.box);
     }
 
     @Test
@@ -27,7 +27,7 @@ public class CellTest  {
         Assert.assertEquals(11, cell.index);
         Assert.assertEquals(2, cell.row);
         Assert.assertEquals(3, cell.col);
-        Assert.assertEquals(BoardPosition.Box.TOP_LEFT, cell.box);
+        Assert.assertEquals(Board.Box.TOP_LEFT, cell.box);
     }
 
     @Test
@@ -37,7 +37,7 @@ public class CellTest  {
         Assert.assertEquals(8, cell.index);
         Assert.assertEquals(1, cell.row);
         Assert.assertEquals(9, cell.col);
-        Assert.assertEquals(BoardPosition.Box.TOP_RIGHT, cell.box);
+        Assert.assertEquals(Board.Box.TOP_RIGHT, cell.box);
     }
 
     @Test

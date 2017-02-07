@@ -13,7 +13,7 @@ public class Cell {
     public final Position position;
     public final int row;
     public final int col;
-    public final BoardPosition.Box box;
+    public final Board.Box box;
 
     private final Set<Integer> reach;
     private int value;
@@ -24,9 +24,9 @@ public class Cell {
         this.row = row;
         this.col = col;
         this.position = new Position(row, col);
-        this.index = BoardPosition.getIndex(row, col);
-        this.box = BoardPosition.getBox(row, col);
-        this.reach = BoardPosition.getReachedIndexes(position, false);
+        this.index = Board.getIndex(row, col);
+        this.box = Board.getBox(row, col);
+        this.reach = Board.getReachedIndexes(position, false);
     }
 
     public Cell(Position position) {
@@ -34,7 +34,7 @@ public class Cell {
     }
 
     public Cell(int index) {
-        this(BoardPosition.getPosition(index));
+        this(Board.getPosition(index));
     }
 
     public Set<Integer> getReach() {
