@@ -44,7 +44,7 @@ public class Board extends ArrayList<Cell> {
         return getBox(position.row, position.col);
     }
 
-    public static Set<Integer> getReachedIndexes(Position position, Boolean includeClickedPosition) {
+    public static Set<Integer> getIndexesInRange(Position position, Boolean includeClickedPosition) {
         Set<Integer> indexes = new HashSet<>();
         indexes.addAll(getBoxIndexes(position));
         indexes.addAll(getRowIndexes(position));
@@ -132,22 +132,8 @@ public class Board extends ArrayList<Cell> {
     }
 
     public Set<Integer> getPossibleValues(int index) {
-        Set<Integer> possibleValues = new HashSet<>();
-        for (int i = 1; i <= 9; i++) {
-            possibleValues.add(i);
-        }
-
-        Set<Integer> invalidValues = new HashSet<>();
-        Set<Integer> reachedIndexes = getReachedIndexes(getPosition(index), false);
-        for (Integer i : reachedIndexes) {
-            Cell cell = this.get(i);
-            if (cell.hasValue()) {
-                invalidValues.add(cell.getValue());
-            }
-        }
-
-        possibleValues.removeAll(invalidValues);
-
+        Set<Integer> possibleValues = allValues();
+        possibleValues.removeAll(invalidValues(index));
         return possibleValues;
     }
 
@@ -159,6 +145,26 @@ public class Board extends ArrayList<Cell> {
             Position position = getPosition(i);
             this.add(new Cell(position));
         }
+    }
+
+    private Set<Integer> allValues() {
+        Set<Integer> possibleValues = new HashSet<>();
+        for (int i = 1; i <= 9; i++) {
+            possibleValues.add(i);
+        }
+        return possibleValues;
+    }
+
+    private Set<Integer> invalidValues(int index) {
+        Set<Integer> invalidValues = new HashSet<>();
+        Set<Integer> inRange = this.get(index).getIndexesInRange();
+        for (Integer i : inRange) {
+            Cell cell = this.get(i);
+            if (cell.hasValue()) {
+                invalidValues.add(cell.getValue());
+            }
+        }
+        return invalidValues;
     }
 
 

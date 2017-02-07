@@ -15,7 +15,7 @@ public class Cell {
     public final int col;
     public final Board.Box box;
 
-    private final Set<Integer> reach;
+    private final Set<Integer> indexesInRange;
     private int value;
     private boolean hasValue;
 
@@ -26,7 +26,7 @@ public class Cell {
         this.position = new Position(row, col);
         this.index = Board.getIndex(row, col);
         this.box = Board.getBox(row, col);
-        this.reach = Board.getReachedIndexes(position, false);
+        this.indexesInRange = Board.getIndexesInRange(position, false);
     }
 
     public Cell(Position position) {
@@ -37,8 +37,8 @@ public class Cell {
         this(Board.getPosition(index));
     }
 
-    public Set<Integer> getReach() {
-        return new HashSet<>(reach);
+    public Set<Integer> getIndexesInRange() {
+        return new HashSet<>(indexesInRange);
     }
 
     public int getValue() {

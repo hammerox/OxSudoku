@@ -139,7 +139,7 @@ public class BoardTest {
 
     @Test
     public void shouldGiveReachedIndexesFromPosition() {
-        Set<Integer> indexes = Board.getReachedIndexes(new Position(1, 1), true);
+        Set<Integer> indexes = Board.getIndexesInRange(new Position(1, 1), true);
         boolean containItself = indexes.contains(0);
         Assert.assertTrue(containItself);
         boolean containRow = indexes.contains(1);
@@ -149,7 +149,7 @@ public class BoardTest {
         boolean containBox = indexes.contains(20);
         Assert.assertTrue(containBox);
 
-        indexes = Board.getReachedIndexes(new Position(9, 9), false);
+        indexes = Board.getIndexesInRange(new Position(9, 9), false);
         Assert.assertFalse(indexes.contains(80));
         Assert.assertTrue(indexes.contains(79));
         Assert.assertTrue(indexes.contains(71));
