@@ -23,28 +23,54 @@ public class BoardTest {
     @Test
     public void shouldGetAllPossibleValuesOfACell() {
         Board board = new Board();
-        // Cells in range
+        // Cells in range of i = 0
         board.get(2).setValue(1);
         board.get(5).setValue(2);
         board.get(9).setValue(3);
         board.get(27).setValue(4);
         board.get(10).setValue(5);
-        // Cells out of range
+        // Cells out of range of i = 0
         board.get(50).setValue(6);
         board.get(60).setValue(7);
         board.get(70).setValue(8);
         board.get(80).setValue(9);
 
-        Set<Integer> possibleValues = board.getPossibleValues(0);
-        Assert.assertTrue(possibleValues.contains(9));
-        Assert.assertTrue(possibleValues.contains(8));
-        Assert.assertTrue(possibleValues.contains(7));
-        Assert.assertTrue(possibleValues.contains(6));
-        Assert.assertFalse(possibleValues.contains(5));
-        Assert.assertFalse(possibleValues.contains(4));
-        Assert.assertFalse(possibleValues.contains(3));
-        Assert.assertFalse(possibleValues.contains(2));
-        Assert.assertFalse(possibleValues.contains(1));
+        Set<Integer> availableValues = board.getAvailableValues(0);
+        Assert.assertTrue(availableValues.contains(9));
+        Assert.assertTrue(availableValues.contains(8));
+        Assert.assertTrue(availableValues.contains(7));
+        Assert.assertTrue(availableValues.contains(6));
+        Assert.assertFalse(availableValues.contains(5));
+        Assert.assertFalse(availableValues.contains(4));
+        Assert.assertFalse(availableValues.contains(3));
+        Assert.assertFalse(availableValues.contains(2));
+        Assert.assertFalse(availableValues.contains(1));
+    }
+
+    @Test
+    public void shouldTestIfValueIsPossible() {
+        Board board = new Board();
+        // Cells in range of i = 0
+        board.get(2).setValue(1);
+        board.get(5).setValue(2);
+        board.get(9).setValue(3);
+        board.get(27).setValue(4);
+        board.get(10).setValue(5);
+        // Cells out of range of i = 0
+        board.get(50).setValue(6);
+        board.get(60).setValue(7);
+        board.get(70).setValue(8);
+        board.get(80).setValue(9);
+
+        Assert.assertTrue(board.isValueAvailable(0, 9));
+        Assert.assertTrue(board.isValueAvailable(0, 8));
+        Assert.assertTrue(board.isValueAvailable(0, 7));
+        Assert.assertTrue(board.isValueAvailable(0, 6));
+        Assert.assertFalse(board.isValueAvailable(0, 5));
+        Assert.assertFalse(board.isValueAvailable(0, 4));
+        Assert.assertFalse(board.isValueAvailable(0, 3));
+        Assert.assertFalse(board.isValueAvailable(0, 2));
+        Assert.assertFalse(board.isValueAvailable(0, 1));
     }
 
     @Test

@@ -131,10 +131,14 @@ public class Board extends ArrayList<Cell> {
         return super.get(index);
     }
 
-    public Set<Integer> getPossibleValues(int index) {
-        Set<Integer> possibleValues = allValues();
-        possibleValues.removeAll(invalidValues(index));
-        return possibleValues;
+    public Set<Integer> getAvailableValues(int index) {
+        Set<Integer> availableValues = allValues();
+        availableValues.removeAll(invalidValues(index));
+        return availableValues;
+    }
+
+    public boolean isValueAvailable(int index, int value) {
+        return getAvailableValues(index).contains(value);
     }
 
     private void initializeBoard() {
