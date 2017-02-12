@@ -30,12 +30,13 @@ public class SolutionTest {
     @Test
     public void valuesShouldNotBreakSudokuRules() {
         Board board = new Solution();
-        int emptyCellCount = 0;
+        int irregularCellCount = 0;
         for (Cell cell : board) {
-            if (!cell.hasValue()) {
-                emptyCellCount++;
+            int numberOfAvailableValues = board.getAvailableValues(cell.index).size();
+            if (numberOfAvailableValues != 1) {
+                irregularCellCount++;
             }
         }
-        Assert.assertEquals(0, emptyCellCount);
+        Assert.assertEquals(0, irregularCellCount);
     }
 }

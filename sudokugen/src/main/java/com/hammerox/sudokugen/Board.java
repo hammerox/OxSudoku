@@ -131,6 +131,10 @@ public class Board extends ArrayList<Cell> {
         return super.get(index);
     }
 
+    public void set(int index, int value) {
+        this.get(index).setValue(value);
+    }
+
     public Set<Integer> getAvailableValues(int index) {
         Set<Integer> availableValues = allValues();
         availableValues.removeAll(invalidValues(index));
