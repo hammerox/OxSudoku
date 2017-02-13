@@ -1,6 +1,8 @@
 package com.hammerox.sudokugen;
 
-import java.util.Random;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -10,29 +12,67 @@ import java.util.Set;
 public class Solution extends Board {
 
 
-    private Random random = new Random();
-
+    private int step;
+    private List<Integer> shuffledIndexes;
+    private List<Set<Integer>> backtrackList;
+    private boolean isBacktracking;
+    private int cellsFilled;
 
     public Solution() {
-        set(randomIndex(), randomValue());
+        step = 0;
+        backtrackList = new ArrayList<>();
+        shuffleIndexes();
+        while (step < 81) {
+            Set<Integer> availableValues;
+            int currentIndex = shuffledIndexes.get(step);
 
+            if (isBacktracking) {
+                availableValues = backtrackList.get(step);
+            } else {
+                availableValues = getAvailableValues(currentIndex);
+                backtrackList.add(step, availableValues);
+            }
+
+            if (availableValues.isEmpty()) {
+                get(currentIndex).clearValue();
+                backtrackList.remove(step);
+                step--;
+                isBacktracking = true;
+            } else {
+                setRandomValueFromList(currentIndex, availableValues);
+                step++;
+                isBacktracking = false;
+            }
+            cellsFilled = countCells();
+            BoardLogger.log(this, currentIndex);
+        }
     }
 
 
-    private int randomIndex() {
-        return random.nextInt(80);
+    private void shuffleIndexes() {
+        shuffledIndexes = new ArrayList<>();
+        for (int i = 0; i < 81; i++) {
+            shuffledIndexes.add(i);
+        }
+        Collections.shuffle(shuffledIndexes);
     }
 
-    private int randomValue() {
-        return random.nextInt(8) + 1;
+    private int setRandomValueFromList(int index, Set<Integer> availableValues) {
+        List<Integer> list = new ArrayList<>(availableValues);
+        Collections.shuffle(list);
+        int value = list.get(0);
+        availableValues.remove(value);
+        set(index, value);
+        return value;
     }
 
-    private int randomValue(Set<Integer> availableValues) {
-        while (true) {
-            int pickedValue = randomValue();
-            if (availableValues.contains(pickedValue)) {
-                return pickedValue;
+    private int countCells() {
+        int count = 0;
+        for (Cell cell : this) {
+            if (cell.hasValue()) {
+                count++;
             }
         }
+        return count;
     }
 }
