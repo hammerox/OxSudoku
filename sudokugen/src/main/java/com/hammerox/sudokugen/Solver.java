@@ -12,7 +12,7 @@ import java.util.Set;
 
 public class Solver extends Board {
 
-    /* Set isToLog to true ONLY FOR DEBUGGING
+    /* Set "isToLog" to true ONLY FOR DEBUGGING
     *  It logs the whole board for evaluation.
     *  However it doubles the computation time. */
     private final static boolean isToLog = false;
@@ -51,38 +51,27 @@ public class Solver extends Board {
     }
 
     private boolean nextStep(int step) {
-        int currentIndex = shuffledIndexes.get(step);
-        Set<Integer> availableValues = getAvailableValues(currentIndex);
+        int index = shuffledIndexes.get(step);
+        Set<Integer> availableValues = getAvailableValues(index);
         boolean isBoardComplete = false;
         while (!isBoardComplete) {
-            boolean isToBacktrack = addOrRemoveValue(step, currentIndex, availableValues);
-            boolean isToContinue = countFilledCells() < BOARD_SIZE;
-            if (isToContinue) {
-                if (isToBacktrack) {
-                    return false;
-                } else {
-                    isBoardComplete = nextStep(step + 1);
-                }
-            } else {
+            boolean isToBacktrack = addOrRemoveValue(step, index, availableValues);
+            boolean isComplete = countFilledCells() == BOARD_SIZE;
+            if (isToBacktrack) {
+                return false;
+            } else if (isComplete) {
                 return true;
+            } else {
+                isBoardComplete = nextStep(step + 1);
             }
         }
-        return true;
-    }
-
-    private void logBoard(int step, int currentIndex, Set<Integer> availableValues) {
-        if (isToLog) {
-            BoardLogger.log(this, step, currentIndex, availableValues);
-        }
+        return isBoardComplete;
     }
 
     private boolean addOrRemoveValue(int step, int currentIndex, Set<Integer> availableValues) {
-        boolean isToBacktrack;
-        if (availableValues.isEmpty()) {
-            isToBacktrack = removeValue(step);
-        } else {
-            isToBacktrack = addValue(currentIndex, availableValues);
-        }
+        boolean isToBacktrack = (availableValues.isEmpty())
+                ? removeValue(step)
+                : addValue(currentIndex, availableValues);
         logBoard(step, currentIndex, availableValues);
         return isToBacktrack;
     }
@@ -98,9 +87,10 @@ public class Solver extends Board {
         return true;
     }
 
-    private void clearValue(int step) {
-        int previousIndex = shuffledIndexes.get(step);
-        get(previousIndex).clearValue();
+    private void logBoard(int step, int currentIndex, Set<Integer> availableValues) {
+        if (isToLog) {
+            BoardLogger.log(this, step, currentIndex, availableValues);
+        }
     }
 
     private int setRandomValue(int index, Set<Integer> availableValues) {
@@ -109,5 +99,10 @@ public class Solver extends Board {
         int value = list.get(0);
         set(index, value);
         return value;
+    }
+
+    private void clearValue(int step) {
+        int previousIndex = shuffledIndexes.get(step);
+        get(previousIndex).clearValue();
     }
 }
