@@ -21,8 +21,8 @@ public class Solver extends Board {
     private List<Integer> indexes;
 
 
-    public Solver(Board board) {
-        this.originalPuzzle = board;
+    public Solver(Board puzzle) {
+        this.originalPuzzle = puzzle;
         setBoardAsPuzzle();
         setIndexOrder();
         startSolving();

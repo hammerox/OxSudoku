@@ -13,7 +13,7 @@ import com.hammerox.sudokugen.util.Testable;
  * Created by Mauricio on 21-Oct-16.
  */
 
-public class BoardTest {
+public class BoardTests {
 
     @Test
     public void shouldCreateBoardWithAllCells() {
@@ -58,25 +58,25 @@ public class BoardTest {
     public void shouldThrowExceptionWhenRangeIsOut() throws Exception {
         Testable.assertThrows(IndexOutOfBoundsException.class, new Testable() {
             @Override
-            void run() throws Exception {
+            public void run() throws Exception {
                 Board.Box box = Board.getBox(0, 5);
             }
         });
         Testable.assertThrows(IndexOutOfBoundsException.class, new Testable() {
             @Override
-            void run() throws Exception {
+            public void run() throws Exception {
                 Board.Box box = Board.getBox(5, 0);
             }
         });
         Testable.assertThrows(IndexOutOfBoundsException.class, new Testable() {
             @Override
-            void run() throws Exception {
+            public void run() throws Exception {
                 Board.Box box = Board.getBox(5, 10);
             }
         });
         Testable.assertThrows(IndexOutOfBoundsException.class, new Testable() {
             @Override
-            void run() throws Exception {
+            public void run() throws Exception {
                 Board.Box box = Board.getBox(20, 5);
             }
         });

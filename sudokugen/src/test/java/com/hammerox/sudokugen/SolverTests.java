@@ -9,7 +9,7 @@ import org.junit.Test;
  * Created by Mauricio on 04-Feb-17.
  */
 
-public class SolverTest {
+public class SolverTests {
 
     @Test
     public void shouldHaveABoard() {
@@ -48,7 +48,6 @@ public class SolverTest {
     @Test
     public void shouldFindOnlyOneSolution() {
         Board puzzle = new PuzzleMock(1);
-
     }
 
     @Test

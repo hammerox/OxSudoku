@@ -8,7 +8,7 @@ import org.junit.Assert;
 
 public abstract class Testable {
 
-    abstract void run() throws Exception;
+    public abstract void run() throws Exception;
 
     public static <T extends Exception> T assertThrows(
             final Class<T> expected,

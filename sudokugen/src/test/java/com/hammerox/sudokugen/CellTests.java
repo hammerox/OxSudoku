@@ -9,7 +9,7 @@ import org.junit.Test;
  * Created by Mauricio on 02-Feb-17.
  */
 
-public class CellTest  {
+public class CellTests {
 
     @Test
     public void shouldCreateCellWithIntegers() {
