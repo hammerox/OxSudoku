@@ -37,12 +37,17 @@ public class Solver extends Board {
         return this;
     }
 
-    private void setIndexOrder() {
-        setDefaultIndexOrder();
-        removeIndexesOnPuzzle();
+    public boolean hasValidSolution() {
+        return false;
     }
 
-    private void setDefaultIndexOrder() {
+    private void setIndexOrder() {
+        Set<Integer> indexes = setDefaultIndexOrder();
+        indexes = removeIndexesOnPuzzle(indexes);
+        this.indexes = new ArrayList<>(indexes);
+    }
+
+    private Set<Integer> setDefaultIndexOrder() {
         Set<Integer> indexes = new LinkedHashSet<>();
         for (Box box : Box.values()) {
             for (int i : box.index) {
@@ -53,15 +58,16 @@ public class Solver extends Board {
                 break;
             }
         }
-        this.indexes = new ArrayList<>(indexes);
+        return indexes;
     }
 
-    private void removeIndexesOnPuzzle() {
+    private Set<Integer> removeIndexesOnPuzzle(Set<Integer> indexes) {
         for (Cell cell : originalPuzzle) {
             if (cell.hasValue()) {
                 indexes.remove(cell.index);
             }
         }
+        return indexes;
     }
 
     private boolean nextStep(int step) {

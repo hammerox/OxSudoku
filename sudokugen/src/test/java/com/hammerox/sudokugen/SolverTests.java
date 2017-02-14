@@ -45,10 +45,16 @@ public class SolverTests {
     @Test
     public void shouldFindOnlyOneSolution() {
         Board puzzle = new PuzzleMock(1);
+        Solver solver = new Solver(puzzle);
+        boolean isValidPuzzle = solver.hasValidSolution();
+        Assert.assertTrue(isValidPuzzle);
     }
 
     @Test
-    public void shouldFindMoreThanOneSolution() {
-
+    public void shouldConfirmPuzzleIsInvalid() {
+        Board emptyBoard = new Board();
+        Solver solver = new Solver(emptyBoard);
+        boolean isValidPuzzle = solver.hasValidSolution();
+        Assert.assertFalse(isValidPuzzle);
     }
 }
