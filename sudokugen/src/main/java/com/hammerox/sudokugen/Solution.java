@@ -12,42 +12,55 @@ import java.util.Set;
 public class Solution extends Board {
 
 
-    private int step;
     private List<Integer> shuffledIndexes;
     private List<Set<Integer>> backtrackList;
-    private boolean isBacktracking;
-    private int cellsFilled;
+
 
     public Solution() {
-        step = 0;
         backtrackList = new ArrayList<>();
         shuffleIndexes();
-        while (step < 81) {
-            Set<Integer> availableValues;
-            int currentIndex = shuffledIndexes.get(step);
-
-            if (isBacktracking) {
-                availableValues = backtrackList.get(step);
-            } else {
-                availableValues = getAvailableValues(currentIndex);
-                backtrackList.add(step, availableValues);
-            }
-
-            if (availableValues.isEmpty()) {
-                get(currentIndex).clearValue();
-                backtrackList.remove(step);
-                step--;
-                isBacktracking = true;
-            } else {
-                setRandomValueFromList(currentIndex, availableValues);
-                step++;
-                isBacktracking = false;
-            }
-            cellsFilled = countCells();
-            BoardLogger.log(this, currentIndex);
-        }
+        startSolving();
     }
 
+
+    private void startSolving() {
+        nextStep(0);
+    }
+
+    private boolean nextStep(int step) {
+        int currentIndex = shuffledIndexes.get(step);
+
+        Set<Integer> availableValues = getAvailableValues(currentIndex);
+
+        boolean boardIsIncomplete = true;
+        while (boardIsIncomplete) {
+            boolean isToBacktrack;
+            if (availableValues.isEmpty()) {
+                clearValue(step);
+
+                isToBacktrack = true;
+            } else {
+                int value = setRandomValue(currentIndex, availableValues);
+                availableValues.remove(value);
+                isToBacktrack = false;
+            }
+
+            int cellsFilled = countCells();
+            BoardLogger.log(this, currentIndex, availableValues);
+
+            boolean isToContinue = cellsFilled < 81;
+            if (isToContinue) {
+                if (isToBacktrack) {
+                    return true;
+                } else {
+                    boardIsIncomplete = nextStep(step + 1);
+                }
+            } else {
+                return false;
+            }
+        }
+        return false;
+    }
 
     private void shuffleIndexes() {
         shuffledIndexes = new ArrayList<>();
@@ -57,11 +70,15 @@ public class Solution extends Board {
         Collections.shuffle(shuffledIndexes);
     }
 
-    private int setRandomValueFromList(int index, Set<Integer> availableValues) {
+    private void clearValue(int step) {
+        int previousIndex = shuffledIndexes.get(step);
+        get(previousIndex).clearValue();
+    }
+
+    private int setRandomValue(int index, Set<Integer> availableValues) {
         List<Integer> list = new ArrayList<>(availableValues);
         Collections.shuffle(list);
         int value = list.get(0);
-        availableValues.remove(value);
         set(index, value);
         return value;
     }
