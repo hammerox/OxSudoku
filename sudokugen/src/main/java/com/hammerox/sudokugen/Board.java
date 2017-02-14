@@ -86,6 +86,44 @@ public class Board extends ArrayList<Cell> {
         return colIndexes;
     }
 
+    public Cell get(Position position) {
+        int index = getIndex(position);
+        return super.get(index);
+    }
+
+    public Cell get(int row, int col) {
+        int index = getIndex(row, col);
+        return super.get(index);
+    }
+
+    public void set(int index, int value) {
+        this.get(index).setValue(value);
+    }
+
+    public Set<Integer> getAvailableValues(int index) {
+        Set<Integer> availableValues = allValues();
+        availableValues.removeAll(invalidValues(index));
+        return availableValues;
+    }
+
+    public boolean isValueAvailable(int index, int value) {
+        return getAvailableValues(index).contains(value);
+    }
+
+    public int countFilledCells() {
+        int count = 0;
+        for (Cell cell : this) {
+            if (cell.hasValue()) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public int countEmptyCells() {
+        return BOARD_SIZE - countFilledCells();
+    }
+
     private static boolean isBetween(int x, int lower, int upper) {
         return lower <= x && x <= upper;
     }
@@ -121,30 +159,6 @@ public class Board extends ArrayList<Cell> {
             return Box.BOTTOM_RIGHT;
         }
         throw new IndexOutOfBoundsException();
-    }
-
-    public Cell get(Position position) {
-        int index = getIndex(position);
-        return super.get(index);
-    }
-
-    public Cell get(int row, int col) {
-        int index = getIndex(row, col);
-        return super.get(index);
-    }
-
-    public void set(int index, int value) {
-        this.get(index).setValue(value);
-    }
-
-    public Set<Integer> getAvailableValues(int index) {
-        Set<Integer> availableValues = allValues();
-        availableValues.removeAll(invalidValues(index));
-        return availableValues;
-    }
-
-    public boolean isValueAvailable(int index, int value) {
-        return getAvailableValues(index).contains(value);
     }
 
     private void initializeBoard() {

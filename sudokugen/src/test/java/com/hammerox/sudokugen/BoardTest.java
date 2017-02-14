@@ -100,6 +100,20 @@ public class BoardTest {
         Assert.assertTrue(indexes.contains(60));
     }
 
+    @Test
+    public void shouldCountCellsWithValue() {
+        Board board = new Board();
+        setBoardValues(board);
+        Assert.assertEquals(9, board.countFilledCells());
+    }
+
+    @Test
+    public void shouldCountCellsWithoutValue() {
+        Board board = new Board();
+        setBoardValues(board);
+        Assert.assertEquals(72, board.countEmptyCells());
+    }
+
     private void setBoardValues(Board board) {
         // Cells in range of i = 0
         board.get(2).setValue(1);

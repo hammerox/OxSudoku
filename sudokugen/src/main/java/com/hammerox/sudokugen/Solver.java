@@ -12,6 +12,10 @@ import java.util.Set;
 
 public class Solver extends Board {
 
+    /* Set isToLog to true ONLY FOR DEBUGGING
+    *  It logs the whole board for evaluation.
+    *  However it doubles the computation time. */
+    private final static boolean isToLog = false;
 
     private List<Integer> shuffledIndexes;
 
@@ -48,38 +52,50 @@ public class Solver extends Board {
 
     private boolean nextStep(int step) {
         int currentIndex = shuffledIndexes.get(step);
-
         Set<Integer> availableValues = getAvailableValues(currentIndex);
-
-        boolean boardIsIncomplete = true;
-        while (boardIsIncomplete) {
-            boolean isToBacktrack;
-            if (availableValues.isEmpty()) {
-                clearValue(step);
-                isToBacktrack = true;
-            } else {
-                int value = setRandomValue(currentIndex, availableValues);
-                availableValues.remove(value);
-                isToBacktrack = false;
-            }
-
-            int cellsFilled = countCells();
-
-
-            BoardLogger.log(this, step, currentIndex, availableValues);
-
-            boolean isToContinue = cellsFilled < BOARD_SIZE;
+        boolean isBoardComplete = false;
+        while (!isBoardComplete) {
+            boolean isToBacktrack = addOrRemoveValue(step, currentIndex, availableValues);
+            boolean isToContinue = countFilledCells() < BOARD_SIZE;
             if (isToContinue) {
                 if (isToBacktrack) {
-                    return true;
+                    return false;
                 } else {
-                    boardIsIncomplete = nextStep(step + 1);
+                    isBoardComplete = nextStep(step + 1);
                 }
             } else {
-                return false;
+                return true;
             }
         }
+        return true;
+    }
+
+    private void logBoard(int step, int currentIndex, Set<Integer> availableValues) {
+        if (isToLog) {
+            BoardLogger.log(this, step, currentIndex, availableValues);
+        }
+    }
+
+    private boolean addOrRemoveValue(int step, int currentIndex, Set<Integer> availableValues) {
+        boolean isToBacktrack;
+        if (availableValues.isEmpty()) {
+            isToBacktrack = removeValue(step);
+        } else {
+            isToBacktrack = addValue(currentIndex, availableValues);
+        }
+        logBoard(step, currentIndex, availableValues);
+        return isToBacktrack;
+    }
+
+    private boolean addValue(int currentIndex, Set<Integer> availableValues) {
+        int value = setRandomValue(currentIndex, availableValues);
+        availableValues.remove(value);
         return false;
+    }
+
+    private boolean removeValue(int step) {
+        clearValue(step);
+        return true;
     }
 
     private void clearValue(int step) {
@@ -93,15 +109,5 @@ public class Solver extends Board {
         int value = list.get(0);
         set(index, value);
         return value;
-    }
-
-    private int countCells() {
-        int count = 0;
-        for (Cell cell : this) {
-            if (cell.hasValue()) {
-                count++;
-            }
-        }
-        return count;
     }
 }
