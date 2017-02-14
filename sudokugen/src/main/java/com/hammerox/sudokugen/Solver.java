@@ -19,6 +19,8 @@ public class Solver extends Board {
 
     private final Board originalPuzzle;
     private List<Integer> indexes;
+    private boolean stopOnFirstSolution;
+    private int solutions;
 
 
     public Solver(Board puzzle) {
@@ -33,12 +35,16 @@ public class Solver extends Board {
 
 
     public Board getSingleSolution() {
+        stopOnFirstSolution = true;
         nextStep(0);
         return this;
     }
 
     public boolean hasValidSolution() {
-        return false;
+        stopOnFirstSolution = false;
+        solutions = 0;
+        nextStep(0);
+        return solutions == 1;
     }
 
     private void setIndexOrder() {
@@ -76,11 +82,11 @@ public class Solver extends Board {
         boolean isBoardComplete = false;
         while (!isBoardComplete) {
             boolean isToBacktrack = addOrRemoveValue(step, index, availableValues);
-            boolean isComplete = countFilledCells() == BOARD_SIZE;
+            isBoardComplete = countFilledCells() == BOARD_SIZE;
             if (isToBacktrack) {
                 return false;
-            } else if (isComplete) {
-                return true;
+            } else if (isBoardComplete) {
+                return isDoneSolving();
             } else {
                 isBoardComplete = nextStep(step + 1);
             }
@@ -94,6 +100,10 @@ public class Solver extends Board {
                 : addValue(currentIndex, availableValues);
         logBoard(step, currentIndex, availableValues);
         return isToBacktrack;
+    }
+
+    private boolean isDoneSolving() {
+        return stopOnFirstSolution || ++solutions > 1;
     }
 
     private boolean addValue(int currentIndex, Set<Integer> availableValues) {
