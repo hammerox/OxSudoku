@@ -11,8 +11,15 @@ public class Puzzle extends Board {
 
 
     public Board create(int cellsToRemove) {
+        checkIfParameterIsValid(cellsToRemove);
         solution = new Solver().getSingleSolution();
 
         return null;    // For now
+    }
+
+    private void checkIfParameterIsValid(int cellsToRemove) {
+        if (cellsToRemove < 0 || cellsToRemove > 81) {
+            throw new IndexOutOfBoundsException();
+        }
     }
 }

@@ -19,7 +19,7 @@ public class PuzzleTests {
     }
 
     @Test
-    public void shouldNotAllowNegativeValues() {
+    public void shouldNotAllowNegativeValues() throws Exception {
         final Puzzle puzzle = new Puzzle();
         Testable.assertThrows(IndexOutOfBoundsException.class, new Testable() {
             @Override
@@ -30,7 +30,7 @@ public class PuzzleTests {
     }
 
     @Test
-    public void shouldNotAllowValuesGreaterThan81() {
+    public void shouldNotAllowValuesGreaterThan81() throws Exception {
         final Puzzle puzzle = new Puzzle();
         Testable.assertThrows(IndexOutOfBoundsException.class, new Testable() {
             @Override
