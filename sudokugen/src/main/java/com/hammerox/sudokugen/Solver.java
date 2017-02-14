@@ -23,18 +23,26 @@ public class Solver extends Board {
 
     public Solver(Board puzzle) {
         this.originalPuzzle = puzzle;
-        setBoardAsPuzzle();
+        setBoard(originalPuzzle);
         setIndexOrder();
-        startSolving();
+    }
+
+    public Solver() {
+        this(new Board());
     }
 
 
-    private void setBoardAsPuzzle() {
-        removeAll(this);
-        addAll(originalPuzzle);
+    public Board getSingleSolution() {
+        nextStep(0);
+        return this;
     }
 
     private void setIndexOrder() {
+        setDefaultIndexOrder();
+        removeIndexesOnPuzzle();
+    }
+
+    private void setDefaultIndexOrder() {
         Set<Integer> indexes = new LinkedHashSet<>();
         for (Box box : Box.values()) {
             for (int i : box.index) {
@@ -48,8 +56,12 @@ public class Solver extends Board {
         this.indexes = new ArrayList<>(indexes);
     }
 
-    private void startSolving() {
-        nextStep(0);
+    private void removeIndexesOnPuzzle() {
+        for (Cell cell : originalPuzzle) {
+            if (cell.hasValue()) {
+                indexes.remove(cell.index);
+            }
+        }
     }
 
     private boolean nextStep(int step) {

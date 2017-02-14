@@ -23,16 +23,14 @@ public class BoardTests {
 
     @Test
     public void shouldGetAllPossibleValuesOfACell() {
-        Board board = new Board();
-        setBoardValues(board);
+        Board board = mockBoardValues();
         Set<Integer> availableValues = board.getAvailableValues(0);
         assertValuesAvailableOnSet(availableValues);
     }
 
     @Test
     public void shouldTestIfValueIsPossible() {
-        Board board = new Board();
-        setBoardValues(board);
+        Board board = mockBoardValues();
         assertSingleValuesAvailable(board);
     }
 
@@ -103,19 +101,26 @@ public class BoardTests {
 
     @Test
     public void shouldCountCellsWithValue() {
-        Board board = new Board();
-        setBoardValues(board);
+        Board board = mockBoardValues();
         Assert.assertEquals(9, board.countFilledCells());
     }
 
     @Test
     public void shouldCountCellsWithoutValue() {
-        Board board = new Board();
-        setBoardValues(board);
+        Board board = mockBoardValues();
         Assert.assertEquals(72, board.countEmptyCells());
     }
 
-    private void setBoardValues(Board board) {
+    @Test
+    public void shouldCopyBoardValues() {
+        Board emptyBoard = new Board();
+        Board boardWithValues = mockBoardValues();
+        emptyBoard.setBoard(boardWithValues);
+        Assert.assertTrue(emptyBoard.equals(boardWithValues));
+    }
+
+    private Board mockBoardValues() {
+        Board board = new Board();
         // Cells in range of i = 0
         board.get(2).setValue(1);
         board.get(5).setValue(2);
@@ -127,6 +132,7 @@ public class BoardTests {
         board.get(60).setValue(7);
         board.get(70).setValue(8);
         board.get(80).setValue(9);
+        return board;
     }
 
     private void assertValuesAvailableOnSet(Set<Integer> availableValues) {

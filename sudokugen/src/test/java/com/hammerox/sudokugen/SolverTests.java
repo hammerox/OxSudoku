@@ -13,15 +13,13 @@ public class SolverTests {
 
     @Test
     public void shouldHaveABoard() {
-        Board emptyBoard = new Board();
-        Board solution = new Solver(emptyBoard);
+        Board solution = new Solver().getSingleSolution();
         Assert.assertEquals(81, solution.size());
     }
 
     @Test
     public void shouldBeFilledWithValues() {
-        Board emptyBoard = new Board();
-        Board solution = new Solver(emptyBoard);
+        Board solution = new Solver().getSingleSolution();
         int emptyCellCount = 0;
         for (Cell cell : solution) {
             if (!cell.hasValue()) {
@@ -33,8 +31,7 @@ public class SolverTests {
 
     @Test
     public void valuesShouldNotBreakSudokuRules() {
-        Board emptyBoard = new Board();
-        Board solution = new Solver(emptyBoard);
+        Board solution = new Solver().getSingleSolution();
         int irregularCellCount = 0;
         for (Cell cell : solution) {
             int numberOfAvailableValues = solution.getAvailableValues(cell.index).size();

@@ -124,6 +124,11 @@ public class Board extends ArrayList<Cell> {
         return BOARD_SIZE - countFilledCells();
     }
 
+    public void setBoard(Board boardToCopy) {
+        removeAll(this);
+        addAll(boardToCopy);
+    }
+
     private static boolean isBetween(int x, int lower, int upper) {
         return lower <= x && x <= upper;
     }
