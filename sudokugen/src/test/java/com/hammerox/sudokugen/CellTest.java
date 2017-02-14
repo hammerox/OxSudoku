@@ -1,5 +1,7 @@
 package com.hammerox.sudokugen;
 
+import com.hammerox.sudokugen.util.Testable;
+
 import org.junit.Assert;
 import org.junit.Test;
 

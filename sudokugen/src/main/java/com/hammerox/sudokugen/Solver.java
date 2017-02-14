@@ -17,22 +17,24 @@ public class Solver extends Board {
     *  However it doubles the computation time. */
     private final static boolean isToLog = false;
 
-    private List<Integer> shuffledIndexes;
+    private final Board originalPuzzle;
+    private List<Integer> indexes;
 
 
     public Solver(Board board) {
-        copyBoardCells(board);
-        getIndexOrder();
+        this.originalPuzzle = board;
+        setBoardAsPuzzle();
+        setIndexOrder();
         startSolving();
     }
 
 
-    private void copyBoardCells(Board board) {
+    private void setBoardAsPuzzle() {
         removeAll(this);
-        addAll(board);
+        addAll(originalPuzzle);
     }
 
-    private void getIndexOrder() {
+    private void setIndexOrder() {
         Set<Integer> indexes = new LinkedHashSet<>();
         for (Box box : Box.values()) {
             for (int i : box.index) {
@@ -43,7 +45,7 @@ public class Solver extends Board {
                 break;
             }
         }
-        shuffledIndexes = new ArrayList<>(indexes);
+        this.indexes = new ArrayList<>(indexes);
     }
 
     private void startSolving() {
@@ -51,7 +53,7 @@ public class Solver extends Board {
     }
 
     private boolean nextStep(int step) {
-        int index = shuffledIndexes.get(step);
+        int index = indexes.get(step);
         Set<Integer> availableValues = getAvailableValues(index);
         boolean isBoardComplete = false;
         while (!isBoardComplete) {
@@ -102,7 +104,7 @@ public class Solver extends Board {
     }
 
     private void clearValue(int step) {
-        int previousIndex = shuffledIndexes.get(step);
+        int previousIndex = indexes.get(step);
         get(previousIndex).clearValue();
     }
 }

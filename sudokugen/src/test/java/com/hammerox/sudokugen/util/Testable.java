@@ -1,4 +1,4 @@
-package com.hammerox.sudokugen;
+package com.hammerox.sudokugen.util;
 
 import org.junit.Assert;
 

@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import java.util.Set;
 import com.hammerox.sudokugen.Board.Box;
+import com.hammerox.sudokugen.util.Testable;
 
 
 /**

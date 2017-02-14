@@ -1,5 +1,7 @@
 package com.hammerox.sudokugen;
 
+import com.hammerox.sudokugen.util.PuzzleMock;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -41,5 +43,16 @@ public class SolverTest {
             }
         }
         Assert.assertEquals(0, irregularCellCount);
+    }
+
+    @Test
+    public void shouldFindOnlyOneSolution() {
+        Board puzzle = new PuzzleMock(1);
+
+    }
+
+    @Test
+    public void shouldFindMoreThanOneSolution() {
+
     }
 }
