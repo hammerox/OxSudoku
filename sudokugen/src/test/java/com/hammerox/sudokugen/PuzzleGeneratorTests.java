@@ -9,33 +9,33 @@ import org.junit.Test;
  * Created by Mauricio on 14-Feb-17.
  */
 
-public class PuzzleTests {
+public class PuzzleGeneratorTests {
 
     @Test
     public void shouldBuildValidPuzzle() {
-        Puzzle puzzle = new Puzzle();
-        puzzle.create(10);
-        Assert.assertTrue(puzzle.countEmptyCells() == 10);
+        PuzzleGenerator puzzleGenerator = new PuzzleGenerator();
+        puzzleGenerator.createPuzzle(10);
+        Assert.assertTrue(puzzleGenerator.countEmptyCells() == 10);
     }
 
     @Test
     public void shouldNotAllowNegativeValues() throws Exception {
-        final Puzzle puzzle = new Puzzle();
+        final PuzzleGenerator puzzleGenerator = new PuzzleGenerator();
         Testable.assertThrows(IndexOutOfBoundsException.class, new Testable() {
             @Override
             public void run() throws Exception {
-                puzzle.create(-1);
+                puzzleGenerator.createPuzzle(-1);
             }
         });
     }
 
     @Test
     public void shouldNotAllowValuesGreaterThan81() throws Exception {
-        final Puzzle puzzle = new Puzzle();
+        final PuzzleGenerator puzzleGenerator = new PuzzleGenerator();
         Testable.assertThrows(IndexOutOfBoundsException.class, new Testable() {
             @Override
             public void run() throws Exception {
-                puzzle.create(82);
+                puzzleGenerator.createPuzzle(82);
             }
         });
     }
