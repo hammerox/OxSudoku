@@ -7,19 +7,21 @@ import org.junit.Test;
  * Created by Mauricio on 04-Feb-17.
  */
 
-public class SolutionTest {
+public class SolverTest {
 
     @Test
     public void shouldHaveABoard() {
-        Board solution = new Solution();
+        Board emptyBoard = new Board();
+        Board solution = new Solver(emptyBoard);
         Assert.assertEquals(81, solution.size());
     }
 
     @Test
     public void shouldBeFilledWithValues() {
-        Board board = new Solution();
+        Board emptyBoard = new Board();
+        Board solution = new Solver(emptyBoard);
         int emptyCellCount = 0;
-        for (Cell cell : board) {
+        for (Cell cell : solution) {
             if (!cell.hasValue()) {
                 emptyCellCount++;
             }
@@ -29,10 +31,11 @@ public class SolutionTest {
 
     @Test
     public void valuesShouldNotBreakSudokuRules() {
-        Board board = new Solution();
+        Board emptyBoard = new Board();
+        Board solution = new Solver(emptyBoard);
         int irregularCellCount = 0;
-        for (Cell cell : board) {
-            int numberOfAvailableValues = board.getAvailableValues(cell.index).size();
+        for (Cell cell : solution) {
+            int numberOfAvailableValues = solution.getAvailableValues(cell.index).size();
             if (numberOfAvailableValues != 1) {
                 irregularCellCount++;
             }

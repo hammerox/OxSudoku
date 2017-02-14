@@ -10,17 +10,23 @@ import java.util.Set;
  * Created by Mauricio on 04-Feb-17.
  */
 
-public class Solution extends Board {
+public class Solver extends Board {
 
 
     private List<Integer> shuffledIndexes;
 
 
-    public Solution() {
+    public Solver(Board board) {
+        copyBoardCells(board);
         getIndexOrder();
         startSolving();
     }
 
+
+    private void copyBoardCells(Board board) {
+        removeAll(this);
+        addAll(board);
+    }
 
     private void getIndexOrder() {
         Set<Integer> indexes = new LinkedHashSet<>();
