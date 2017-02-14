@@ -15,6 +15,7 @@ public class PuzzleGeneratorTests {
     public void shouldBuildValidPuzzle() {
         PuzzleGenerator puzzleGenerator = new PuzzleGenerator();
         puzzleGenerator.createPuzzle(10);
+        BoardLogger.log(puzzleGenerator);
         Assert.assertTrue(puzzleGenerator.countEmptyCells() == 10);
     }
 

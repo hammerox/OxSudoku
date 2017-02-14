@@ -10,6 +10,7 @@ import static com.hammerox.sudokugen.Board.getPosition;
 
 public class BoardLogger {
 
+
     private static Board board;
     private static int step;
     private static int maxStep;
@@ -17,6 +18,22 @@ public class BoardLogger {
     private static Position position;
     private static Set<Integer> availableValues;
     private static StringBuffer buffer;
+    private static boolean showInfo;
+
+
+    public static void log(Board b) {
+        buffer = new StringBuffer();
+        board = b;
+        position = new Position(0, 0);
+        showInfo = false;
+        firstAndLastRow();
+        for (int row = 1; row <= 9; row++) {
+            logRow(row);
+        }
+        firstAndLastRow();
+        System.out.print(buffer.toString());
+    }
+
 
     public static void log(Board b, int s, int i, Set<Integer> available) {
         buffer = new StringBuffer();
@@ -26,6 +43,7 @@ public class BoardLogger {
         index = i;
         position = getPosition(i);
         availableValues = available;
+        showInfo = true;
         firstAndLastRow();
         for (int row = 1; row <= 9; row++) {
             logRow(row);
@@ -70,7 +88,9 @@ public class BoardLogger {
     private static void logRowEnd(int row) {
         verticalBorder(row);
         appendSpace();
-        displayInfo(row);
+        if (showInfo) {
+            displayInfo(row);
+        }
         buffer.append("\n");
     }
 

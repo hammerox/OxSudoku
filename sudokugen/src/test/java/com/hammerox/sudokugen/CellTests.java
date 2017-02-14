@@ -80,4 +80,14 @@ public class CellTests {
         Assert.assertFalse(cell.hasValue());
     }
 
+    @Test
+    public void shouldCloneCells() {
+        Cell cell = new Cell(0);
+        cell.setValue(9);
+        Cell cloneCell = cell.clone();
+        Assert.assertEquals(0, cloneCell.index);
+        Assert.assertEquals(9, cloneCell.getValue());
+        Assert.assertFalse(cloneCell == cell);
+    }
+
 }

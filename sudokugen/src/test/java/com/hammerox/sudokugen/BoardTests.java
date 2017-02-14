@@ -113,10 +113,10 @@ public class BoardTests {
 
     @Test
     public void shouldCopyBoardValues() {
-        Board emptyBoard = new Board();
-        Board boardWithValues = mockBoardValues();
-        emptyBoard.setBoard(boardWithValues);
-        Assert.assertTrue(emptyBoard.equals(boardWithValues));
+        Board boardToWatch = new Board();
+        Board boardToClone = mockBoardValues();
+        boardToWatch.setBoard(boardToClone);
+        assertSingleValuesAvailable(boardToWatch);
     }
 
     private Board mockBoardValues() {

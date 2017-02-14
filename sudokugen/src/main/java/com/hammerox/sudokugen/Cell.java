@@ -37,6 +37,7 @@ public class Cell {
         this(Board.getPosition(index));
     }
 
+
     public Set<Integer> getIndexesInRange() {
         return new HashSet<>(indexesInRange);
     }
@@ -61,6 +62,14 @@ public class Cell {
 
     public boolean hasValue() {
         return hasValue;
+    }
+
+    public Cell clone() {
+        Cell cloneCell = new Cell(this.index);
+        if (hasValue()) {
+            cloneCell.setValue(this.getValue());
+        }
+        return cloneCell;
     }
 
     private static boolean isBetween(int x, int lower, int upper) {
