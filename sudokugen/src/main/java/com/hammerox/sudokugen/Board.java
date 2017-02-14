@@ -9,6 +9,8 @@ import java.util.Set;
  */
 public class Board extends ArrayList<Cell> {
 
+    public static final int BOARD_SIZE = 81;
+
 
     public Board() {
         initializeBoard();
@@ -149,7 +151,7 @@ public class Board extends ArrayList<Cell> {
         if (!this.isEmpty()) {
             this.clear();
         }
-        for (int i = 0; i < 81; i++) {
+        for (int i = 0; i < BOARD_SIZE; i++) {
             Position position = getPosition(i);
             this.add(new Cell(position));
         }

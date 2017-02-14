@@ -29,7 +29,7 @@ public class Solution extends Board {
                 indexes.add(i);
                 indexes.addAll(get(i).getIndexesInRange());
             }
-            if (indexes.size() == 81) {
+            if (indexes.size() == BOARD_SIZE) {
                 break;
             }
         }
@@ -62,7 +62,7 @@ public class Solution extends Board {
 
             BoardLogger.log(this, step, currentIndex, availableValues);
 
-            boolean isToContinue = cellsFilled < 81;
+            boolean isToContinue = cellsFilled < BOARD_SIZE;
             if (isToContinue) {
                 if (isToBacktrack) {
                     return true;
