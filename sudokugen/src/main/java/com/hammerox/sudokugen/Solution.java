@@ -2,6 +2,7 @@ package com.hammerox.sudokugen;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -13,15 +14,27 @@ public class Solution extends Board {
 
 
     private List<Integer> shuffledIndexes;
-    private List<Set<Integer>> backtrackList;
 
 
     public Solution() {
-        backtrackList = new ArrayList<>();
-        shuffleIndexes();
+        getIndexOrder();
         startSolving();
     }
 
+
+    private void getIndexOrder() {
+        Set<Integer> indexes = new LinkedHashSet<>();
+        for (Box box : Box.values()) {
+            for (int i : box.index) {
+                indexes.add(i);
+                indexes.addAll(get(i).getIndexesInRange());
+            }
+            if (indexes.size() == 81) {
+                break;
+            }
+        }
+        shuffledIndexes = new ArrayList<>(indexes);
+    }
 
     private void startSolving() {
         nextStep(0);
@@ -37,7 +50,6 @@ public class Solution extends Board {
             boolean isToBacktrack;
             if (availableValues.isEmpty()) {
                 clearValue(step);
-
                 isToBacktrack = true;
             } else {
                 int value = setRandomValue(currentIndex, availableValues);
@@ -46,7 +58,9 @@ public class Solution extends Board {
             }
 
             int cellsFilled = countCells();
-            BoardLogger.log(this, currentIndex, availableValues);
+
+
+            BoardLogger.log(this, step, currentIndex, availableValues);
 
             boolean isToContinue = cellsFilled < 81;
             if (isToContinue) {
@@ -60,14 +74,6 @@ public class Solution extends Board {
             }
         }
         return false;
-    }
-
-    private void shuffleIndexes() {
-        shuffledIndexes = new ArrayList<>();
-        for (int i = 0; i < 81; i++) {
-            shuffledIndexes.add(i);
-        }
-        Collections.shuffle(shuffledIndexes);
     }
 
     private void clearValue(int step) {

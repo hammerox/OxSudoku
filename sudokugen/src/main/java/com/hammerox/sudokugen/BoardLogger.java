@@ -11,22 +11,26 @@ import static com.hammerox.sudokugen.Board.getPosition;
 public class BoardLogger {
 
     private static Board board;
+    private static int step;
+    private static int maxStep;
     private static int index;
     private static Position position;
     private static Set<Integer> availableValues;
     private static StringBuffer buffer;
 
-    public static void log(Board b, int i, Set<Integer> available) {
+    public static void log(Board b, int s, int i, Set<Integer> available) {
         buffer = new StringBuffer();
         board = b;
+        step = s;
+        maxStep = (step > maxStep) ? step : maxStep;
         index = i;
         position = getPosition(i);
         availableValues = available;
-        logColumn();
+        firstAndLastRow();
         for (int row = 1; row <= 9; row++) {
             logRow(row);
         }
-        logColumn();
+        firstAndLastRow();
         System.out.print(buffer.toString());
     }
 
@@ -43,79 +47,106 @@ public class BoardLogger {
         if (cell.hasValue()) {
             buffer.append(cell.getValue());
         } else {
-            buffer.append(" ");
+            appendSpace();
         }
         if (position.col - 1 == col && position.row == row){
             buffer.append("(");
         } else if (position.col == col && position.row == row) {
             buffer.append(")");
         } else {
-            buffer.append(" ");
+            appendSpace();
         }
     }
 
     private static void logRowStart(int row) {
-        if (row == position.row) {
-            buffer.append("- ");
+        verticalBorder(row);
+        if (position.col == 1 && position.row == row) {
+            buffer.append("(");
         } else {
-            buffer.append("| ");
+            appendSpace();
         }
     }
 
     private static void logRowEnd(int row) {
-        if (row == position.row) {
-            buffer.append("-");
-        } else {
-            buffer.append("|");
-        }
+        verticalBorder(row);
+        appendSpace();
+        displayInfo(row);
+        buffer.append("\n");
+    }
 
-        buffer.append(" ");
-
+    private static void displayInfo(int row) {
         switch (row) {
             case 1:
+                buffer.append("Step: ");
+                buffer.append(step);
+                break;
+            case 2:
+                buffer.append("Max Step: ");
+                buffer.append(maxStep);
+                break;
+            case 3:
                 buffer.append("Index: ");
                 buffer.append(index);
                 break;
-            case 2:
+            case 4:
                 buffer.append("Row: ");
                 buffer.append(position.row);
                 break;
-            case 3:
+            case 5:
                 buffer.append("Col: ");
                 buffer.append(position.col);
                 break;
-            case 4:
+            case 6:
                 buffer.append("Box: ");
                 buffer.append(Board.getBox(position).name());
                 break;
-            case 5:
+            case 7:
                 buffer.append("Available Values: ");
                 buffer.append("[ ");
                 for (Integer i : availableValues) {
                     buffer.append(i);
-                    buffer.append(" ");
+                    appendSpace();
                 }
                 buffer.append("]");
                 break;
-            case 6:
+            case 8:
                 buffer.append("Available Count: ");
                 buffer.append(availableValues.size());
                 break;
         }
-
-        buffer.append("\n");
     }
 
-    private static void logColumn() {
-        buffer.append(" -");
-        for (int col = 1; col <= 9; col++) {
-            if(col == position.col) {
-                buffer.append("|-");
-            } else {
-                buffer.append("--");
+    private static void firstAndLastRow() {
+        appendSpace();
+        for (int i = 1; i <= 19; i++) {
+            switch (i) {
+                case 7:
+                case 13:
+                    buffer.append("|");
+                    break;
+                default:
+                    buffer.append("-");
             }
         }
+        appendSpace();
         buffer.append(" \n");
+    }
+
+    private static void appendSpace() {
+        buffer.append(" ");
+    }
+
+    private static void verticalBorder(int row) {
+        switch (row) {
+            case 4:
+            case 5:
+            case 6:
+                buffer.append("-");
+                break;
+            default:
+                buffer.append("|");
+                break;
+        }
     }
 
 }
