@@ -35,7 +35,6 @@ public class PuzzleGenerator extends Board {
                 undoStep(availableIndexes, index);
                 step--;
             }
-            BoardLogger.log(this);
         }
 
         return this;
@@ -64,7 +63,7 @@ public class PuzzleGenerator extends Board {
 
     private void undoStep(List<Integer> indexes, int index) {
         int originalValue = solution.get(index).getValue();
-        int last = removedIndexes.size();
+        int last = removedIndexes.size() - 1;
         addIndex(indexes, index, originalValue, last);
     }
 

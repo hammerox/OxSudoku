@@ -41,4 +41,12 @@ public class PuzzleGeneratorTests {
         });
     }
 
+    @Test
+    public void shouldBuildDifficultPuzzles() {
+        PuzzleGenerator puzzleGenerator = new PuzzleGenerator();
+        puzzleGenerator.createPuzzle(40);
+        BoardLogger.log(puzzleGenerator);
+        Assert.assertTrue(puzzleGenerator.countEmptyCells() == 40);
+    }
+
 }
