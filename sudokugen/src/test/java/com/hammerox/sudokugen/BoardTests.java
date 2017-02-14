@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import java.util.Set;
 import com.hammerox.sudokugen.Board.Box;
+import com.hammerox.sudokugen.util.PuzzleMock;
 import com.hammerox.sudokugen.util.Testable;
 
 
@@ -117,6 +118,13 @@ public class BoardTests {
         Board boardToClone = mockBoardValues();
         boardToWatch.setBoard(boardToClone);
         assertSingleValuesAvailable(boardToWatch);
+    }
+
+    @Test
+    public void shouldValidateAllValues() {
+        Board board = new PuzzleMock(0);
+        boolean isValid = board.isBoardValid();
+        Assert.assertTrue(isValid);
     }
 
     private Board mockBoardValues() {

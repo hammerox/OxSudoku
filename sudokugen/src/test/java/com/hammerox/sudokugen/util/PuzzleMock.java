@@ -22,6 +22,7 @@ public class PuzzleMock extends Board {
         removeValues(emptyCells);
     }
 
+
     private void removeValues(int emptyCells) {
         for (int i = 0; i < emptyCells; i++) {
             int index = shuffledIndexes.get(i);
@@ -64,8 +65,8 @@ public class PuzzleMock extends Board {
         this.set(21, 3);
         this.set(22, 5);
         this.set(23, 7);
-        this.set(24, 8);
-        this.set(25, 2);
+        this.set(24, 2);
+        this.set(25, 8);
         this.set(26, 1);
 
         this.set(27, 7);

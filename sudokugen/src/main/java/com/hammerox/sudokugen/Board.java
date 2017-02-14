@@ -125,12 +125,23 @@ public class Board extends ArrayList<Cell> {
     }
 
     public void setBoard(Board boardToCopy) {
-//        removeAll(this);
-//        addAll(boardToCopy);
         removeAll(this);
         for (Cell cell : boardToCopy) {
             this.add(cell.clone());
         }
+    }
+
+    public boolean isBoardValid() {
+        for (Cell cell : this) {
+            if (cell.hasValue()) {
+                Set<Integer> invalidValues = invalidValues(cell.index);
+                boolean isInvalid = invalidValues.contains(cell.getValue());
+                if (isInvalid) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     private static boolean isBetween(int x, int lower, int upper) {

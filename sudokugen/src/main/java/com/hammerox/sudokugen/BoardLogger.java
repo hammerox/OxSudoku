@@ -35,13 +35,13 @@ public class BoardLogger {
     }
 
 
-    public static void log(Board b, int s, int i, Set<Integer> available) {
+    public static void log(Board brd, int stp, int idx, Set<Integer> available) {
         buffer = new StringBuffer();
-        board = b;
-        step = s;
+        board = brd;
+        step = stp;
         maxStep = (step > maxStep) ? step : maxStep;
-        index = i;
-        position = getPosition(i);
+        index = idx;
+        position = getPosition(idx);
         availableValues = available;
         showInfo = true;
         firstAndLastRow();

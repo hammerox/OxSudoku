@@ -16,7 +16,7 @@ public class PuzzleGeneratorTests {
         PuzzleGenerator puzzleGenerator = new PuzzleGenerator();
         puzzleGenerator.createPuzzle(10);
         BoardLogger.log(puzzleGenerator);
-        Assert.assertTrue(puzzleGenerator.countEmptyCells() == 10);
+        Assert.assertEquals(10, puzzleGenerator.countEmptyCells());
     }
 
     @Test
@@ -46,7 +46,16 @@ public class PuzzleGeneratorTests {
         PuzzleGenerator puzzleGenerator = new PuzzleGenerator();
         puzzleGenerator.createPuzzle(40);
         BoardLogger.log(puzzleGenerator);
-        Assert.assertTrue(puzzleGenerator.countEmptyCells() == 40);
+        Assert.assertEquals(40, puzzleGenerator.countEmptyCells());
+    }
+
+    @Test
+    public void shouldBuildDifficultPuzzles45() {
+        int removeCount = 45;
+        PuzzleGenerator puzzleGenerator = new PuzzleGenerator();
+        puzzleGenerator.createPuzzle(removeCount);
+        BoardLogger.log(puzzleGenerator);
+        Assert.assertEquals(removeCount, puzzleGenerator.countEmptyCells());
     }
 
 }
