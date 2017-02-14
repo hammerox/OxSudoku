@@ -33,9 +33,10 @@ public class PuzzleGenerator extends Board {
                 step++;
             } else {
                 undoStep(availableIndexes, index);
-                step--;
             }
         }
+
+        BoardLogger.log(this);
 
         return this;
     }

@@ -127,6 +127,14 @@ public class BoardTests {
         Assert.assertTrue(isValid);
     }
 
+    @Test
+    public void shouldDetectInvalidBoards() {
+        Board board = mockBoardValues();
+        board.set(0, 2);
+        boolean isValid = board.isBoardValid();
+        Assert.assertFalse(isValid);
+    }
+
     private Board mockBoardValues() {
         Board board = new Board();
         // Cells in range of i = 0
