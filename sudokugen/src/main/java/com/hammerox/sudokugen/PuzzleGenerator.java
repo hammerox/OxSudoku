@@ -1,6 +1,7 @@
 package com.hammerox.sudokugen;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -25,15 +26,26 @@ public class PuzzleGenerator extends Board {
         resetVariables();
 
         while (step < cellsToRemove) {
-            int index = removeNextIndex();
-            if (boardIsValid()) {
-                goToNextStep();
+            if (attempts >= indexPool.size()) {
+                break;
             } else {
-                undoChanges(index);
+                shuffleIndexesOnFirstAttempt();
+                int index = removeNextIndex();
+                if (boardIsValid()) {
+                    goToNextStep();
+                } else {
+                    undoChanges(index);
+                }
             }
         }
         BoardLogger.log(this);
         return this;
+    }
+
+    private void shuffleIndexesOnFirstAttempt() {
+        if (attempts == 0) {
+            Collections.shuffle(indexPool);
+        }
     }
 
     public void useSolution(Board solution) {
@@ -73,10 +85,15 @@ public class PuzzleGenerator extends Board {
     }
 
     private int removeNextIndex() {
-        int pick = randomNumber(indexPool);
-        int pickedIndex = indexPool.get(pick);
-        removeIndex(indexPool, pick, pickedIndex);
-        return pickedIndex;
+        int index = indexPool.get(attempts);
+        removeIndex(index);
+        return index;
+    }
+
+    private void removeIndex(int index) {
+        indexPool.remove(attempts);
+        this.get(index).clearValue();
+        removedIndexes.add(index);
     }
 
     private boolean boardIsValid() {
@@ -90,29 +107,18 @@ public class PuzzleGenerator extends Board {
     }
 
     private void undoChanges(int index) {
-        undoStep(indexPool, index);
+        undoStep(index);
         attempts++;
     }
 
-    private void undoStep(List<Integer> indexes, int index) {
+    private void undoStep(int index) {
         int originalValue = solution.get(index).getValue();
-        int last = removedIndexes.size() - 1;
-        addIndex(indexes, index, originalValue, last);
+        int lastPosition = removedIndexes.size() - 1;
+        addIndex(index, originalValue, lastPosition);
     }
 
-    private int randomNumber(List<Integer> indexes) {
-        int size = indexes.size();
-        return random.nextInt(size);
-    }
-
-    private void removeIndex(List<Integer> indexes, int pick, int index) {
-        indexes.remove(pick);
-        this.get(index).clearValue();
-        removedIndexes.add(index);
-    }
-
-    private void addIndex(List<Integer> indexes, int index, int originalValue, int last) {
-        indexes.add(index);
+    private void addIndex(int index, int originalValue, int last) {
+        indexPool.add(index);
         this.get(index).setValue(originalValue);
         removedIndexes.remove(last);
     }

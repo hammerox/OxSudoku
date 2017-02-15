@@ -87,13 +87,13 @@ public class PuzzleGeneratorTests {
         Assert.assertEquals(45, indexHistory.size());
     }
 
-//    @Test
-//    public void shouldBreakIfCannotRemoveMoreValues() {
-//        PuzzleGenerator puzzleGenerator = new PuzzleGenerator();
-//        Board solution = new PuzzleMock(0);
-//        puzzleGenerator.useSolution(solution);
-//        puzzleGenerator.createPuzzle(70);
-//        Assert.assertTrue(puzzleGenerator.countEmptyCells() < 70);
-//    }
+    @Test
+    public void shouldBreakIfCannotRemoveMoreValues() {
+        PuzzleGenerator puzzleGenerator = new PuzzleGenerator();
+        Board solution = new PuzzleMock(0);
+        puzzleGenerator.useSolution(solution);
+        puzzleGenerator.createPuzzle(70);
+        Assert.assertTrue(puzzleGenerator.countEmptyCells() < 70);
+    }
 
 }
