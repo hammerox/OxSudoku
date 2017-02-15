@@ -55,6 +55,9 @@ public class Solver extends Board {
 
     private Set<Integer> setDefaultIndexOrder() {
         Set<Integer> indexes = new LinkedHashSet<>();
+//        for (int i = 0; i < BOARD_SIZE; i++) {
+//            indexes.add(i);
+//        }
         for (Box box : Box.values()) {
             for (int i : box.index) {
                 indexes.add(i);

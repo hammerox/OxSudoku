@@ -23,19 +23,19 @@ public class PuzzleMock extends Board {
     }
 
 
-    private void removeValues(int emptyCells) {
-        for (int i = 0; i < emptyCells; i++) {
-            int index = shuffledIndexes.get(i);
-            get(index).clearValue();
-        }
-    }
-
     private void shuffleIndexes() {
         shuffledIndexes = new ArrayList<>();
         for (int i = 0; i < BOARD_SIZE; i++) {
             shuffledIndexes.add(i);
         }
         Collections.shuffle(shuffledIndexes);
+    }
+
+    private void removeValues(int emptyCells) {
+        for (int i = 0; i < emptyCells; i++) {
+            int index = shuffledIndexes.get(i);
+            get(index).clearValue();
+        }
     }
 
     private void buildSolution() {

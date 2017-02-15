@@ -18,8 +18,11 @@ public class PuzzleGenerator extends Board {
 
     public Board createPuzzle(int cellsToRemove) {
         checkIfParameterIsValid(cellsToRemove);
-        solution = new Solver().getSingleSolution();
-        this.setBoard(solution);
+
+        if (solution == null) {
+            solution = new Solver().getSingleSolution();
+            this.setBoard(solution);
+        }
 
         removedIndexes = new ArrayList<>();
         int step = 0;
@@ -35,10 +38,16 @@ public class PuzzleGenerator extends Board {
                 undoStep(availableIndexes, index);
             }
         }
-
         BoardLogger.log(this);
-
         return this;
+    }
+
+    public void useSolution(Board solution) {
+        this.setBoard(solution);
+    }
+
+    public List<Integer> getRemovedIndexes() {
+        return removedIndexes;
     }
 
     private void checkIfParameterIsValid(int cellsToRemove) {
