@@ -7,6 +7,7 @@ import org.junit.Test;
 import java.util.Set;
 import com.hammerox.sudokugen.Board.Box;
 import com.hammerox.sudokugen.util.PuzzleMock;
+import com.hammerox.sudokugen.util.SolutionMock;
 import com.hammerox.sudokugen.util.Testable;
 
 
@@ -122,7 +123,7 @@ public class BoardTests {
 
     @Test
     public void shouldValidateAllValues() {
-        Board board = new PuzzleMock(0);
+        Board board = new SolutionMock();
         boolean isValid = board.isBoardValid();
         Assert.assertTrue(isValid);
     }

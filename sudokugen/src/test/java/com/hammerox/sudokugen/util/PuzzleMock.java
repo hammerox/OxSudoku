@@ -13,15 +13,34 @@ import java.util.List;
 public class PuzzleMock extends Board {
 
 
+    public final static int MAX = 53;
+    public final static int[] INDEX_HISTORY = new int[]
+            {0, 20, 10, 25, 23, 67, 26, 5 , 55, 21,
+            64, 32, 38, 44, 72, 63, 54, 80, 28, 8 ,
+            53, 30, 31, 19, 7 , 42, 57, 75, 48, 3 ,
+            49, 70, 34, 18, 37, 9 , 12, 51, 74, 66,
+            59, 65, 11, 56, 4 , 50, 45, 47, 78, 62,
+            15, 58, 27};
+
     private List<Integer> shuffledIndexes;
 
 
-    public PuzzleMock(int emptyCells) {
-        buildSolution();
+    public PuzzleMock() {
+        this.setBoard(new SolutionMock());
+    }
+
+
+    public void randomBuild(int emptyCells) {
         shuffleIndexes();
         removeValues(emptyCells);
     }
 
+    public Board mockedBuild(int cellsToRemove) {
+        for (int i = 0; i < cellsToRemove; i++) {
+            get(INDEX_HISTORY[i]).clearValue();
+        }
+        return this;
+    }
 
     private void shuffleIndexes() {
         shuffledIndexes = new ArrayList<>();
@@ -36,98 +55,6 @@ public class PuzzleMock extends Board {
             int index = shuffledIndexes.get(i);
             get(index).clearValue();
         }
-    }
-
-    private void buildSolution() {
-        this.set(0, 5);
-        this.set(1, 1);
-        this.set(2, 3);
-        this.set(3, 6);
-        this.set(4, 2);
-        this.set(5, 8);
-        this.set(6, 7);
-        this.set(7, 9);
-        this.set(8, 4);
-
-        this.set(9, 2);
-        this.set(10, 8);
-        this.set(11, 7);
-        this.set(12, 4);
-        this.set(13, 1);
-        this.set(14, 9);
-        this.set(15, 5);
-        this.set(16, 6);
-        this.set(17, 3);
-
-        this.set(18, 9);
-        this.set(19, 6);
-        this.set(20, 4);
-        this.set(21, 3);
-        this.set(22, 5);
-        this.set(23, 7);
-        this.set(24, 2);
-        this.set(25, 8);
-        this.set(26, 1);
-
-        this.set(27, 7);
-        this.set(28, 9);
-        this.set(29, 8);
-        this.set(30, 5);
-        this.set(31, 6);
-        this.set(32, 3);
-        this.set(33, 1);
-        this.set(34, 4);
-        this.set(35, 2);
-
-        this.set(36, 3);
-        this.set(37, 4);
-        this.set(38, 5);
-        this.set(39, 2);
-        this.set(40, 8);
-        this.set(41, 1);
-        this.set(42, 6);
-        this.set(43, 7);
-        this.set(44, 9);
-
-        this.set(45, 6);
-        this.set(46, 2);
-        this.set(47, 1);
-        this.set(48, 9);
-        this.set(49, 7);
-        this.set(50, 4);
-        this.set(51, 3);
-        this.set(52, 5);
-        this.set(53, 8);
-
-        this.set(54, 1);
-        this.set(55, 7);
-        this.set(56, 6);
-        this.set(57, 8);
-        this.set(58, 4);
-        this.set(59, 2);
-        this.set(60, 9);
-        this.set(61, 3);
-        this.set(62, 5);
-
-        this.set(63, 8);
-        this.set(64, 5);
-        this.set(65, 9);
-        this.set(66, 1);
-        this.set(67, 3);
-        this.set(68, 6);
-        this.set(69, 4);
-        this.set(70, 2);
-        this.set(71, 7);
-
-        this.set(72, 4);
-        this.set(73, 3);
-        this.set(74, 2);
-        this.set(75, 7);
-        this.set(76, 9);
-        this.set(77, 5);
-        this.set(78, 8);
-        this.set(79, 1);
-        this.set(80, 6);
     }
 
 }

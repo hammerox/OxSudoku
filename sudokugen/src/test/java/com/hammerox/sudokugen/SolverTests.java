@@ -44,7 +44,7 @@ public class SolverTests {
 
     @Test
     public void shouldFindOnlyOneSolution() {
-        Board puzzle = new PuzzleMock(1);
+        Board puzzle = new PuzzleMock().mockedBuild(1);
         Solver solver = new Solver(puzzle);
         boolean isValidPuzzle = solver.hasValidSolution();
         Assert.assertTrue(isValidPuzzle);

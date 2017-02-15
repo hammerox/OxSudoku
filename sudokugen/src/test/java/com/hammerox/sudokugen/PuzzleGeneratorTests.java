@@ -1,6 +1,6 @@
 package com.hammerox.sudokugen;
 
-import com.hammerox.sudokugen.util.PuzzleMock;
+import com.hammerox.sudokugen.util.SolutionMock;
 import com.hammerox.sudokugen.util.Testable;
 
 import org.junit.Assert;
@@ -70,7 +70,7 @@ public class PuzzleGeneratorTests {
     @Test
     public void shouldUseGivenSolution() {
         PuzzleGenerator puzzleGenerator = new PuzzleGenerator();
-        Board solution = new PuzzleMock(0);
+        Board solution = new SolutionMock();
         puzzleGenerator.useSolution(solution);
         Assert.assertEquals(solution.get(0).getValue(), puzzleGenerator.get(0).getValue());
         Assert.assertEquals(solution.get(10).getValue(), puzzleGenerator.get(10).getValue());
@@ -80,7 +80,7 @@ public class PuzzleGeneratorTests {
     @Test
     public void shouldSaveHitoryOfRemovedIndexes() {
         PuzzleGenerator puzzleGenerator = new PuzzleGenerator();
-        Board solution = new PuzzleMock(0);
+        Board solution = new SolutionMock();
         puzzleGenerator.useSolution(solution);
         puzzleGenerator.createPuzzle(45);
         List<Integer> indexHistory = puzzleGenerator.getRemovedIndexes();
@@ -90,9 +90,10 @@ public class PuzzleGeneratorTests {
     @Test
     public void shouldBreakIfCannotRemoveMoreValues() {
         PuzzleGenerator puzzleGenerator = new PuzzleGenerator();
-        Board solution = new PuzzleMock(0);
+        Board solution = new SolutionMock();
         puzzleGenerator.useSolution(solution);
         puzzleGenerator.createPuzzle(70);
+        List<Integer> indexHistory = puzzleGenerator.getRemovedIndexes();
         Assert.assertTrue(puzzleGenerator.countEmptyCells() < 70);
     }
 
