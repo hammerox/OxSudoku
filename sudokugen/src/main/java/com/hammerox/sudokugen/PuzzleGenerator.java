@@ -14,28 +14,22 @@ public class PuzzleGenerator extends Board {
     private Board solution;
     private List<Integer> removedIndexes;
     private Random random = new Random();
+    private int step;
+    private int attempts;
+    private List<Integer> indexPool;
 
 
     public Board createPuzzle(int cellsToRemove) {
-        checkIfParameterIsValid(cellsToRemove);
-
-        if (solution == null) {
-            solution = new Solver().getSingleSolution();
-            this.setBoard(solution);
-        }
-
-        removedIndexes = new ArrayList<>();
-        int step = 0;
-        List<Integer> availableIndexes = getAllIndexes();
+        checkIfArgumentIsValid(cellsToRemove);
+        checkSolution();
+        resetVariables();
 
         while (step < cellsToRemove) {
-            int index = removeRandomIndex(availableIndexes);
-            Solver solver = new Solver(this);
-            boolean isValid = solver.hasValidSolution();
-            if (isValid) {
-                step++;
+            int index = removeNextIndex();
+            if (boardIsValid()) {
+                goToNextStep();
             } else {
-                undoStep(availableIndexes, index);
+                undoChanges(index);
             }
         }
         BoardLogger.log(this);
@@ -50,10 +44,24 @@ public class PuzzleGenerator extends Board {
         return removedIndexes;
     }
 
-    private void checkIfParameterIsValid(int cellsToRemove) {
+    private void checkIfArgumentIsValid(int cellsToRemove) {
         if (cellsToRemove < 0 || cellsToRemove > 81) {
             throw new IndexOutOfBoundsException();
         }
+    }
+
+    private void checkSolution() {
+        if (solution == null) {
+            solution = new Solver().getSingleSolution();
+            this.setBoard(solution);
+        }
+    }
+
+    private void resetVariables() {
+        removedIndexes = new ArrayList<>();
+        step = 0;
+        attempts = 0;
+        indexPool = getAllIndexes();
     }
 
     private List<Integer> getAllIndexes() {
@@ -64,11 +72,26 @@ public class PuzzleGenerator extends Board {
         return indexes;
     }
 
-    private int removeRandomIndex(List<Integer> indexes) {
-        int pick = randomNumber(indexes);
-        int pickedIndex = indexes.get(pick);
-        removeIndex(indexes, pick, pickedIndex);
+    private int removeNextIndex() {
+        int pick = randomNumber(indexPool);
+        int pickedIndex = indexPool.get(pick);
+        removeIndex(indexPool, pick, pickedIndex);
         return pickedIndex;
+    }
+
+    private boolean boardIsValid() {
+        Solver solver = new Solver(this);
+        return solver.hasValidSolution();
+    }
+
+    private void goToNextStep() {
+        step++;
+        attempts = 0;
+    }
+
+    private void undoChanges(int index) {
+        undoStep(indexPool, index);
+        attempts++;
     }
 
     private void undoStep(List<Integer> indexes, int index) {
