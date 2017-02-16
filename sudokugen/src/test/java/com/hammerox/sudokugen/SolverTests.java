@@ -44,7 +44,7 @@ public class SolverTests {
 
     @Test
     public void shouldFindOnlyOneSolution() {
-        Board puzzle = new PuzzleMock().mockedBuild(1);
+        Board puzzle = new PuzzleMock().build(1);
         Solver solver = new Solver(puzzle);
         boolean isValidPuzzle = solver.hasValidSolution();
         Assert.assertTrue(isValidPuzzle);
@@ -56,5 +56,11 @@ public class SolverTests {
         Solver solver = new Solver(emptyBoard);
         boolean isValidPuzzle = solver.hasValidSolution();
         Assert.assertFalse(isValidPuzzle);
+    }
+
+    @Test
+    public void shouldTestSolverSpeed() {
+        Board puzzle = new PuzzleMock().build(PuzzleMock.MAX);
+        Solver solver = new Solver(puzzle);
     }
 }

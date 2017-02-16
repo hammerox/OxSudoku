@@ -64,13 +64,7 @@ public class PuzzleGeneratorTests {
     public void puzzleGeneratedShouldLookLikeSolution() {
         puzzleGenerator.useSolution(solution);
         puzzleGenerator.createPuzzle(40);
-        Set<Integer> remainingIndexes = new LinkedHashSet<>(Board.getAllIndexes());
-        List<Integer> indexHistory = puzzleGenerator.getRemovedIndexes();
-        remainingIndexes.removeAll(indexHistory);
-        for (Integer i :
-                remainingIndexes) {
-            Assert.assertEquals(solution.get(i).getValue(), puzzleGenerator.get(i).getValue());
-        }
+        assertRemainingIndexes();
     }
 
     @Test
@@ -107,6 +101,17 @@ public class PuzzleGeneratorTests {
         puzzleGenerator.createPuzzle(45);
         List<Integer> indexHistory = puzzleGenerator.getRemovedIndexes();
         Assert.assertEquals(45, indexHistory.size());
+    }
+
+
+    private void assertRemainingIndexes() {
+        Set<Integer> remainingIndexes = new LinkedHashSet<>(Board.getAllIndexes());
+        List<Integer> indexHistory = puzzleGenerator.getRemovedIndexes();
+        remainingIndexes.removeAll(indexHistory);
+        for (Integer i :
+                remainingIndexes) {
+            Assert.assertEquals(solution.get(i).getValue(), puzzleGenerator.get(i).getValue());
+        }
     }
 
 }

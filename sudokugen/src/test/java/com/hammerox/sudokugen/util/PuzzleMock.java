@@ -13,14 +13,14 @@ import java.util.List;
 public class PuzzleMock extends Board {
 
 
-    public final static int MAX = 53;
+    public final static int MAX = 57;
     public final static int[] INDEX_HISTORY = new int[]
-            {0, 20, 10, 25, 23, 67, 26, 5 , 55, 21,
-            64, 32, 38, 44, 72, 63, 54, 80, 28, 8 ,
-            53, 30, 31, 19, 7 , 42, 57, 75, 48, 3 ,
-            49, 70, 34, 18, 37, 9 , 12, 51, 74, 66,
-            59, 65, 11, 56, 4 , 50, 45, 47, 78, 62,
-            15, 58, 27};
+            {38,40,68,5 ,63,0 ,22,34,7 ,48,
+             33,73,30,71,3 ,55,16,69,18,17,
+             26,60,51,77,13,8 ,32,35,11,54,
+             58,6 ,46,65,47,66,31,20,45,1 ,
+             36,10,76,19,21,49,43,59,64,74,
+             70,50,52,39,79,61,78};
 
     private List<Integer> shuffledIndexes;
 
@@ -30,16 +30,16 @@ public class PuzzleMock extends Board {
     }
 
 
-    public void randomBuild(int emptyCells) {
-        shuffleIndexes();
-        removeValues(emptyCells);
-    }
-
-    public Board mockedBuild(int cellsToRemove) {
+    public Board build(int cellsToRemove) {
         for (int i = 0; i < cellsToRemove; i++) {
             get(INDEX_HISTORY[i]).clearValue();
         }
         return this;
+    }
+
+    public void randomBuild(int emptyCells) {
+        shuffleIndexes();
+        removeValues(emptyCells);
     }
 
     private void shuffleIndexes() {
