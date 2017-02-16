@@ -3,7 +3,6 @@ package com.hammerox.sudokugen;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Created by Mauricio on 14-Feb-17.
@@ -14,7 +13,6 @@ public class PuzzleGenerator extends Board {
 
     private Board solution;
     private List<Integer> removedIndexes;
-    private Random random = new Random();
     private int step;
     private int attempts;
     private List<Integer> indexPool;
@@ -38,6 +36,7 @@ public class PuzzleGenerator extends Board {
                 }
             }
         }
+        BoardLogger.log(solution);
         BoardLogger.log(this);
         return this;
     }
@@ -74,14 +73,6 @@ public class PuzzleGenerator extends Board {
         step = 0;
         attempts = 0;
         indexPool = getAllIndexes();
-    }
-
-    private List<Integer> getAllIndexes() {
-        List<Integer> indexes = new ArrayList<>();
-        for (int i = 0; i < BOARD_SIZE; i++) {
-            indexes.add(i);
-        }
-        return indexes;
     }
 
     private int removeNextIndex() {

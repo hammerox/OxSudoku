@@ -2,6 +2,7 @@ package com.hammerox.sudokugen;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -84,6 +85,14 @@ public class Board extends ArrayList<Cell> {
             colIndexes.add(i);
         }
         return colIndexes;
+    }
+
+    public static List<Integer> getAllIndexes() {
+        List<Integer> indexes = new ArrayList<>();
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            indexes.add(i);
+        }
+        return indexes;
     }
 
     public Cell get(Position position) {

@@ -4,9 +4,12 @@ import com.hammerox.sudokugen.util.SolutionMock;
 import com.hammerox.sudokugen.util.Testable;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Mauricio on 14-Feb-17.
@@ -14,16 +17,23 @@ import java.util.List;
 
 public class PuzzleGeneratorTests {
 
+    private PuzzleGenerator puzzleGenerator;
+    private Board solution;
+
+    @Before
+    public void setup() {
+        puzzleGenerator = new PuzzleGenerator();
+        solution = new SolutionMock();
+    }
+
     @Test
     public void shouldBuildValidPuzzle() {
-        PuzzleGenerator puzzleGenerator = new PuzzleGenerator();
         puzzleGenerator.createPuzzle(10);
         Assert.assertEquals(10, puzzleGenerator.countEmptyCells());
     }
 
     @Test
     public void shouldNotAllowNegativeValues() throws Exception {
-        final PuzzleGenerator puzzleGenerator = new PuzzleGenerator();
         Testable.assertThrows(IndexOutOfBoundsException.class, new Testable() {
             @Override
             public void run() throws Exception {
@@ -34,7 +44,6 @@ public class PuzzleGeneratorTests {
 
     @Test
     public void shouldNotAllowValuesGreaterThan81() throws Exception {
-        final PuzzleGenerator puzzleGenerator = new PuzzleGenerator();
         Testable.assertThrows(IndexOutOfBoundsException.class, new Testable() {
             @Override
             public void run() throws Exception {
@@ -44,33 +53,7 @@ public class PuzzleGeneratorTests {
     }
 
     @Test
-    public void shouldBuildDifficultPuzzles40() {
-        int removeCount = 40;
-        PuzzleGenerator puzzleGenerator = new PuzzleGenerator();
-        puzzleGenerator.createPuzzle(removeCount);
-        Assert.assertEquals(removeCount, puzzleGenerator.countEmptyCells());
-    }
-
-    @Test
-    public void shouldBuildDifficultPuzzles45() {
-        int removeCount = 45;
-        PuzzleGenerator puzzleGenerator = new PuzzleGenerator();
-        puzzleGenerator.createPuzzle(removeCount);
-        Assert.assertEquals(removeCount, puzzleGenerator.countEmptyCells());
-    }
-
-    @Test
-    public void shouldBuildDifficultPuzzles50() {
-        int removeCount = 50;
-        PuzzleGenerator puzzleGenerator = new PuzzleGenerator();
-        puzzleGenerator.createPuzzle(removeCount);
-        Assert.assertEquals(removeCount, puzzleGenerator.countEmptyCells());
-    }
-
-    @Test
     public void shouldUseGivenSolution() {
-        PuzzleGenerator puzzleGenerator = new PuzzleGenerator();
-        Board solution = new SolutionMock();
         puzzleGenerator.useSolution(solution);
         Assert.assertEquals(solution.get(0).getValue(), puzzleGenerator.get(0).getValue());
         Assert.assertEquals(solution.get(10).getValue(), puzzleGenerator.get(10).getValue());
@@ -78,23 +61,52 @@ public class PuzzleGeneratorTests {
     }
 
     @Test
-    public void shouldSaveHitoryOfRemovedIndexes() {
-        PuzzleGenerator puzzleGenerator = new PuzzleGenerator();
-        Board solution = new SolutionMock();
+    public void puzzleGeneratedShouldLookLikeSolution() {
         puzzleGenerator.useSolution(solution);
-        puzzleGenerator.createPuzzle(45);
+        puzzleGenerator.createPuzzle(40);
+        Set<Integer> remainingIndexes = new LinkedHashSet<>(Board.getAllIndexes());
         List<Integer> indexHistory = puzzleGenerator.getRemovedIndexes();
-        Assert.assertEquals(45, indexHistory.size());
+        remainingIndexes.removeAll(indexHistory);
+        for (Integer i :
+                remainingIndexes) {
+            Assert.assertEquals(solution.get(i).getValue(), puzzleGenerator.get(i).getValue());
+        }
+    }
+
+    @Test
+    public void shouldBuildDifficultPuzzles40() {
+        int removeCount = 40;
+        puzzleGenerator.createPuzzle(removeCount);
+        Assert.assertEquals(removeCount, puzzleGenerator.countEmptyCells());
+    }
+
+    @Test
+    public void shouldBuildDifficultPuzzles45() {
+        int removeCount = 45;
+        puzzleGenerator.createPuzzle(removeCount);
+        Assert.assertEquals(removeCount, puzzleGenerator.countEmptyCells());
+    }
+
+    @Test
+    public void shouldBuildDifficultPuzzles50() {
+        int removeCount = 50;
+        puzzleGenerator.createPuzzle(removeCount);
+        Assert.assertEquals(removeCount, puzzleGenerator.countEmptyCells());
     }
 
     @Test
     public void shouldBreakIfCannotRemoveMoreValues() {
-        PuzzleGenerator puzzleGenerator = new PuzzleGenerator();
-        Board solution = new SolutionMock();
         puzzleGenerator.useSolution(solution);
         puzzleGenerator.createPuzzle(70);
-        List<Integer> indexHistory = puzzleGenerator.getRemovedIndexes();
         Assert.assertTrue(puzzleGenerator.countEmptyCells() < 70);
+    }
+
+    @Test
+    public void shouldSaveHitoryOfRemovedIndexes() {
+        puzzleGenerator.useSolution(solution);
+        puzzleGenerator.createPuzzle(45);
+        List<Integer> indexHistory = puzzleGenerator.getRemovedIndexes();
+        Assert.assertEquals(45, indexHistory.size());
     }
 
 }
