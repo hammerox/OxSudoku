@@ -48,6 +48,8 @@ public class PuzzleGenerator extends Board {
     }
 
     public void useSolution(Board solution) {
+        this.solution = new Board();
+        this.solution.setBoard(solution);
         this.setBoard(solution);
     }
 
