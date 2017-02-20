@@ -48,26 +48,9 @@ public class Solver extends Board {
     }
 
     private void setIndexOrder() {
-        Set<Integer> indexes = setDefaultIndexOrder();
+        Set<Integer> indexes = new LinkedHashSet<>(getAllIndexes());
         indexes = removeIndexesOnPuzzle(indexes);
         this.indexes = new ArrayList<>(indexes);
-    }
-
-    private Set<Integer> setDefaultIndexOrder() {
-        Set<Integer> indexes = new LinkedHashSet<>();
-//        for (int i = 0; i < BOARD_SIZE; i++) {
-//            indexes.add(i);
-//        }
-        for (Box box : Box.values()) {
-            for (int i : box.index) {
-                indexes.add(i);
-                indexes.addAll(get(i).getIndexesInRange());
-            }
-            if (indexes.size() == BOARD_SIZE) {
-                break;
-            }
-        }
-        return indexes;
     }
 
     private Set<Integer> removeIndexesOnPuzzle(Set<Integer> indexes) {

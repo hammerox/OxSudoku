@@ -58,9 +58,11 @@ public class SolverTests {
         Assert.assertFalse(isValidPuzzle);
     }
 
-    @Test
-    public void shouldTestSolverSpeed() {
-        Board puzzle = new PuzzleMock().build(PuzzleMock.MAX);
-        Solver solver = new Solver(puzzle);
-    }
+//    @Test
+//    public void shouldTestSolverSpeed() {
+//        for (int i = 0; i < 10000; i++) {
+//            Board puzzle = new PuzzleMock().build(PuzzleMock.MAX);
+//            Solver solver = new Solver(puzzle);
+//        }
+//    }
 }
